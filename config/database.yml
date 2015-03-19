@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: registryadmin
+  password: registryadmin
+
+development:
+  <<: *default
+  database: registry_development
+
+test:
+  <<: *default
+  database: registry_test
+
+production:
+  <<: *default
+  database: registry
+  password: <%= ENV['REGISTRY_DATABASE_PASSWORD'] %>

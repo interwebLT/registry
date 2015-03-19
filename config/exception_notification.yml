@@ -1,0 +1,11 @@
+development:
+  sender_address:
+  exception_recipients:
+
+test:
+  sender_address:
+  exception_recipients:
+
+production:
+  sender_address:
+  exception_recipients:
