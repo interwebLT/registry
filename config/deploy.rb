@@ -1,5 +1,5 @@
 set :application, 'registry'
-set :repo_url, 'git@github.com:dotph/registry.git'
+set :repo_url, 'https://github.com/dotph/registry.git'
 set :branch, ENV['REVISION'] || ENV['BRANCH'] || proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 set :rails_env, 'production'
 
