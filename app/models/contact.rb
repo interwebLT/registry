@@ -28,6 +28,8 @@ class Contact < ActiveRecord::Base
                           phone: self.phone,
                           fax: self.fax,
                           street: self.street,
+                          street2: self.street2,
+                          street3: self.street3,
                           city: self.city,
                           state: self.state,
                           country_code: self.country_code,

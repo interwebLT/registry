@@ -46,6 +46,8 @@ def update_contact with: { handle: nil, partner: nil }
     phone: 'new_phone',
     fax: 'new_fax',
     street: 'new_street',
+    street2: 'new_street2',
+    street3: 'new_street3',
     city: 'new_city',
     state: 'new_state',
     country_code: 'new_country',
@@ -106,6 +108,8 @@ def assert_contact_history contact_history, contact
   contact_history.phone.must_equal contact.phone
   contact_history.fax.must_equal contact.fax
   contact_history.street.must_equal contact.street
+  contact_history.street2.must_equal contact.street2
+  contact_history.street3.must_equal contact.street3
   contact_history.city.must_equal contact.city
   contact_history.state.must_equal contact.state
   contact_history.country_code.must_equal contact.country_code
@@ -123,8 +127,8 @@ def assert_contact_updated
     phone: 'new_phone',
     fax: 'new_fax',
     street: 'new_street',
-    street2: nil,
-    street3: nil,
+    street2: 'new_street2',
+    street3: 'new_street3',
     city: 'new_city',
     state: 'new_state',
     country_code: 'new_country',
