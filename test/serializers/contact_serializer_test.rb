@@ -10,7 +10,9 @@ describe ContactSerializer do
   specify { subject[:email].must_equal contact.email }
   specify { subject[:organization].must_equal contact.organization }
   specify { subject[:voice].must_equal contact.voice }
+  specify { subject[:voice_ext].must_equal contact.voice_ext }
   specify { subject[:fax].must_equal contact.fax }
+  specify { subject[:fax_ext].must_equal contact.fax_ext }
   specify { subject[:street].must_equal contact.street }
   specify { subject[:street2].must_equal contact.street }
   specify { subject[:street3].must_equal contact.street }

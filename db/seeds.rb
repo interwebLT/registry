@@ -120,6 +120,20 @@ def create_contact partner:, handle:
                   name: handle
 end
 
+def create_complete_contact partner:, handle:
+  Contact.create  partner: partner,
+                  handle: handle,
+                  name: "Contact #{handle}",
+                  organization: "Organization #{handle}",
+                  street: 'Street',
+                  street2: 'Street 2',
+                  street3: 'Street 3',
+                  voice: '+63.21234567',
+                  voice_ext: '1234',
+                  fax: '+63.21234567',
+                  fax_ext: '1235'
+end
+
 def create_domain_host domain:, host_name:
   domain.product.domain_hosts.create name: host_name
 end
@@ -167,9 +181,15 @@ def create_partner name:, domain_count: 0, admin: false, staff: false
       create_renew_domain_order partner, 10, "#{domain_name}.org.ph"
     end
   end
+
+  partner
 end
 
 create_partner name: 'sync',  admin: true
 create_partner name: 'admin', admin: true
-create_partner name: 'alpha', domain_count: 4
 create_partner name: 'staff', domain_count: 4, staff: true
+
+alpha = create_partner name: 'alpha', domain_count: 4
+
+complete_contact  = create_complete_contact partner: alpha, handle: 'Complete'
+complete_domain   = create_domain alpha, complete_contact, 'complete.ph'

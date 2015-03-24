@@ -14,7 +14,7 @@ class DomainSerializer < ActiveModel::Serializer
   end
 
   def registrant
-    RegistrantSerializer.new(object.registrant).serializable_hash
+    ContactSerializer.new(object.registrant).serializable_hash
   end
 
   def registered_at
