@@ -43,7 +43,7 @@ def update_contact with: { handle: nil, partner: nil }
     name: 'new_name',
     email: 'new_email@contact.ph',
     organization: 'new_organization',
-    phone: 'new_phone',
+    voice: 'new_phone',
     fax: 'new_fax',
     street: 'new_street',
     street2: 'new_street2',
@@ -68,7 +68,7 @@ def assert_contact_created
     name: nil,
     email: nil,
     organization: nil,
-    phone: nil,
+    voice: nil,
     fax: nil,
     street: nil,
     street2: nil,
@@ -105,7 +105,7 @@ def assert_contact_history contact_history, contact
   contact_history.name.must_equal contact.name
   contact_history.email.must_equal contact.email
   contact_history.organization.must_equal contact.organization
-  contact_history.phone.must_equal contact.phone
+  contact_history.voice.must_equal contact.voice
   contact_history.fax.must_equal contact.fax
   contact_history.street.must_equal contact.street
   contact_history.street2.must_equal contact.street2
@@ -124,7 +124,7 @@ def assert_contact_updated
     name: 'new_name',
     email: 'new_email@contact.ph',
     organization: 'new_organization',
-    phone: 'new_phone',
+    voice: 'new_phone',
     fax: 'new_fax',
     street: 'new_street',
     street2: 'new_street2',

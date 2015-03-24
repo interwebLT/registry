@@ -231,7 +231,7 @@ def domain_response id: 1,
       postal_code: nil,
       country_code: nil,
       email: nil,
-      phone: nil,
+      voice: nil,
       fax: nil
     },
     registrant_handle: registrant,
