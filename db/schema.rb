@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150324061118) do
+ActiveRecord::Schema.define(version: 20150324083551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,45 +24,63 @@ ActiveRecord::Schema.define(version: 20150324061118) do
   end
 
   create_table "contact_history", force: :cascade do |t|
-    t.string   "handle",       limit: 16,   null: false
-    t.integer  "partner_id",                null: false
-    t.string   "name",         limit: 255
-    t.string   "email",        limit: 2048
-    t.string   "organization", limit: 255
-    t.string   "voice",        limit: 64
-    t.string   "fax",          limit: 64
-    t.string   "street",       limit: 255
-    t.string   "city",         limit: 255
-    t.string   "state",        limit: 255
-    t.string   "country_code", limit: 255
-    t.string   "postal_code",  limit: 255
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.string   "street2",      limit: 255
-    t.string   "street3",      limit: 255
-    t.string   "voice_ext",    limit: 64
-    t.string   "fax_ext",      limit: 64
+    t.string   "handle",             limit: 16,   null: false
+    t.integer  "partner_id",                      null: false
+    t.string   "name",               limit: 255
+    t.string   "email",              limit: 2048
+    t.string   "organization",       limit: 255
+    t.string   "voice",              limit: 64
+    t.string   "fax",                limit: 64
+    t.string   "street",             limit: 255
+    t.string   "city",               limit: 255
+    t.string   "state",              limit: 255
+    t.string   "country_code",       limit: 255
+    t.string   "postal_code",        limit: 255
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.string   "street2",            limit: 255
+    t.string   "street3",            limit: 255
+    t.string   "voice_ext",          limit: 64
+    t.string   "fax_ext",            limit: 64
+    t.string   "local_name",         limit: 255
+    t.string   "local_organization", limit: 255
+    t.string   "local_street",       limit: 255
+    t.string   "local_street2",      limit: 255
+    t.string   "local_street3",      limit: 255
+    t.string   "local_city",         limit: 255
+    t.string   "local_state",        limit: 255
+    t.string   "local_postal_code",  limit: 255
+    t.string   "local_country_code", limit: 255
   end
 
   create_table "contacts", id: false, force: :cascade do |t|
-    t.string   "handle",       limit: 16,   null: false
-    t.integer  "partner_id",                null: false
-    t.string   "name",         limit: 255
-    t.string   "email",        limit: 2048
-    t.string   "organization", limit: 255
-    t.string   "voice",        limit: 64
-    t.string   "fax",          limit: 64
-    t.string   "street",       limit: 255
-    t.string   "city",         limit: 255
-    t.string   "state",        limit: 255
-    t.string   "country_code", limit: 255
-    t.string   "postal_code",  limit: 255
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.string   "street2",      limit: 255
-    t.string   "street3",      limit: 255
-    t.string   "voice_ext",    limit: 64
-    t.string   "fax_ext",      limit: 64
+    t.string   "handle",             limit: 16,   null: false
+    t.integer  "partner_id",                      null: false
+    t.string   "name",               limit: 255
+    t.string   "email",              limit: 2048
+    t.string   "organization",       limit: 255
+    t.string   "voice",              limit: 64
+    t.string   "fax",                limit: 64
+    t.string   "street",             limit: 255
+    t.string   "city",               limit: 255
+    t.string   "state",              limit: 255
+    t.string   "country_code",       limit: 255
+    t.string   "postal_code",        limit: 255
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.string   "street2",            limit: 255
+    t.string   "street3",            limit: 255
+    t.string   "voice_ext",          limit: 64
+    t.string   "fax_ext",            limit: 64
+    t.string   "local_name",         limit: 255
+    t.string   "local_organization", limit: 255
+    t.string   "local_street",       limit: 255
+    t.string   "local_street2",      limit: 255
+    t.string   "local_street3",      limit: 255
+    t.string   "local_city",         limit: 255
+    t.string   "local_state",        limit: 255
+    t.string   "local_postal_code",  limit: 255
+    t.string   "local_country_code", limit: 255
   end
 
   create_table "domain_activity", force: :cascade do |t|

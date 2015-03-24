@@ -20,21 +20,9 @@ class Contact < ActiveRecord::Base
   end
 
   def create_contact_history
-    ContactHistory.create contact: self,
-                          partner: self.partner,
-                          name: self.name,
-                          email: self.email,
-                          organization: self.organization,
-                          voice: self.voice,
-                          voice_ext: self.voice_ext,
-                          fax: self.fax,
-                          fax_ext: self.fax_ext,
-                          street: self.street,
-                          street2: self.street2,
-                          street3: self.street3,
-                          city: self.city,
-                          state: self.state,
-                          country_code: self.country_code,
-                          postal_code: self.postal_code
+    hash = self.attributes
+    hash[:contact] = self
+
+    ContactHistory.create hash
   end
 end
