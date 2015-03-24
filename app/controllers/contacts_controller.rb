@@ -36,7 +36,9 @@ class ContactsController < SecureController
   end
 
   def contact_params
-    params.permit :id, :partner, :handle, :name, :organization, :street, :street2, :street3, :city, :state, :postal_code, :country_code, :voice, :email, :fax
+    params.permit :id, :partner, :handle, :name, :organization,
+                  :street, :street2, :street3, :city, :state, :postal_code, :country_code,
+                  :email, :voice, :voice_ext, :fax, :fax_ext
   end
 
   def create_params
