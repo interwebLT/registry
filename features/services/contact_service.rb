@@ -41,19 +41,28 @@ def update_contact with: { handle: nil, partner: nil }
 
   json_request = {
     name: 'new_name',
-    email: 'new_email@contact.ph',
     organization: 'new_organization',
-    voice: 'new_phone',
-    voice_ext: '1234',
-    fax: 'new_fax',
-    fax_ext: '1234',
     street: 'new_street',
     street2: 'new_street2',
     street3: 'new_street3',
     city: 'new_city',
     state: 'new_state',
+    postal_code: 'new_postal_code',
     country_code: 'new_country',
-    postal_code: 'new_postal_code'
+    local_name: 'New local name',
+    local_organization: 'New local organization',
+    local_street: 'New local street',
+    local_street2: 'New local street 2',
+    local_street3: 'New local street 3',
+    local_city: 'New local city',
+    local_state: 'New local state',
+    local_postal_code: 'New local postal code',
+    local_country_code: 'New local country code',
+    voice: 'new_phone',
+    voice_ext: '1234',
+    fax: 'new_fax',
+    fax_ext: '1234',
+    email: 'new_email@contact.ph',
   }
 
   json_request[:handle] = params[:handle] if params[:handle]
@@ -68,19 +77,28 @@ def assert_contact_created
   expected_response = {
     handle: CONTACT_HANDLE,
     name: nil,
-    email: nil,
     organization: nil,
-    voice: nil,
-    voice_ext: nil,
-    fax: nil,
-    fax_ext: nil,
     street: nil,
     street2: nil,
     street3: nil,
     city: nil,
     state: nil,
+    postal_code: nil,
     country_code: nil,
-    postal_code: nil
+    local_name: nil,
+    local_organization: nil,
+    local_street: nil,
+    local_street2: nil,
+    local_street3: nil,
+    local_city: nil,
+    local_state: nil,
+    local_postal_code: nil,
+    local_country_code: nil,
+    voice: nil,
+    voice_ext: nil,
+    fax: nil,
+    fax_ext: nil,
+    email: nil,
   }
 
   json_response.must_equal expected_response
@@ -106,20 +124,32 @@ end
 def assert_contact_history contact_history, contact
   contact_history.handle.must_equal contact.handle
   contact_history.partner.must_equal contact.partner
+
   contact_history.name.must_equal contact.name
-  contact_history.email.must_equal contact.email
   contact_history.organization.must_equal contact.organization
-  contact_history.voice.must_equal contact.voice
-  contact_history.voice_ext.must_equal contact.voice_ext
-  contact_history.fax.must_equal contact.fax
-  contact_history.fax_ext.must_equal contact.fax_ext
   contact_history.street.must_equal contact.street
   contact_history.street2.must_equal contact.street2
   contact_history.street3.must_equal contact.street3
   contact_history.city.must_equal contact.city
   contact_history.state.must_equal contact.state
-  contact_history.country_code.must_equal contact.country_code
   contact_history.postal_code.must_equal contact.postal_code
+  contact_history.country_code.must_equal contact.country_code
+
+  contact_history.local_name.must_equal contact.local_name
+  contact_history.local_organization.must_equal contact.local_organization
+  contact_history.local_street.must_equal contact.local_street
+  contact_history.local_street2.must_equal contact.local_street2
+  contact_history.local_street3.must_equal contact.local_street3
+  contact_history.local_city.must_equal contact.local_city
+  contact_history.local_state.must_equal contact.local_state
+  contact_history.local_postal_code.must_equal contact.local_postal_code
+  contact_history.local_country_code.must_equal contact.local_country_code
+
+  contact_history.voice.must_equal contact.voice
+  contact_history.voice_ext.must_equal contact.voice_ext
+  contact_history.fax.must_equal contact.fax
+  contact_history.fax_ext.must_equal contact.fax_ext
+  contact_history.email.must_equal contact.email
 end
 
 def assert_contact_updated
@@ -128,19 +158,28 @@ def assert_contact_updated
   expected_response = {
     handle: CONTACT_HANDLE,
     name: 'new_name',
-    email: 'new_email@contact.ph',
     organization: 'new_organization',
-    voice: 'new_phone',
-    voice_ext: '1234',
-    fax: 'new_fax',
-    fax_ext: '1234',
     street: 'new_street',
     street2: 'new_street2',
     street3: 'new_street3',
     city: 'new_city',
     state: 'new_state',
+    postal_code: 'new_postal_code',
     country_code: 'new_country',
-    postal_code: 'new_postal_code'
+    local_name: 'New local name',
+    local_organization: 'New local organization',
+    local_street: 'New local street',
+    local_street2: 'New local street 2',
+    local_street3: 'New local street 3',
+    local_city: 'New local city',
+    local_state: 'New local state',
+    local_postal_code: 'New local postal code',
+    local_country_code: 'New local country code',
+    voice: 'new_phone',
+    voice_ext: '1234',
+    fax: 'new_fax',
+    fax_ext: '1234',
+    email: 'new_email@contact.ph'
   }
 
   json_response.must_equal expected_response

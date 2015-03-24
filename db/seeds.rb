@@ -128,10 +128,24 @@ def create_complete_contact partner:, handle:
                   street: 'Street',
                   street2: 'Street 2',
                   street3: 'Street 3',
+                  city: 'City',
+                  state: 'State',
+                  postal_code: '1234',
+                  country_code: 'PH',
+                  local_name: 'Local contact',
+                  local_organization: 'Local organization',
+                  local_street: 'Local street',
+                  local_street2: 'Local street 2',
+                  local_street3: 'Local street 3',
+                  local_city: 'Local city',
+                  local_state: 'Local state',
+                  local_postal_code: 'Local postal code',
+                  local_country_code: 'Local country code',
                   voice: '+63.21234567',
                   voice_ext: '1234',
                   fax: '+63.21234567',
-                  fax_ext: '1235'
+                  fax_ext: '1235',
+                  email: "#{handle}@contact.ph"
 end
 
 def create_domain_host domain:, host_name:
