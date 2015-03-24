@@ -25,7 +25,7 @@ class Contact < ActiveRecord::Base
                           name: self.name,
                           email: self.email,
                           organization: self.organization,
-                          phone: self.phone,
+                          voice: self.voice,
                           fax: self.fax,
                           street: self.street,
                           street2: self.street2,

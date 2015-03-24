@@ -88,7 +88,7 @@ describe Contact do
   end
 
   describe :callbacks do
-    CONTACT_FIELDS = [:name, :email, :organization, :phone, :fax, :street, :street2, :street3, :city, :state, :country_code, :postal_code]
+    CONTACT_FIELDS = [:name, :email, :organization, :voice, :fax, :street, :street2, :street3, :city, :state, :country_code, :postal_code]
 
     subject { create :contact }
 
