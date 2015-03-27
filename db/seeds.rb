@@ -53,6 +53,8 @@ def create_domain partner, contact, name, registered_at = Date.today
 
   create_domain_host domain: domain, host_name: 'ns3.domains.ph'
   create_domain_host domain: domain, host_name: 'ns4.domains.ph'
+
+  domain
 end
 
 def create_register_domain_order partner, period, domain_name, registrant, registered_at
@@ -207,3 +209,8 @@ alpha = create_partner name: 'alpha', domain_count: 4
 
 complete_contact  = create_complete_contact partner: alpha, handle: 'Complete'
 complete_domain   = create_domain alpha, complete_contact, 'complete.ph'
+
+complete_domain.admin_contact   = complete_contact
+complete_domain.billing_contact = complete_contact
+complete_domain.tech_contact    = complete_contact
+complete_domain.save!

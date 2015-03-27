@@ -71,6 +71,12 @@ When /^I try to view the latest domains registered in my zone$/ do
   view_latest_domains
 end
 
+When /^I try to view the info of a domain with complete contacts$/ do
+  domain_with_complete_contacts_exists
+
+  view_domain_info
+end
+
 Then /^all contact handles of my domain must be updated$/ do
   assert_response_must_be_updated_domain with: {
     registrant_handle: CONTACT_HANDLE,
@@ -136,4 +142,8 @@ end
 
 Then /^I must see the latest domains with newest first$/ do
   assert_latest_domains_displayed
+end
+
+Then /^I must see the info of my domain with all contacts$/ do
+  assert_domain_with_complete_contacts_displayed
 end

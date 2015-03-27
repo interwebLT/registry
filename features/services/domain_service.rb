@@ -16,14 +16,18 @@ def domain_does_not_exist domain: DOMAIN
   contact_does_not_exist
 end
 
-def domain_exists domain: DOMAIN
+def domain_exists domain: DOMAIN, factory: :domain
   domain_does_not_exist domain: domain
 
   domain_array = domain.split '.', 2
 
-  create :domain, partner: @current_partner,
+  create factory, partner: @current_partner,
                   name: domain_array[0],
                   extension: ".#{domain_array[1]}"
+end
+
+def domain_with_complete_contacts_exists domain: DOMAIN
+  domain_exists domain: domain, factory: :complete_domain
 end
 
 def update_domain_contact registrant_handle: NO_UPDATE,
@@ -168,23 +172,13 @@ end
 def assert_domain_info_displayed
   assert_response_status_must_be_ok
 
-  domain_info_params = {
-    activities: [
-      {
-        id: 1,
-        type: 'create',
-        activity_at: '2015-01-01T00:00:00Z',
-        object: {
-          id: 1,
-          type: 'domain',
-          name: 'domain.ph'
-        }
-      }
-    ],
-    hosts: []
-  }
+  json_response.must_equal domain_info_response
+end
 
-  json_response.must_equal domain_response.merge(domain_info_params)
+def assert_domain_with_complete_contacts_displayed
+  assert_response_status_must_be_ok
+
+  json_response.must_equal domain_with_complete_contacts_response
 end
 
 def assert_domains_displayed
@@ -260,6 +254,243 @@ def domain_response id: 1,
   }
 end
 
-def latest_domains_response
-
+def domain_info_response
+  {
+    id: 1,
+    zone: 'ph',
+    name: 'domain.ph',
+    partner: 'alpha',
+    registered_at: '2014-01-01T00:00:00Z',
+    expires_at: '2015-01-01T00:00:00Z',
+    registrant_handle: 'contact',
+    registrant: {
+      handle: 'contact',
+      name: nil,
+      organization: nil,
+      street: nil,
+      street2: nil,
+      street3: nil,
+      city: nil,
+      state: nil,
+      postal_code: nil,
+      country_code: nil,
+      local_name: nil,
+      local_organization: nil,
+      local_street: nil,
+      local_street2: nil,
+      local_street3: nil,
+      local_city: nil,
+      local_state: nil,
+      local_postal_code: nil,
+      local_country_code: nil,
+      voice: nil,
+      voice_ext: nil,
+      fax: nil,
+      fax_ext: nil,
+      email: nil
+    },
+    admin_handle: nil,
+    billing_handle: nil,
+    tech_handle: nil,
+    client_hold: false,
+    client_delete_prohibited: false,
+    client_renew_prohibited: false,
+    client_transfer_prohibited: false,
+    client_update_prohibited: false,
+    expired: true,
+    expiring: false,
+    admin_contact: nil,
+    billing_contact: nil,
+    tech_contact: nil,
+    activities: [
+      {
+        id: 1,
+        type: 'create',
+        activity_at: '2015-01-01T00:00:00Z',
+        object: {
+          id: 1,
+          type: 'domain',
+          name: 'domain.ph'
+        }
+      }
+    ],
+    hosts: []
+  }
+end
+def domain_with_complete_contacts_response
+  {
+    id: 1,
+    zone: 'ph',
+    name: 'domain.ph',
+    partner: 'alpha',
+    registered_at: '2014-01-01T00:00:00Z',
+    expires_at: '2015-01-01T00:00:00Z',
+    registrant_handle: 'contact',
+    registrant: {
+      handle: 'contact',
+      name: nil,
+      organization: nil,
+      street: nil,
+      street2: nil,
+      street3: nil,
+      city: nil,
+      state: nil,
+      postal_code: nil,
+      country_code: nil,
+      local_name: nil,
+      local_organization: nil,
+      local_street: nil,
+      local_street2: nil,
+      local_street3: nil,
+      local_city: nil,
+      local_state: nil,
+      local_postal_code: nil,
+      local_country_code: nil,
+      voice: nil,
+      voice_ext: nil,
+      fax: nil,
+      fax_ext: nil,
+      email: nil
+    },
+    admin_handle: 'contact',
+    admin_contact: {
+      handle: 'contact',
+      name: nil,
+      organization: nil,
+      street: nil,
+      street2: nil,
+      street3: nil,
+      city: nil,
+      state: nil,
+      postal_code: nil,
+      country_code: nil,
+      local_name: nil,
+      local_organization: nil,
+      local_street: nil,
+      local_street2: nil,
+      local_street3: nil,
+      local_city: nil,
+      local_state: nil,
+      local_postal_code: nil,
+      local_country_code: nil,
+      voice: nil,
+      voice_ext: nil,
+      fax: nil,
+      fax_ext: nil,
+      email: nil
+    },
+    billing_handle: 'contact',
+    billing_contact: {
+      handle: 'contact',
+      name: nil,
+      organization: nil,
+      street: nil,
+      street2: nil,
+      street3: nil,
+      city: nil,
+      state: nil,
+      postal_code: nil,
+      country_code: nil,
+      local_name: nil,
+      local_organization: nil,
+      local_street: nil,
+      local_street2: nil,
+      local_street3: nil,
+      local_city: nil,
+      local_state: nil,
+      local_postal_code: nil,
+      local_country_code: nil,
+      voice: nil,
+      voice_ext: nil,
+      fax: nil,
+      fax_ext: nil,
+      email: nil
+    },
+    tech_handle: 'contact',
+    tech_contact: {
+      handle: 'contact',
+      name: nil,
+      organization: nil,
+      street: nil,
+      street2: nil,
+      street3: nil,
+      city: nil,
+      state: nil,
+      postal_code: nil,
+      country_code: nil,
+      local_name: nil,
+      local_organization: nil,
+      local_street: nil,
+      local_street2: nil,
+      local_street3: nil,
+      local_city: nil,
+      local_state: nil,
+      local_postal_code: nil,
+      local_country_code: nil,
+      voice: nil,
+      voice_ext: nil,
+      fax: nil,
+      fax_ext: nil,
+      email: nil
+    },
+    client_hold: false,
+    client_delete_prohibited: false,
+    client_renew_prohibited: false,
+    client_transfer_prohibited: false,
+    client_update_prohibited: false,
+    expired: true,
+    expiring: false,
+    activities: [
+      {
+        id: 1,
+        type: 'create',
+        activity_at: '2015-01-01T00:00:00Z',
+        object: {
+          id: 1,
+          type: 'domain',
+          name: 'domain.ph'
+        }
+      },
+      {
+        id: 2,
+        type: 'update',
+        activity_at: '2015-01-01T00:00:00Z',
+        object: {
+          id: 2,
+          type: 'domain',
+          name: 'domain.ph'
+        },
+        property_changed: 'admin_handle',
+        old_value: '',
+        new_value: 'contact'
+      },
+      {
+        id: 3,
+        type: 'update',
+        activity_at: '2015-01-01T00:00:00Z',
+        object: {
+          id: 3,
+          type: 'domain',
+          name: 'domain.ph'
+        },
+        property_changed: 'billing_handle',
+        old_value: '',
+        new_value: 'contact'
+      },
+      {
+        id: 4,
+        type: 'update',
+        activity_at: '2015-01-01T00:00:00Z',
+        object: {
+          id: 4,
+          type: 'domain',
+          name: 'domain.ph'
+        },
+        property_changed: 'tech_handle',
+        old_value: '',
+        new_value: 'contact'
+      }
+    ],
+    hosts: []
+  }
 end
