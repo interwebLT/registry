@@ -31,7 +31,7 @@ Rails.application.routes.draw do
 
   resources :activities, only: [:index]
 
-  resources :migrations, only: [:post]
+  resources :migrations, only: [:create]
 
   match '*unmatched', to: 'application#handle_routing_error', via: :all
 end
