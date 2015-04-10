@@ -19,5 +19,6 @@ Feature: Migrate Domain as Administrator
     And   validation error on <field> must be "<code>"
 
     Examples:
-      | invalid parameter | field         | code    |
-      | no domain name    | order_details | invalid |
+      | invalid parameter     | field         | code    |
+      | no domain name        | order_details | invalid |
+      | no registrant handle  | order_details | invalid |

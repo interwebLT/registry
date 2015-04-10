@@ -50,5 +50,17 @@ describe OrderDetail::MigrateDomain do
       specify { subject.errors.count.must_equal 1 }
       specify { subject.errors[:domain].must_equal ['invalid'] }
     end
+
+    context :when_no_registrant_handle do
+      before do
+        subject.registrant_handle = nil
+
+        subject.valid?
+      end
+
+      specify { subject.valid?.wont_equal true }
+      specify { subject.errors.count.must_equal 1 }
+      specify { subject.errors[:registrant_handle].must_equal ['invalid'] }
+    end
   end
 end
