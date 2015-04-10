@@ -13,7 +13,11 @@ Feature: Migrate Domain as Administrator
     And   domain status must be inactive
     And   migrate domain fee must be deducted from credits of non-admin partner
 
-  Scenario: Invalid parameters
-    When  I migrate a domain with no domain name
+  Scenario Outline: Invalid parameters
+    When  I migrate a domain with <invalid parameter>
     Then  error must be validation failed
-    And   validation error on order_details must be "invalid"
+    And   validation error on <field> must be "<code>"
+
+    Examples:
+      | invalid parameter | field         | code    |
+      | no domain name    | order_details | invalid |
