@@ -15,8 +15,9 @@ class OrderDetail < ActiveRecord::Base
 
   ORDER_DETAIL_TYPES = {
     domain_create: OrderDetail::RegisterDomain,
+    domain_renew: OrderDetail::RenewDomain,
     credits: OrderDetail::ReplenishCredits,
-    domain_renew: OrderDetail::RenewDomain
+    migrate_domain: OrderDetail::MigrateDomain
   }
 
   def self.build params, partner
