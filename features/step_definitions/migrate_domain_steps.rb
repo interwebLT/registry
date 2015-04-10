@@ -4,6 +4,10 @@ When /^I migrate a domain into registry$/ do
   migrate_domain
 end
 
+When /^I migrate a domain with (.*)$/ do |scenario|
+  migrate_domain scenario: scenario
+end
+
 Then /^domain must be migrated under non-admin partner$/ do
   assert_completed_migrate_domain_response
 

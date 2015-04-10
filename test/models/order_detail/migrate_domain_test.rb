@@ -35,4 +35,20 @@ describe OrderDetail::MigrateDomain do
       specify { latest_ledger_entry.credits.must_equal 0.00 }
     end
   end
+
+  describe :valid? do
+    subject { build :migrate_domain_order_detail }
+
+    context :when_no_domain do
+      before do
+        subject.domain = nil
+
+        subject.valid?
+      end
+
+      specify { subject.valid?.wont_equal true }
+      specify { subject.errors.count.must_equal 1 }
+      specify { subject.errors[:domain].must_equal ['invalid'] }
+    end
+  end
 end

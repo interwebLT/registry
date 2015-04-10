@@ -1,4 +1,6 @@
 class OrderDetail::MigrateDomain < OrderDetail
+  validates :domain, presence: true
+
   def self.build params, partner
     new params
   end

@@ -1,6 +1,10 @@
 EXPIRES_AT = '2017-01-01 00:00'.in_time_zone
 
-def migrate_domain
+MIGRATE_DOMAIN_PARAMS = {
+  'no domain name'  => { domain: nil }
+}
+
+def migrate_domain scenario: nil
   json_request = {
     partner: NON_ADMIN_PARTNER,
     currency_code: 'USD',
@@ -12,6 +16,8 @@ def migrate_domain
       expires_at: EXPIRES_AT
     ]
   }
+
+  json_request[:order_details].first.merge!(MIGRATE_DOMAIN_PARAMS[scenario]) if scenario
 
   post migrations_url, json_request
 end
