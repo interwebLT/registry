@@ -4,6 +4,8 @@ class OrderDetail::MigrateDomain < OrderDetail
   validates :registered_at,     presence: true
   validates :expires_at,        presence: true
 
+  validate :registered_at_must_be_before_expires_at
+
   def self.build params, partner
     new params
   end
@@ -51,5 +53,13 @@ class OrderDetail::MigrateDomain < OrderDetail
       registered_at:      self.registered_at.iso8601,
       expires_at:         self.expires_at.iso8601
     }
+  end
+
+  private
+
+  def registered_at_must_be_before_expires_at
+    return if registered_at.nil? or expires_at.nil?
+
+    errors.add :expires_at, I18n.t('errors.messages.invalid') if expires_at < registered_at
   end
 end
