@@ -6,10 +6,9 @@ Feature: Migrate Domain as Administrator
   Background:
     Given I am authenticated as administrator
 
-  @wip
   Scenario: Migrate domain
     When  I migrate a domain into registry
-    Then  domain must be registered under non-admin partner
+    Then  domain must be migrated under non-admin partner
     And   domain must not have domain hosts by default
     And   domain status must be inactive
     And   migrate domain fee must be deducted from credits of non-admin partner
