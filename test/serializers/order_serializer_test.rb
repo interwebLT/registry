@@ -22,6 +22,7 @@ describe OrderSerializer do
           type: 'domain_create',
           price: order_detail.price.to_f,
           domain: order_detail.domain,
+          authcode: order_detail.authcode,
           period: order_detail.period,
           registrant_handle: order_detail.registrant_handle,
           registered_at: order_detail.registered_at.iso8601

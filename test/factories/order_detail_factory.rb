@@ -21,6 +21,7 @@ FactoryGirl.define do
       type OrderDetail::RegisterDomain.name
       price 35.00
       domain 'domains.ph'
+      authcode 'ABC123'
       period 2
       registrant_handle 'domains_r'
       registered_at '2015-02-17 00:00'.in_time_zone
