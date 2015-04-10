@@ -22,3 +22,4 @@ Feature: Migrate Domain as Administrator
       | invalid parameter     | field         | code    |
       | no domain name        | order_details | invalid |
       | no registrant handle  | order_details | invalid |
+      | no registered at      | order_details | invalid |
