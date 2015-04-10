@@ -23,3 +23,4 @@ Feature: Migrate Domain as Administrator
       | no domain name        | order_details | invalid |
       | no registrant handle  | order_details | invalid |
       | no registered at      | order_details | invalid |
+      | no expires at         | order_details | invalid |

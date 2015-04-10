@@ -2,6 +2,7 @@ class OrderDetail::MigrateDomain < OrderDetail
   validates :domain,            presence: true
   validates :registrant_handle, presence: true
   validates :registered_at,     presence: true
+  validates :expires_at,        presence: true
 
   def self.build params, partner
     new params

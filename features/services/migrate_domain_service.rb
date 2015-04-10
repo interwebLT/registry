@@ -3,7 +3,8 @@ EXPIRES_AT = '2017-01-01 00:00'.in_time_zone
 MIGRATE_DOMAIN_PARAMS = {
   'no domain name'        => { domain: nil },
   'no registrant handle'  => { registrant_handle: nil },
-  'no registered at'      => { registered_at: nil }
+  'no registered at'      => { registered_at: nil },
+  'no expires at'         => { expires_at: nil }
 }
 
 def migrate_domain scenario: nil

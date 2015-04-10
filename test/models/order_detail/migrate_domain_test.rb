@@ -74,5 +74,17 @@ describe OrderDetail::MigrateDomain do
       specify { subject.errors.count.must_equal 1 }
       specify { subject.errors[:registered_at].must_equal ['invalid'] }
     end
+
+    context :when_no_expires_at do
+      before do
+        subject.expires_at = nil
+
+        subject.valid?
+      end
+
+      specify { subject.valid?.wont_equal true }
+      specify { subject.errors.count.must_equal 1 }
+      specify { subject.errors[:expires_at].must_equal ['invalid'] }
+    end
   end
 end
