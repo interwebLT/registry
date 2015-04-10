@@ -12,3 +12,9 @@ Feature: Migrate Domain as Administrator
     And   domain must not have domain hosts by default
     And   domain status must be inactive
     And   migrate domain fee must be deducted from credits of non-admin partner
+
+  @wip
+  Scenario: Invalid parameters
+    When  I migrate a domain with no domain name
+    Then  error must be validation failed
+    And   validation failed on order_details must be "invalid"
