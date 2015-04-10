@@ -57,6 +57,7 @@ describe Partner do
   describe :register_domain do
     subject do
       partner.register_domain domain_name,
+                              authcode: 'ABC123',
                               period: 2,
                               registrant_handle: registrant_handle,
                               registered_at: registered_at

@@ -16,7 +16,7 @@ class Partner < ActiveRecord::Base
     partner_pricing ? partner_pricing.price : 0.00.money
   end
 
-  def register_domain domain_name, period:, registrant_handle:, registered_at:
+  def register_domain domain_name, authcode:, period:, registrant_handle:, registered_at:
     domain_name_array = domain_name.split '.', 2
 
     product = Product.create product_type: 'domain'
@@ -26,7 +26,7 @@ class Partner < ActiveRecord::Base
                         partner: self,
                         registered_at: registered_at,
                         expires_at: registered_at + period.to_i.years,
-                        authcode: 'ABC123',
+                        authcode: authcode,
                         registrant_handle: registrant_handle,
                         product: product
 

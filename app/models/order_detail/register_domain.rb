@@ -15,6 +15,7 @@ class OrderDetail::RegisterDomain < OrderDetail
 
   def complete!
     new_domain = self.order.partner.register_domain self.domain,
+                                                    authcode: self.authcode,
                                                     period: self.period,
                                                     registrant_handle: self.registrant_handle,
                                                     registered_at: self.registered_at
