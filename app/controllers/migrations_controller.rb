@@ -16,7 +16,7 @@ class MigrationsController < SecureController
   private
 
   def migration_params
-    params.permit(:partner, :currency_code, order_details: [:type, :domain, :registrant_handle, :registered_at, :expires_at])
+    params.permit(:partner, :currency_code, order_details: [:type, :domain, :authcode, :registrant_handle, :registered_at, :expires_at])
   end
 
   def migration_partner

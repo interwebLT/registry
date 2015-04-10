@@ -1,5 +1,6 @@
 class OrderDetail::MigrateDomain < OrderDetail
   validates :domain,            presence: true
+  validates :authcode,          presence: true
   validates :registrant_handle, presence: true
   validates :registered_at,     presence: true
   validates :expires_at,        presence: true
@@ -24,8 +25,8 @@ class OrderDetail::MigrateDomain < OrderDetail
                         partner:            self.order.partner,
                         registered_at:      self.registered_at,
                         expires_at:         self.expires_at,
-                        authcode:           'ABC123',
-                        registrant_handle:  registrant_handle,
+                        authcode:           self.authcode,
+                        registrant_handle:  self.registrant_handle,
                         product:            product
 
     if domain.save
@@ -49,6 +50,7 @@ class OrderDetail::MigrateDomain < OrderDetail
       type:               'migrate_domain',
       price:              self.price.to_f,
       domain:             self.domain,
+      authcode:           self.authcode,
       registrant_handle:  self.registrant_handle,
       registered_at:      self.registered_at.iso8601,
       expires_at:         self.expires_at.iso8601

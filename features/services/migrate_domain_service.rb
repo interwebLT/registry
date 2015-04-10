@@ -15,6 +15,7 @@ def migrate_domain scenario: nil
     order_details: [
       type: 'migrate_domain',
       domain: DOMAIN,
+      authcode: 'ABC123',
       registrant_handle: CONTACT_HANDLE,
       registered_at: REGISTERED_AT,
       expires_at: EXPIRES_AT
@@ -43,6 +44,7 @@ def assert_completed_migrate_domain_response
         type: 'migrate_domain',
         price: 0.00,
         domain: DOMAIN,
+        authcode: 'ABC123',
         registrant_handle: CONTACT_HANDLE,
         registered_at: REGISTERED_AT.iso8601,
         expires_at: EXPIRES_AT.iso8601

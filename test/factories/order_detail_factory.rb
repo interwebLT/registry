@@ -44,6 +44,7 @@ FactoryGirl.define do
       type OrderDetail::MigrateDomain
       price 0.00
       domain 'domain.ph'
+      authcode 'ABC123'
       registrant_handle 'domains_r'
       registered_at '2015-04-10 11:00'.in_time_zone
       expires_at '2017-04-10 11:00'.in_time_zone

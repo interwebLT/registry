@@ -7,6 +7,7 @@ describe OrderDetail::MigrateDomain do
     specify { subject[:type].must_equal 'migrate_domain' }
     specify { subject[:price].must_equal 0.00 }
     specify { subject[:domain].must_equal 'domain.ph' }
+    specify { subject[:authcode].must_equal 'ABC123' }
     specify { subject[:registrant_handle].must_equal 'domains_r' }
     specify { subject[:registered_at].must_equal '2015-04-10T11:00:00Z' }
     specify { subject[:expires_at].must_equal '2017-04-10T11:00:00Z' }
@@ -28,6 +29,7 @@ describe OrderDetail::MigrateDomain do
       specify { subject.complete?.must_equal true }
 
       specify { saved_domain.full_name.must_equal subject.domain }
+      specify { saved_domain.authcode.must_equal subject.authcode }
       specify { saved_domain.registered_at.must_equal subject.registered_at }
       specify { saved_domain.expires_at.must_equal subject.expires_at }
 
@@ -102,6 +104,18 @@ describe OrderDetail::MigrateDomain do
       specify { subject.valid?.wont_equal true }
       specify { subject.errors.count.must_equal 1 }
       specify { subject.errors[:expires_at].must_equal ['invalid'] }
+    end
+
+    context :when_no_authcode do
+      before do
+        subject.authcode = nil
+
+        subject.valid?
+      end
+
+      specify { subject.valid?.wont_equal true }
+      specify { subject.errors.count.must_equal 1 }
+      specify { subject.errors[:authcode].must_equal ['invalid'] }
     end
   end
 end
