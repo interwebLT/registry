@@ -17,6 +17,7 @@ def register_domain partner: nil,
     order_details: [
       type: 'domain_create',
       domain: name,
+      authcode: AUTHCODE,
       period: period,
       registrant_handle: registrant,
       registered_at: registered_at
@@ -56,6 +57,7 @@ def assert_register_domain_response domain: nil,
         type: 'domain_create',
         price: 70.00,
         domain: domain_name,
+        authcode: AUTHCODE,
         period: 2,
         registrant_handle: registrant,
         registered_at: '2015-01-01T00:00:00Z'
@@ -177,6 +179,7 @@ def orders_response
           type: 'domain_create',
           price: 35.00,
           domain: 'domains.ph',
+          authcode: 'ABC123',
           period: 2,
           registrant_handle: 'domains_r',
           registered_at: '2015-02-17T00:00:00Z'
@@ -290,6 +293,7 @@ def latest_orders_response
           type: 'domain_create',
           price: 35.00,
           domain: 'domains.ph',
+          authcode: 'ABC123',
           period: 2,
           registrant_handle: 'domains_r',
           registered_at: '2015-02-17T00:00:00Z'
@@ -310,6 +314,7 @@ def latest_orders_response
           type: 'domain_create',
           price: 35.00,
           domain: 'domains.ph',
+          authcode: 'ABC123',
           period: 2,
           registrant_handle: 'domains_r',
           registered_at: '2015-02-17T00:00:00Z'

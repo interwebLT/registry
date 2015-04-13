@@ -1,5 +1,6 @@
 DOMAIN = 'domain.ph'
 OTHER_DOMAIN = 'other_domain.ph'
+AUTHCODE = 'ABC123'
 
 def saved_domain name: DOMAIN
   Domain.named(name)

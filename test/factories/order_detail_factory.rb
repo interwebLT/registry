@@ -21,6 +21,7 @@ FactoryGirl.define do
       type OrderDetail::RegisterDomain.name
       price 35.00
       domain 'domains.ph'
+      authcode 'ABC123'
       period 2
       registrant_handle 'domains_r'
       registered_at '2015-02-17 00:00'.in_time_zone
@@ -38,6 +39,16 @@ FactoryGirl.define do
       type OrderDetail::TransferDomain
       price 15.00
       domain 'domain.ph'
+    end
+
+    factory :migrate_domain_order_detail, class: OrderDetail::MigrateDomain do
+      type OrderDetail::MigrateDomain
+      price 0.00
+      domain 'domain.ph'
+      authcode 'ABC123'
+      registrant_handle 'domains_r'
+      registered_at '2015-04-10 11:00'.in_time_zone
+      expires_at '2017-04-10 11:00'.in_time_zone
     end
   end
 end

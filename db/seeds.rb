@@ -64,6 +64,7 @@ def create_register_domain_order partner, period, domain_name, registrant, regis
       {
         type: 'domain_create',
         domain: domain_name,
+        authcode: 'ABC123',
         period: period,
         registrant_handle: registrant,
         registered_at: registered_at
