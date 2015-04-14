@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150410105905) do
+ActiveRecord::Schema.define(version: 20150414094015) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -144,6 +144,21 @@ ActiveRecord::Schema.define(version: 20150410105905) do
     t.string   "activity_type", limit: 10,                          null: false
     t.datetime "created_at",                                        null: false
     t.datetime "updated_at",                                        null: false
+  end
+
+  create_table "object_activities", force: :cascade do |t|
+    t.string   "type",              limit: 64,  null: false
+    t.integer  "partner_id",                    null: false
+    t.integer  "product_id",                    null: false
+    t.datetime "activity_at",                   null: false
+    t.string   "registrant_handle", limit: 16
+    t.string   "authcode",          limit: 64
+    t.datetime "expires_at"
+    t.string   "property_changed",  limit: 64
+    t.string   "old_value",         limit: 255
+    t.string   "value",             limit: 255
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   create_table "object_status_history", force: :cascade do |t|
