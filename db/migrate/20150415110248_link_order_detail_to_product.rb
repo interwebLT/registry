@@ -10,6 +10,8 @@ class LinkOrderDetailToProduct < ActiveRecord::Migration
     OrderDetail::RegisterDomain.where(product: nil).each do |od|
       domain = Domain.named(od.domain)
 
+      next unless domain
+
       od.product = domain.product
       od.authcode = domain.authcode
       od.save!
@@ -19,6 +21,8 @@ class LinkOrderDetailToProduct < ActiveRecord::Migration
   def link_renew_domain_orders
     OrderDetail::RenewDomain.where(product: nil).each do |od|
       domain = Domain.named(od.domain)
+
+      next unless domain
 
       od.product = domain.product
       od.authcode = domain.authcode
