@@ -10,9 +10,6 @@ describe Domain do
       subject.tech_handle = subject.registrant.handle
       subject.save
 
-      create :domain_activity, domain: subject
-      create :domain_activity, domain: subject
-
       create :object_activity, product: subject.product, type: ObjectActivity::Create
     end
 
@@ -23,7 +20,6 @@ describe Domain do
     specify { subject.billing_contact.wont_be_nil }
     specify { subject.tech_contact.wont_be_nil }
     specify { subject.domain_activities.wont_be_empty }
-    specify { subject.object_activities.wont_be_empty }
   end
 
   describe :zone do
@@ -249,7 +245,7 @@ describe Domain do
 
     context :when_created do
       specify { activities.count.must_equal 1 }
-      specify { activities.first.must_be_kind_of DomainActivity::Registered }
+      specify { activities.first.must_be_kind_of ObjectActivity::Create }
 
       specify { subject.product.domain_hosts.must_be_empty }
     end
@@ -262,7 +258,7 @@ describe Domain do
 
       specify { activities.count.must_equal 2 }
 
-      specify { activities.last.must_be_kind_of DomainActivity::Updated }
+      specify { activities.last.must_be_kind_of ObjectActivity::Update }
       specify { activities.last.property_changed.must_equal 'expires_at' }
       specify { activities.last.old_value.must_equal expires_at }
       specify { activities.last.value.must_equal (expires_at + 1.year) }

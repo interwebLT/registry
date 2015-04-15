@@ -4,7 +4,7 @@ describe DomainInfoSerializer do
   subject { DomainInfoSerializer.new(domain).serializable_hash }
 
   context :when_contact_registrant_only do
-    let(:domain) { build :domain }
+    let(:domain) { create :domain }
 
     before do
       create :domain_host, product: domain.product, name: 'ns3.domains.ph'

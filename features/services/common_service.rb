@@ -135,7 +135,7 @@ end
 def assert_latest_object_activity(scenario:)
   activity = OBJECT_ACTIVITY_SCENARIOS[scenario]
 
-  latest_activity.must_be_kind_of DomainActivity::Updated if activity[:type] == :update
+  latest_activity.must_be_kind_of ObjectActivity::Update if activity[:type] == :update
 
   latest_activity.property_changed.to_sym.must_equal activity[:property]
   latest_activity.old_value.must_equal activity[:old_value].to_s

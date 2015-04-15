@@ -41,12 +41,12 @@ class ObjectStatus < ActiveRecord::Base
   end
 
   def create_update_activity status
-    DomainActivity::Updated.create  activity_at: Time.now,
-                                    domain: self.product.domain,
-                                    partner: self.product.domain.partner,
-                                    property_changed: status.to_s,
-                                    old_value: self.send(status.to_s + '_was').to_s,
-                                    value: self.send(status.to_s).to_s
+    ObjectActivity::Update.create activity_at: Time.now,
+                                  partner: self.product.domain.partner,
+                                  product: self.product,
+                                  property_changed: status.to_s,
+                                  old_value: self.send(status.to_s + '_was').to_s,
+                                  value: self.send(status.to_s).to_s
   end
 
   def create_object_status_history

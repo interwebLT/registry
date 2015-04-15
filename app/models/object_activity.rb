@@ -5,4 +5,8 @@ class ObjectActivity < ActiveRecord::Base
   validates :partner,     presence: true
   validates :product,     presence: true
   validates :activity_at, presence: true
+
+  def self.latest
+    self.all.order(id: :desc).limit(1000)
+  end
 end

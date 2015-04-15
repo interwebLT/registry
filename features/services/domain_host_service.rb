@@ -57,7 +57,7 @@ def assert_add_domain_host_domain_activity_must_be_created
   saved_domain.domain_activities.count.must_equal 4
 
   domain_activity = saved_domain.domain_activities[1]
-  domain_activity.must_be_instance_of DomainActivity::Updated
+  domain_activity.must_be_instance_of ObjectActivity::Update
   domain_activity.property_changed.must_equal 'domain_host'
   domain_activity.old_value.must_be_nil
   domain_activity.value.must_equal HOST_NAME
@@ -88,7 +88,7 @@ def assert_remove_domain_host_domain_activity_must_be_created
   saved_domain.domain_activities.count.must_equal 5
 
   domain_activity = saved_domain.domain_activities.last
-  domain_activity.must_be_instance_of DomainActivity::Updated
+  domain_activity.must_be_instance_of ObjectActivity::Update
   domain_activity.property_changed.must_equal 'domain_host'
   domain_activity.old_value.must_equal HOST_NAME
   domain_activity.value.must_be_nil

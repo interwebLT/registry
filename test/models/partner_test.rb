@@ -16,7 +16,6 @@ describe Partner do
     specify { subject.credits.wont_be_empty }
     specify { subject.partner_configurations.wont_be_empty }
     specify { subject.partner_pricings.wont_be_empty }
-    specify { subject.domain_activities.wont_be_empty }
   end
 
   describe :current_balance do

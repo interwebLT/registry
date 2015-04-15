@@ -7,9 +7,11 @@ class Domain < ActiveRecord::Base
   belongs_to :billing_contact, foreign_key: :billing_handle, class_name: Contact
   belongs_to :tech_contact, foreign_key: :tech_handle, class_name: Contact
 
-  has_many :domain_activities
   has_many :domain_statuses
-  has_many :object_activities, through: :product
+
+  has_many :domain_activities,  class_name: ObjectActivity,
+                                through:    :product,
+                                source:     :object_activities
 
   alias_attribute :domain, :name
 
@@ -128,12 +130,12 @@ class Domain < ActiveRecord::Base
   end
 
   def create_domain_registered_activity
-    DomainActivity::Registered.create activity_at: Time.now,
-                                      domain: self,
-                                      partner: self.partner,
-                                      registrant_handle: self.registrant_handle,
-                                      authcode: self.authcode,
-                                      expires_at: self.expires_at
+    ObjectActivity::Create.create activity_at: Time.now,
+                                  partner: self.partner,
+                                  product: self.product,
+                                  registrant_handle: self.registrant_handle,
+                                  authcode: self.authcode,
+                                  expires_at: self.expires_at
   end
 
   def create_domain_changed_activity
@@ -146,12 +148,12 @@ class Domain < ActiveRecord::Base
   end
 
   def create_update_activity field
-    DomainActivity::Updated.create  activity_at: Time.now,
-                                    domain: self,
-                                    partner: self.partner,
-                                    property_changed: field.to_s,
-                                    old_value: self.send(field.to_s + '_was').to_s,
-                                    value: self.send(field.to_s).to_s
+    ObjectActivity::Update.create activity_at: Time.now,
+                                  partner: self.partner,
+                                  product: self.product,
+                                  property_changed: field.to_s,
+                                  old_value: self.send(field.to_s + '_was').to_s,
+                                  value: self.send(field.to_s).to_s
   end
 
   def valid_status value

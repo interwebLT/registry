@@ -47,4 +47,18 @@ describe ObjectActivity do
       specify { subject.errors[:activity_at].must_equal ['invalid'] }
     end
   end
+
+  describe :latest do
+    subject { ObjectActivity.latest }
+
+    before do
+      domain = create :domain
+
+      create :update_domain_activity, product: domain.product
+    end
+
+    specify { subject.count.must_equal 2 }
+    specify { subject[0].must_be_instance_of ObjectActivity::Update }
+    specify { subject[1].must_be_instance_of ObjectActivity::Create }
+  end
 end
