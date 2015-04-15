@@ -34,6 +34,7 @@ class OrderDetail::MigrateDomain < OrderDetail
                                         credits: 0.00,
                                         activity_type: 'use'
 
+      self.product = domain.product
       self.status = COMPLETE_ORDER_DETAIL
 
     else
