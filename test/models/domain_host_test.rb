@@ -84,7 +84,7 @@ describe DomainHost do
     context :when_adding_domain_host do
       specify { activities.count.must_equal 4 }
 
-      specify { activities[1].must_be_instance_of DomainActivity::Updated }
+      specify { activities[1].must_be_instance_of ObjectActivity::Update }
       specify { activities[1].property_changed.must_equal 'domain_host' }
       specify { activities[1].old_value.must_be_nil }
       specify { activities[1].value.must_equal 'ns5.domains.ph' }
@@ -100,7 +100,7 @@ describe DomainHost do
 
       specify { activities.count.must_equal 5 }
 
-      specify { activities[4].must_be_instance_of DomainActivity::Updated }
+      specify { activities[4].must_be_instance_of ObjectActivity::Update }
       specify { activities[4].property_changed.must_equal 'domain_host' }
       specify { activities[4].old_value.must_equal 'ns5.domains.ph' }
       specify { activities[4].value.must_be_nil }

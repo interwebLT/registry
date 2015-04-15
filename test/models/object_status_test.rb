@@ -44,12 +44,12 @@ describe ObjectStatus do
 
       specify { activities.count.must_equal 5 }
 
-      specify { activities[2].must_be_kind_of DomainActivity::Updated }
+      specify { activities[2].must_be_kind_of ObjectActivity::Update }
       specify { activities[2].property_changed.must_equal 'ok' }
       specify { activities[2].old_value.must_equal 'false' }
       specify { activities[2].value.must_equal 'true' }
 
-      specify { activities[3].must_be_kind_of DomainActivity::Updated }
+      specify { activities[3].must_be_kind_of ObjectActivity::Update }
       specify { activities[3].property_changed.must_equal 'inactive' }
       specify { activities[3].old_value.must_equal 'true' }
       specify { activities[3].value.must_equal 'false' }

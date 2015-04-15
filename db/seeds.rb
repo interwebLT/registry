@@ -6,8 +6,9 @@ PartnerConfiguration.delete_all
 Product.delete_all
 ObjectStatus.delete_all
 
+ObjectActivity.delete_all
+
 Domain.delete_all
-DomainActivity.delete_all
 
 Host.delete_all
 HostAddress.delete_all

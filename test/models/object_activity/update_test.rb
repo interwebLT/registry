@@ -1,9 +1,9 @@
 require 'test_helper'
 
-describe DomainActivity::Updated do
-  subject { create :update_activity }
-
+describe ObjectActivity::Update do
   describe :valid? do
+    subject { create :update_domain_activity }
+
     context :when_property_changed_missing do
       before do
         subject.property_changed = nil
@@ -47,22 +47,30 @@ describe DomainActivity::Updated do
   end
 
   describe :as_json do
-    subject { object_activity.as_json }
+    subject { create :update_domain_activity }
 
-    let(:object_activity) {
-      create :update_activity, activity_at: '2015-03-03 1:00'.in_time_zone
+    before do
+      domain = create :domain
+
+      subject.product = domain.product
+    end
+
+    let(:expected_json) {
+      {
+        id: 1,
+        type: 'update',
+        activity_at: '2015-01-01T00:00:00Z',
+        object: {
+          id: 1,
+          type: 'domain',
+          name: 'domain.ph'
+        },
+        property_changed: 'expires_at',
+        old_value: '2015-04-15T12:00:00Z',
+        new_value: '2017-04-15T12:00:00Z',
+      }
     }
 
-    specify { subject[:id].must_equal object_activity.id }
-    specify { subject[:type].must_equal 'update' }
-    specify { subject[:activity_at].must_equal '2015-03-03T01:00:00Z' }
-    specify { subject[:object].wont_be_nil }
-    specify { subject[:property_changed].must_equal 'registrant' }
-    specify { subject[:old_value].must_equal 'old_registrant' }
-    specify { subject[:new_value].must_equal 'new_registrant' }
-
-    specify { subject[:object][:id].wont_be_nil }
-    specify { subject[:object][:type].must_equal 'domain' }
-    specify { subject[:object][:name].must_equal 'domain.ph' }
+    specify { Json.lock_values(subject.as_json).must_equal expected_json }
   end
 end

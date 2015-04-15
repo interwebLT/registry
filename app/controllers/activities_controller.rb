@@ -1,7 +1,7 @@
 class ActivitiesController < SecureController
   def index
     if current_user.admin?
-      render json: DomainActivity.latest
+      render json: ObjectActivity.latest
     else
       render not_found
     end

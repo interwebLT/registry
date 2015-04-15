@@ -3,8 +3,4 @@ class DomainActivity < ActiveRecord::Base
 
   belongs_to :partner
   belongs_to :domain
-
-  def self.latest
-    self.all.includes(:domain).order(id: :desc).limit(1000)
-  end
 end

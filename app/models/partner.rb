@@ -4,7 +4,6 @@ class Partner < ActiveRecord::Base
   has_many :partner_configurations
   has_many :partner_pricings
   has_many :credits
-  has_many :domain_activities
 
   def current_balance
     credits.map(&:credits).reduce(0.00, :+)

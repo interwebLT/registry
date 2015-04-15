@@ -18,21 +18,21 @@ class DomainHost < ActiveRecord::Base
   end
 
   def create_add_domain_host_domain_activity
-    DomainActivity::Updated.create  activity_at: Time.now,
-                                    domain: self.product.domain,
-                                    partner: self.product.domain.partner,
-                                    property_changed: :domain_host,
-                                    value: self.name
+    ObjectActivity::Update.create activity_at: Time.now,
+                                  partner: self.product.domain.partner,
+                                  product: self.product,
+                                  property_changed: :domain_host,
+                                  value: self.name
 
     product.object_status.update_status
   end
 
   def create_remove_domain_host_domain_activity
-    DomainActivity::Updated.create  activity_at: Time.now,
-                                    domain: self.product.domain,
-                                    partner: self.product.domain.partner,
-                                    property_changed: :domain_host,
-                                    old_value: self.name
+    ObjectActivity::Update.create activity_at: Time.now,
+                                  partner: self.product.domain.partner,
+                                  product: self.product,
+                                  property_changed: :domain_host,
+                                  old_value: self.name
 
     product.object_status.update_status
   end

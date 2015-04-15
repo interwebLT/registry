@@ -1,6 +1,6 @@
 def view_activities
   domain = create :domain
-  create :update_activity, domain: domain
+  create :update_domain_activity, product: domain.product
 
   get activities_path
 end
@@ -24,9 +24,9 @@ def activities_response
         type: 'domain',
         name: 'domain.ph'
       },
-      property_changed: 'registrant',
-      old_value: 'old_registrant',
-      new_value: 'new_registrant'
+      property_changed: 'expires_at',
+      old_value: '2015-04-15T12:00:00Z',
+      new_value: '2017-04-15T12:00:00Z'
     },
     {
       id: 2,

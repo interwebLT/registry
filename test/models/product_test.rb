@@ -7,13 +7,15 @@ describe Product do
     before do
       contact = create :contact
 
-      create :domain, product: subject, registrant: contact
-      create :order_detail, product: subject
+      create :domain,           product: subject, registrant: contact
+      create :order_detail,     product: subject
+      create :object_activity,  product: subject, type: ObjectActivity::Create
     end
 
     specify { subject.order_details.wont_be_empty }
     specify { subject.domain.wont_be_nil }
     specify { subject.object_status.wont_be_nil }
+    specify { subject.object_activities.wont_be_empty }
   end
 
   describe :callbacks do
