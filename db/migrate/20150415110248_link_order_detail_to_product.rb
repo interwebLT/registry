@@ -7,7 +7,7 @@ class LinkOrderDetailToProduct < ActiveRecord::Migration
   private
 
   def link_register_domain_orders
-    OrderDetail::RegisterDomain.where(order: nil).each do |od|
+    OrderDetail::RegisterDomain.where(product: nil).each do |od|
       domain = Domain.named(od.domain)
 
       od.product = domain.product
@@ -16,7 +16,7 @@ class LinkOrderDetailToProduct < ActiveRecord::Migration
   end
 
   def link_renew_domain_orders
-    OrderDetail::RenewDomain.where(order: nil).each do |od|
+    OrderDetail::RenewDomain.where(product: nil).each do |od|
       domain = Domain.named(od.domain)
 
       od.product = domain.product
