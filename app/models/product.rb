@@ -1,6 +1,7 @@
 class Product < ActiveRecord::Base
   has_many :order_details
   has_many :domain_hosts
+  has_many :object_activities
 
   has_one :domain
   has_one :object_status
