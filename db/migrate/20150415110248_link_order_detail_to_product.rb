@@ -11,6 +11,7 @@ class LinkOrderDetailToProduct < ActiveRecord::Migration
       domain = Domain.named(od.domain)
 
       od.product = domain.product
+      od.authcode = domain.authcode
       od.save!
     end
   end
@@ -20,6 +21,7 @@ class LinkOrderDetailToProduct < ActiveRecord::Migration
       domain = Domain.named(od.domain)
 
       od.product = domain.product
+      od.authcode = domain.authcode
       od.save!
     end
   end
