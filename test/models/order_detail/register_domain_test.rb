@@ -48,6 +48,7 @@ describe OrderDetail::RegisterDomain do
       specify { saved_domain.wont_be_nil }
       specify { saved_domain.registered_at.must_equal subject.registered_at }
       specify { saved_domain.authcode.must_equal subject.authcode }
+      specify { subject.product.must_equal saved_domain.product }
 
       specify { latest_ledger_entry.activity_type.must_equal 'use' }
       specify { latest_ledger_entry.credits.must_equal BigDecimal.new(-35) }
