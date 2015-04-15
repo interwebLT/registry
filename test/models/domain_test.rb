@@ -12,6 +12,8 @@ describe Domain do
 
       create :domain_activity, domain: subject
       create :domain_activity, domain: subject
+
+      create :object_activity, product: subject.product, type: ObjectActivity::Create
     end
 
     specify { subject.partner.wont_be_nil }
@@ -21,6 +23,7 @@ describe Domain do
     specify { subject.billing_contact.wont_be_nil }
     specify { subject.tech_contact.wont_be_nil }
     specify { subject.domain_activities.wont_be_empty }
+    specify { subject.object_activities.wont_be_empty }
   end
 
   describe :zone do

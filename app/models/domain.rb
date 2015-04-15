@@ -9,6 +9,7 @@ class Domain < ActiveRecord::Base
 
   has_many :domain_activities
   has_many :domain_statuses
+  has_many :object_activities, through: :product
 
   alias_attribute :domain, :name
 
