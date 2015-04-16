@@ -419,4 +419,20 @@ describe Domain do
     specify { subject[2].full_name.must_equal 'def.ph' }
     specify { subject[3].full_name.must_equal 'abc.ph' }
   end
+
+  describe :transfer! do
+    subject { create :domain, partner: old_partner }
+
+    let(:old_partner) { create :partner }
+    let(:partner) { create :partner }
+    let(:latest_activity) { subject.domain_activities.last }
+
+    before do
+      subject.transfer! to: partner
+    end
+
+    specify { subject.partner.must_equal partner }
+    specify { latest_activity.must_be_kind_of ObjectActivity::Transfer }
+    specify { latest_activity.losing_partner.must_equal old_partner }
+  end
 end
