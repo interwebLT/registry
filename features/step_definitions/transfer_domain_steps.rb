@@ -1,6 +1,6 @@
 When /^I transfer a domain from another partner$/ do
-  domain_exists
   other_partner_exists
+  domain_exists partner: OTHER_PARTNER
 
   transfer_domain
 end

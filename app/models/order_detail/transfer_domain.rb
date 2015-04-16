@@ -9,9 +9,17 @@ class OrderDetail::TransferDomain < OrderDetail
 
   def complete!
     domain = Domain.named(self.domain)
+
+    old_partner = domain.partner
+
     domain.partner = self.order.partner
 
     if domain.save
+      ObjectActivity::Transfer.create activity_at: Time.now,
+                                      partner: domain.partner,
+                                      product: domain.product,
+                                      losing_partner: old_partner
+
       self.order.partner.credits.create order: self.order,
                                         credits: self.price * -1,
                                         activity_type: 'use'
