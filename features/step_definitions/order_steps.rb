@@ -96,10 +96,6 @@ Then /^domain with 2\-level TLD must be registered$/ do
   assert_domain_must_be_registered domain: TWO_LEVEL_DOMAIN
 end
 
-Then /^register domain fee must be deducted from credits of non-admin partner$/ do
-  assert_register_domain_fee_must_be_deducted
-end
-
 Then /^I must see my orders$/ do
   assert_orders_displayed
 end
@@ -114,10 +110,6 @@ end
 
 Then /^domain must be renewed$/ do
   assert_domain_must_be_renewed
-end
-
-Then /^renew domain fee must be deducted from credits of non-admin partner$/ do
-  assert_renew_domain_fee_must_be_deducted
 end
 
 ## Renewal

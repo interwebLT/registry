@@ -25,3 +25,7 @@ end
 Then /^latest object activity must be (.*?)$/ do |scenario|
   assert_latest_object_activity scenario: scenario
 end
+
+Then /^(.*?) fee must be deducted from credits of non-admin partner$/ do |scenario|
+  assert_credits_must_be_deducted scenario: scenario
+end

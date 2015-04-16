@@ -8,3 +8,4 @@ Feature: Transfer Domain as Administrator
   Scenario: Transfer domain
     When  I transfer a domain from another partner
     Then  domain must now be under my partner
+    And   transfer domain fee must be deducted from credits of non-admin partner
