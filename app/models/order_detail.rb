@@ -17,7 +17,8 @@ class OrderDetail < ActiveRecord::Base
     domain_create: OrderDetail::RegisterDomain,
     domain_renew: OrderDetail::RenewDomain,
     credits: OrderDetail::ReplenishCredits,
-    migrate_domain: OrderDetail::MigrateDomain
+    migrate_domain: OrderDetail::MigrateDomain,
+    transfer_domain:  OrderDetail::TransferDomain
   }
 
   def self.build params, partner

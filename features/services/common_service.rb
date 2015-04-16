@@ -96,7 +96,9 @@ def partner_exists name, admin: false
 end
 
 def other_partner_exists
-  partner_exists OTHER_PARTNER
+  partner_does_not_exist name
+
+  create :complete_partner, name: OTHER_PARTNER
 end
 
 def other_partner_does_not_exist
@@ -104,7 +106,9 @@ def other_partner_does_not_exist
 end
 
 def other_admin_partner_exists
-  partner_exists OTHER_ADMIN_PARTNER, admin: true
+  partner_does_not_exist name
+
+  create :complete_partner, name: OTHER_PARTNER, admin: true
 end
 
 def authenticate!
