@@ -145,6 +145,7 @@ class Domain < ActiveRecord::Base
     create_update_activity :tech_handle       if tech_handle_changed?
 
     create_update_activity :expires_at  if expires_at_changed?
+    create_update_activity :authcode    if authcode_changed?
   end
 
   def create_update_activity field

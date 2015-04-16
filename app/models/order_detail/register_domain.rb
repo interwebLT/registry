@@ -21,6 +21,7 @@ class OrderDetail::RegisterDomain < OrderDetail
                                                     registered_at: self.registered_at
 
     if new_domain.errors.empty?
+      self.product = new_domain.product
       self.status = COMPLETE_ORDER_DETAIL
 
       self.order.partner.credits.create order: self.order,

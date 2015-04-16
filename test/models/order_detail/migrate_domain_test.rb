@@ -27,6 +27,7 @@ describe OrderDetail::MigrateDomain do
 
     context :when_successful do
       specify { subject.complete?.must_equal true }
+      specify { subject.product.must_equal saved_domain.product }
 
       specify { saved_domain.full_name.must_equal subject.domain }
       specify { saved_domain.authcode.must_equal subject.authcode }

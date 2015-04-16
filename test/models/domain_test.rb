@@ -250,7 +250,7 @@ describe Domain do
       specify { subject.product.domain_hosts.must_be_empty }
     end
 
-    context :when_update do
+    context :expires_at_updated do
       before do
         subject.expires_at = subject.expires_at + 1.year
         subject.save
@@ -262,6 +262,20 @@ describe Domain do
       specify { activities.last.property_changed.must_equal 'expires_at' }
       specify { activities.last.old_value.must_equal expires_at }
       specify { activities.last.value.must_equal (expires_at + 1.year) }
+    end
+
+    context :authcode_updated do
+      before do
+        subject.authcode = 'NEW_AUTHCODE'
+        subject.save
+      end
+
+      specify { activities.count.must_equal 2 }
+
+      specify { activities.last.must_be_kind_of ObjectActivity::Update }
+      specify { activities.last.property_changed.must_equal 'authcode' }
+      specify { activities.last.old_value.must_equal 'ABCD123' }
+      specify { activities.last.value.must_equal 'NEW_AUTHCODE' }
     end
   end
 

@@ -19,6 +19,7 @@ class OrderDetail::RenewDomain < OrderDetail
     domain = self.order.partner.renew_domain domain_name: self.domain, period: self.period
 
     if domain.errors.empty?
+      self.product = domain.product
       self.status = COMPLETE_ORDER_DETAIL
 
       self.order.partner.credits.create order: self.order,
