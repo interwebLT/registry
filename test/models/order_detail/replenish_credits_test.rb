@@ -50,4 +50,26 @@ describe OrderDetail::ReplenishCredits do
     specify { latest_ledger_entry.credits.must_equal BigDecimal.new(150) }
     specify { latest_ledger_entry.activity_type.must_equal 'topup' }
   end
+
+  describe :execute do
+    subject { OrderDetail::ReplenishCredits.execute partner: partner, credits: credits }
+
+    before do
+      subject
+    end
+
+    let(:partner) { create :partner }
+    let(:credits) { 123.45 }
+
+    specify { OrderDetail.last.must_be_kind_of OrderDetail::ReplenishCredits }
+    specify { OrderDetail.last.complete?.must_equal true }
+    specify { OrderDetail.last.price.must_equal credits.money }
+    specify { OrderDetail.last.credits.must_equal credits.money }
+
+    specify { OrderDetail.last.order.total_price.must_equal credits.money }
+    specify { OrderDetail.last.order.complete?.must_equal true }
+
+    specify { partner.credits.last.credits.must_equal credits }
+    specify { partner.credits.last.activity_type.must_equal 'topup' }
+  end
 end
