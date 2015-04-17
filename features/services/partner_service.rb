@@ -160,6 +160,12 @@ def partner_info_response
         action: 'domain_renew',
         period: 2,
         price: 64.00
+      },
+      {
+        id: 13,
+        action: 'transfer_domain',
+        period: 0,
+        price: 15.00
       }
     ]
   }

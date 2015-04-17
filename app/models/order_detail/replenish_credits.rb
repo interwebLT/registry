@@ -7,6 +7,17 @@ class OrderDetail::ReplenishCredits < OrderDetail
     order_detail
   end
 
+  def self.execute partner:, credits:
+    price = credits.money
+
+    o = Order.new partner: partner, status: Order::PENDING_ORDER, total_price: price
+    od = self.new status: OrderDetail::PENDING_ORDER_DETAIL, price: price, credits: price
+    o.order_details << od
+    o.save!
+
+    o.complete!
+  end
+
   def action
     'credits'
   end

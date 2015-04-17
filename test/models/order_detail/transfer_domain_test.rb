@@ -38,4 +38,27 @@ describe OrderDetail::TransferDomain do
     specify { latest_ledger_entry.activity_type.must_equal 'use' }
     specify { latest_ledger_entry.credits.must_equal BigDecimal.new(-15) }
   end
+
+  describe :execute do
+    subject { OrderDetail::TransferDomain.execute domain: domain, to: partner }
+
+    before do
+      subject
+    end
+
+    let(:domain) { create :domain }
+    let(:partner) { create :partner }
+
+    specify { OrderDetail.last.must_be_kind_of OrderDetail::TransferDomain }
+    specify { OrderDetail.last.complete?.must_equal true }
+    specify { OrderDetail.last.price.must_equal 15.00.money }
+    specify { OrderDetail.last.domain.must_equal domain.full_name }
+
+    specify { OrderDetail.last.order.total_price.must_equal 15.00.money }
+    specify { OrderDetail.last.order.complete?.must_equal true }
+    specify { OrderDetail.last.order.partner.must_equal partner }
+
+    specify { partner.credits.last.credits.must_equal BigDecimal.new(-15) }
+    specify { partner.credits.last.activity_type.must_equal 'use' }
+  end
 end
