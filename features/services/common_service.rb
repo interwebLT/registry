@@ -96,7 +96,9 @@ def partner_exists name, admin: false
 end
 
 def other_partner_exists
-  partner_exists OTHER_PARTNER
+  partner_does_not_exist name
+
+  create :complete_partner, name: OTHER_PARTNER
 end
 
 def other_partner_does_not_exist
@@ -104,7 +106,9 @@ def other_partner_does_not_exist
 end
 
 def other_admin_partner_exists
-  partner_exists OTHER_ADMIN_PARTNER, admin: true
+  partner_does_not_exist name
+
+  create :complete_partner, name: OTHER_PARTNER, admin: true
 end
 
 def authenticate!
@@ -140,4 +144,19 @@ def assert_latest_object_activity(scenario:)
   latest_activity.property_changed.to_sym.must_equal activity[:property]
   latest_activity.old_value.must_equal activity[:old_value].to_s
   latest_activity.value.must_equal activity[:value].to_s
+end
+
+CREDITS_FEE_SCENARIOS = {
+  'register domain' => -30.00.money,
+  'renew domain'    => -30.00.money,
+  'migrate domain'  => 0.00.money,
+  'transfer domain' => -15.00.money
+}
+
+def assert_credits_must_be_deducted scenario:
+  credits = @current_partner.credits.last
+
+  credits.wont_be_nil
+  credits.activity_type = 'use'
+  credits.credits = CREDITS_FEE_SCENARIOS[scenario]
 end

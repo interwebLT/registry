@@ -44,7 +44,7 @@ FactoryGirl.define do
       end
     end
 
-    factory :other_partner do
+    factory :other_partner, aliases: [:losing_partner] do
       name 'other_partner'
     end
 

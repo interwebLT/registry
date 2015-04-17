@@ -54,11 +54,3 @@ def assert_completed_migrate_domain_response
 
   json_response.must_equal expected_response
 end
-
-def assert_migrate_domain_fee_must_be_deducted
-  latest_credit = @current_partner.credits.last
-
-  latest_credit.wont_be_nil
-  latest_credit.activity_type = 'use'
-  latest_credit.credits = 0.00.money
-end

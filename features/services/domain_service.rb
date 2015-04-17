@@ -17,12 +17,14 @@ def domain_does_not_exist domain: DOMAIN
   contact_does_not_exist
 end
 
-def domain_exists domain: DOMAIN, factory: :domain
+def domain_exists domain: DOMAIN, factory: :domain, partner: nil
   domain_does_not_exist domain: domain
 
   domain_array = domain.split '.', 2
 
-  create factory, partner: @current_partner,
+  current_partner = partner ? Partner.find_by(name: partner) : @current_partner
+
+  create factory, partner: current_partner,
                   name: domain_array[0],
                   extension: ".#{domain_array[1]}"
 end

@@ -15,5 +15,9 @@ FactoryGirl.define do
       old_value         '2015-04-15T12:00:00Z'
       value             '2017-04-15T12:00:00Z'
     end
+
+    factory :transfer_domain_activity, class: ObjectActivity::Transfer do
+      losing_partner
+    end
   end
 end

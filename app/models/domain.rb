@@ -118,6 +118,20 @@ class Domain < ActiveRecord::Base
     ((current_date + 30.days) >= expires_at.to_date) and (current_date < expires_at.to_date)
   end
 
+  def transfer! to:
+    old_partner = self.partner
+    self.partner = to
+
+    result = self.save
+
+    ObjectActivity::Transfer.create activity_at: Time.now,
+                                    partner: self.partner,
+                                    product: self.product,
+                                    losing_partner: old_partner if result
+
+    result
+  end
+
   private
 
   def contact_handle_associations_must_exist

@@ -110,13 +110,6 @@ def assert_orders_displayed
   json_response.must_equal orders_response
 end
 
-def assert_register_domain_fee_must_be_deducted
-  credits = @current_partner.credits.last
-
-  credits.activity_type = 'use'
-  credits.credits = -30.00.money
-end
-
 def renew_domain partner: nil
   json_request = {
     currency_code: 'USD',
