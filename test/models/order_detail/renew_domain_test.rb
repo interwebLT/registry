@@ -20,4 +20,32 @@ describe OrderDetail::RenewDomain do
     specify { latest_ledger_entry.activity_type.must_equal 'use' }
     specify { latest_ledger_entry.credits.must_equal -35.money }
   end
+
+  describe :execute do
+    subject { OrderDetail::RenewDomain.execute domain: domain, period: period }
+
+    before do
+      subject
+    end
+
+    let(:domain) { create :domain }
+    let(:period) { 2 }
+
+    let(:saved_domain) { Domain.named(domain.full_name) }
+
+    specify { OrderDetail.last.must_be_kind_of OrderDetail::RenewDomain }
+    specify { OrderDetail.last.complete?.must_equal true }
+    specify { OrderDetail.last.price.must_equal 64.00.money }
+    specify { OrderDetail.last.domain.must_equal domain.full_name }
+    specify { OrderDetail.last.period.must_equal period }
+
+    specify { OrderDetail.last.order.total_price.must_equal 64.00.money }
+    specify { OrderDetail.last.order.complete?.must_equal true }
+    specify { OrderDetail.last.order.partner.must_equal domain.partner }
+
+    specify { saved_domain.partner.credits.last.credits.must_equal BigDecimal.new(-64) }
+    specify { saved_domain.partner.credits.last.activity_type.must_equal 'use' }
+
+    specify { saved_domain.expires_at.must_equal '2017-01-01'.in_time_zone }
+  end
 end

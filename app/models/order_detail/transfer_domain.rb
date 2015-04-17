@@ -39,7 +39,7 @@ class OrderDetail::TransferDomain < OrderDetail
 
   def as_json options = nil
     {
-      type: 'domain_transfer',
+      type: self.action,
       price: self.price.to_f,
       domain: self.domain
     }
