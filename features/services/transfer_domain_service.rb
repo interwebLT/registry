@@ -10,9 +10,7 @@ def transfer_domain
     ]
   }
 
-  order = Order.build json_request, @current_partner
-  order.save!
-  order.complete!
+  post orders_url, json_request
 end
 
 def assert_domain_transferred
