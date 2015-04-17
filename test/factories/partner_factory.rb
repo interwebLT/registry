@@ -39,6 +39,7 @@ FactoryGirl.define do
         { partner: partner, action: 'domain_create',  period: 10, price: 350.money },
         { partner: partner, action: 'domain_renew',   period: 1,  price: 32.money },
         { partner: partner, action: 'domain_renew',   period: 2,  price: 64.money },
+        { partner: partner, action: 'transfer_domain',  period: 0,  price: 15.money },
       ].each do |params|
         partner.partner_pricings << (create :partner_pricing, params)
       end
