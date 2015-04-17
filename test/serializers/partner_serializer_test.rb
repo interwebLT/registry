@@ -17,6 +17,7 @@ describe PartnerSerializer do
       position:       partner.position,
       street:         partner.street,
       city:           partner.city,
+      state:          partner.state,
       postal_code:    partner.postal_code,
       country_code:   partner.country_code,
       phone:          partner.voice,
