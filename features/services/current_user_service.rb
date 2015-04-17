@@ -16,6 +16,7 @@ def assert_current_partner_info_displayed
     position: 'Position',
     street: 'Street',
     city: 'City',
+    state: 'State',
     postal_code: '1234',
     country_code: 'PH',
     phone: '+63.21234567',
