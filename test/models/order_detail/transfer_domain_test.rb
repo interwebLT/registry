@@ -8,7 +8,7 @@ describe OrderDetail::TransferDomain do
 
     let(:expected_json) {
       {
-        type: 'domain_transfer',
+        type: 'transfer_domain',
         price: 15.00,
         domain: 'domain.ph'
       }

@@ -209,7 +209,7 @@ def orders_response
       currency_code: 'USD',
       order_details: [
         {
-          type: 'domain_transfer',
+          type: 'transfer_domain',
           price: 15.00,
           domain: 'domain.ph'
         }
@@ -231,7 +231,7 @@ def latest_orders_response
       currency_code: 'USD',
       order_details: [
         {
-          type: 'domain_transfer',
+          type: 'transfer_domain',
           price: 15.00,
           domain: 'domain.ph'
         }
