@@ -26,6 +26,8 @@ class Domain < ActiveRecord::Base
 
   after_save :update_object_status
 
+  before_destroy :create_deleted_domain
+
   attr_accessor :actual_client_hold_value
   attr_accessor :actual_client_delete_prohibited_value
   attr_accessor :actual_client_transfer_prohibited_value
@@ -191,5 +193,19 @@ class Domain < ActiveRecord::Base
     errors.add :client_renew_prohibited,    message if client_renew_prohibited_changed    and not valid_status self.actual_client_renew_prohibited_value
     errors.add :client_transfer_prohibited, message if client_transfer_prohibited_changed and not valid_status self.actual_client_transfer_prohibited_value
     errors.add :client_update_prohibited,   message if client_update_prohibited_changed   and not valid_status self.actual_client_update_prohibited_value
+  end
+
+  def create_deleted_domain
+    DeletedDomain.create  product:            self.product,
+                          partner:            self.partner,
+                          name:               self.full_name,
+                          authcode:           self.authcode,
+                          registrant_handle:  self.registrant_handle,
+                          admin_handle:       self.admin_handle,
+                          billing_handle:     self.billing_handle,
+                          tech_handle:        self.tech_handle,
+                          registered_at:      self.registered_at,
+                          expires_at:         self.expires_at,
+                          deleted_at:         Time.now
   end
 end

@@ -435,4 +435,26 @@ describe Domain do
     specify { latest_activity.must_be_kind_of ObjectActivity::Transfer }
     specify { latest_activity.losing_partner.must_equal old_partner }
   end
+
+  describe :destroy do
+    subject { DeletedDomain.find_by(name: domain.full_name) }
+
+    let(:domain) { create :complete_domain }
+
+    before do
+      domain.destroy
+    end
+
+    specify { subject.product.must_equal domain.product }
+    specify { subject.partner.must_equal domain.partner }
+    specify { subject.name.must_equal domain.full_name }
+    specify { subject.authcode.must_equal domain.authcode }
+    specify { subject.registrant_handle.must_equal domain.registrant_handle }
+    specify { subject.admin_handle.must_equal domain.admin_handle }
+    specify { subject.billing_handle.must_equal domain.billing_handle }
+    specify { subject.tech_handle.must_equal domain.tech_handle }
+    specify { subject.registered_at.must_equal domain.registered_at }
+    specify { subject.expires_at.must_equal domain.expires_at }
+    specify { subject.deleted_at.wont_be_nil }
+  end
 end
