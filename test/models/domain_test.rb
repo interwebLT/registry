@@ -435,4 +435,37 @@ describe Domain do
     specify { latest_activity.must_be_kind_of ObjectActivity::Transfer }
     specify { latest_activity.losing_partner.must_equal old_partner }
   end
+
+  describe :destroy do
+    subject { DeletedDomain.find_by(name: domain.full_name) }
+
+    let(:domain) { create :complete_domain }
+    let(:activities) { subject.product.object_activities }
+
+    before do
+      create :domain_host, product: domain.product
+
+      domain.destroy
+    end
+
+    specify { subject.product.must_equal domain.product }
+    specify { subject.partner.must_equal domain.partner }
+    specify { subject.name.must_equal domain.full_name }
+    specify { subject.authcode.must_equal domain.authcode }
+    specify { subject.registrant_handle.must_equal domain.registrant_handle }
+    specify { subject.admin_handle.must_equal domain.admin_handle }
+    specify { subject.billing_handle.must_equal domain.billing_handle }
+    specify { subject.tech_handle.must_equal domain.tech_handle }
+    specify { subject.registered_at.must_equal domain.registered_at }
+    specify { subject.expires_at.must_equal domain.expires_at }
+    specify { subject.deleted_at.wont_be_nil }
+    specify { subject.domain_id.must_equal domain.id }
+
+    specify { subject.product.domain_hosts.must_be_empty }
+
+    specify { activities[7].must_be_kind_of ObjectActivity::Update }
+    specify { activities[7].property_changed.must_equal 'domain_host' }
+    specify { activities[7].old_value.must_equal 'ns5.domains.ph' }
+    specify { activities[7].value.must_be_nil }
+  end
 end
