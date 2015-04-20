@@ -440,8 +440,11 @@ describe Domain do
     subject { DeletedDomain.find_by(name: domain.full_name) }
 
     let(:domain) { create :complete_domain }
+    let(:activities) { subject.product.object_activities }
 
     before do
+      create :domain_host, product: domain.product
+
       domain.destroy
     end
 
@@ -456,5 +459,12 @@ describe Domain do
     specify { subject.registered_at.must_equal domain.registered_at }
     specify { subject.expires_at.must_equal domain.expires_at }
     specify { subject.deleted_at.wont_be_nil }
+
+    specify { subject.product.domain_hosts.must_be_empty }
+
+    specify { activities[7].must_be_kind_of ObjectActivity::Update }
+    specify { activities[7].property_changed.must_equal 'domain_host' }
+    specify { activities[7].old_value.must_equal 'ns5.domains.ph' }
+    specify { activities[7].value.must_be_nil }
   end
 end

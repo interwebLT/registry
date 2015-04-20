@@ -9,3 +9,4 @@ Feature: Delete Domain as Administrator
     When  I delete a domain that currently exists
     Then  domain must no longer exist
     And   domain must now be in the deleted domain list
+    And   deleted domain must not have domain hosts

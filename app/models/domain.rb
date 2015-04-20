@@ -196,6 +196,8 @@ class Domain < ActiveRecord::Base
   end
 
   def create_deleted_domain
+    self.product.domain_hosts.map(&:destroy)
+
     DeletedDomain.create  product:            self.product,
                           partner:            self.partner,
                           name:               self.full_name,
