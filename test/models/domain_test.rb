@@ -459,6 +459,7 @@ describe Domain do
     specify { subject.registered_at.must_equal domain.registered_at }
     specify { subject.expires_at.must_equal domain.expires_at }
     specify { subject.deleted_at.wont_be_nil }
+    specify { subject.domain_id.must_equal domain.id }
 
     specify { subject.product.domain_hosts.must_be_empty }
 

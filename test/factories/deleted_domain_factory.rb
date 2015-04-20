@@ -8,6 +8,7 @@ FactoryGirl.define do
     registered_at '2015-01-01'.in_time_zone
     expires_at    '2017-01-01'.in_time_zone
     deleted_at    '2016-01-01'.in_time_zone
+    domain_id     1
 
     factory :complete_deleted_domain do
       after(:create) do |deleted_domain|

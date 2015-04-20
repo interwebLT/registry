@@ -208,6 +208,7 @@ class Domain < ActiveRecord::Base
                           tech_handle:        self.tech_handle,
                           registered_at:      self.registered_at,
                           expires_at:         self.expires_at,
-                          deleted_at:         Time.now
+                          deleted_at:         Time.now,
+                          domain_id:          self.id
   end
 end
