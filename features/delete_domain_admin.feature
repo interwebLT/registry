@@ -5,7 +5,6 @@ Feature: Delete Domain as Administrator
   Background:
     Given I am authenticated as administrator
 
-  @wip
   Scenario: Delete domain
     When  I delete a domain that currently exists
     Then  domain must no longer exist
