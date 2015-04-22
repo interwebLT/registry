@@ -60,5 +60,13 @@ describe OrderDetail::TransferDomain do
 
     specify { partner.credits.last.credits.must_equal BigDecimal.new(-15) }
     specify { partner.credits.last.activity_type.must_equal 'use' }
+
+    context :when_no_transfer_fee do
+      subject { OrderDetail::TransferDomain.execute domain: domain, to: partner, fee: false }
+
+      specify { OrderDetail.last.price.must_equal 0.00.money }
+      specify { OrderDetail.last.order.total_price.must_equal 0.00.money }
+    specify { partner.credits.last.credits.must_equal BigDecimal.new(0) }
+    end
   end
 end
