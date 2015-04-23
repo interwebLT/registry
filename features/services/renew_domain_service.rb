@@ -16,6 +16,12 @@ def renew_domain partner: nil
   post orders_url, json_request
 end
 
+def reverse_renew_domain
+  order_detail = OrderDetail::RenewDomain.last
+
+  order_detail.order.reverse!
+end
+
 def assert_renew_domain_order_created
   order_must_be_created status: 'pending', type: OrderDetail::RenewDomain
 end
@@ -32,4 +38,16 @@ def assert_domain_must_be_renewed
   new_expires_at = REGISTERED_AT + 2.year
 
   saved_domain.expires_at.must_equal new_expires_at
+end
+
+def assert_domain_must_no_longer_be_renewed
+  saved_domain.expires_at.must_equal REGISTERED_AT
+end
+
+def assert_renew_domain_fee_must_be_added_back
+  credits = @current_partner.credits.last
+
+  credits.wont_be_nil
+  credits.activity_type = 'use'
+  credits.credits = 30.00.money
 end

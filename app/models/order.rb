@@ -73,6 +73,12 @@ class Order < ActiveRecord::Base
     complete?
   end
 
+  def reverse!
+    self.order_details.each do |order_detail|
+      order_detail.reverse!
+    end
+  end
+
   def generate_orderno
     self.receiptnum = loop do
       orderno = SecureRandom.hex(5).upcase
