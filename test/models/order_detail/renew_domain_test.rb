@@ -67,5 +67,7 @@ describe OrderDetail::RenewDomain do
     specify { ObjectActivity.last.property_changed.must_equal 'expires_at' }
     specify { ObjectActivity.last.old_value.must_equal '2016-01-01 00:00:00 UTC' }
     specify { ObjectActivity.last.value.must_equal '2015-01-01 00:00:00 UTC' }
+
+    specify { Order.last.partner.credits.last.credits.must_equal BigDecimal.new(35) }
   end
 end

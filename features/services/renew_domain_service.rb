@@ -30,8 +30,8 @@ def assert_renew_domain_fee_must_be_deducted
   credits = @current_partner.credits.last
 
   credits.wont_be_nil
-  credits.activity_type = 'use'
-  credits.credits = -30.00.money
+  credits.activity_type.must_equal 'use'
+  credits.credits.must_equal BigDecimal.new(-65)
 end
 
 def assert_domain_must_be_renewed
@@ -48,6 +48,6 @@ def assert_renew_domain_fee_must_be_added_back
   credits = @current_partner.credits.last
 
   credits.wont_be_nil
-  credits.activity_type = 'use'
-  credits.credits = 30.00.money
+  credits.activity_type.must_equal 'use'
+  credits.credits.must_equal BigDecimal.new(64)
 end
