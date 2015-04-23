@@ -8,5 +8,10 @@ Feature: Renew Domain as Administrator
     Then  domain must be renewed
     And   renew domain fee must be deducted from credits of non-admin partner
 
-
-
+  @wip
+  Scenario: Reverse domain renewal
+    Given I am authenticated as administrator
+    And   I renewed an existing domain
+    When  I reverse the renewal order
+    Then  domain must no longer be renewed
+    And   renew domain fee must be added back to credits of non-admin partner
