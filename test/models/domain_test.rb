@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe Domain do
   describe :associations do
-    subject { create :domain, name: 'test', extension: '.ph' }
+    subject { create :domain, name: 'test.ph' }
 
     before do
       subject.admin_handle = subject.registrant.handle
@@ -23,7 +23,7 @@ describe Domain do
   end
 
   describe :zone do
-    subject { Domain.new name: 'domain', extension: extension }
+    subject { Domain.new name: "domain#{extension}" }
 
     let(:extension) { '.ph' }
 
@@ -37,7 +37,7 @@ describe Domain do
   end
 
   describe :full_name do
-    subject { Domain.new name: 'domain', extension: '.ph' }
+    subject { Domain.new name: 'domain.ph' }
 
     specify { subject.full_name.must_equal 'domain.ph' }
   end
@@ -57,10 +57,10 @@ describe Domain do
       before do
         contact = create :contact
 
-        create :domain, registrant: contact, name: 'notavailable', extension: '.ph'
-        create :domain, registrant: contact, name: 'notavailable', extension: '.com.ph'
-        create :domain, registrant: contact, name: 'notavailable', extension: '.net.ph'
-        create :domain, registrant: contact, name: 'notavailable', extension: '.org.ph'
+        create :domain, registrant: contact, name: 'notavailable.ph'
+        create :domain, registrant: contact, name: 'notavailable.com.ph'
+        create :domain, registrant: contact, name: 'notavailable.net.ph'
+        create :domain, registrant: contact, name: 'notavailable.org.ph'
       end
 
       specify { subject.must_equal [] }
@@ -72,8 +72,8 @@ describe Domain do
       before do
         contact = create :contact
 
-        create :domain, registrant: contact, name: 'test', extension: '.ph'
-        create :domain, registrant: contact, name: 'test', extension: '.com.ph'
+        create :domain, registrant: contact, name: 'test.ph'
+        create :domain, registrant: contact, name: 'test.com.ph'
       end
 
       specify { subject.must_equal ['net.ph', 'org.ph'] }
@@ -102,7 +102,7 @@ describe Domain do
 
     context :when_domain_exists do
       before do
-        create :domain, name: 'domain', extension: '.ph'
+        create :domain, name: 'domain.ph'
       end
 
       let(:domain_name) { 'domain.ph' }
@@ -118,7 +118,7 @@ describe Domain do
 
     context :when_domain_has_two_level_tld do
       before do
-        create :domain, name: 'domain', extension: '.com.ph'
+        create :domain, name: 'domain.com.ph'
       end
 
       let(:domain_name) { 'domain.com.ph' }
@@ -222,10 +222,9 @@ describe Domain do
 
     context :when_domain_name_exists do
       before do
-        create :domain, name: 'existing', extension: '.ph', registrant: subject.registrant
+        create :domain, name: 'existing.ph', registrant: subject.registrant
 
-        subject.name = 'existing'
-        subject.extension = '.ph'
+        subject.name = 'existing.ph'
 
         subject.valid?
       end
@@ -407,10 +406,10 @@ describe Domain do
     before do
       contact = create :contact
 
-      create :domain, registered_at: Time.now, registrant: contact, name: 'abc'
-      create :domain, registered_at: Time.now, registrant: contact, name: 'def'
-      create :domain, registered_at: Time.now, registrant: contact, name: 'ghi'
-      create :domain, registered_at: Time.now, registrant: contact, name: 'jkl'
+      create :domain, registered_at: Time.now, registrant: contact, name: 'abc.ph'
+      create :domain, registered_at: Time.now, registrant: contact, name: 'def.ph'
+      create :domain, registered_at: Time.now, registrant: contact, name: 'ghi.ph'
+      create :domain, registered_at: Time.now, registrant: contact, name: 'jkl.ph'
     end
 
     specify { subject.count.must_equal 4 }

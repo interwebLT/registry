@@ -17,7 +17,8 @@ FactoryGirl.define do
       period 150
     end
 
-    factory :register_domain_order_detail, class: OrderDetail::RegisterDomain do
+    factory :register_domain_order_detail,  class: OrderDetail::RegisterDomain,
+                                            aliases: [:refunded_order_detail] do
       type OrderDetail::RegisterDomain.name
       price 35.00
       domain 'domains.ph'
@@ -49,6 +50,11 @@ FactoryGirl.define do
       registrant_handle 'domains_r'
       registered_at '2015-04-10 11:00'.in_time_zone
       expires_at '2017-04-10 11:00'.in_time_zone
+    end
+
+    factory :refund_order_detail, class: OrderDetail::Refund do
+      price -35.00
+      refunded_order_detail
     end
   end
 end

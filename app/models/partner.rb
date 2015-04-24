@@ -16,12 +16,9 @@ class Partner < ActiveRecord::Base
   end
 
   def register_domain domain_name, authcode:, period:, registrant_handle:, registered_at:
-    domain_name_array = domain_name.split '.', 2
-
     product = Product.create product_type: 'domain'
 
-    domain = Domain.new name: domain_name_array[0],
-                        extension: ".#{domain_name_array[1]}",
+    domain = Domain.new name: domain_name,
                         partner: self,
                         registered_at: registered_at,
                         expires_at: registered_at + period.to_i.years,

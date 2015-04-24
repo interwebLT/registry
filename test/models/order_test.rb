@@ -147,4 +147,8 @@ describe Order do
       specify { subject.order_details.first.must_be_kind_of OrderDetail::MigrateDomain }
     end
   end
+
+  describe :reverse! do
+
+  end
 end

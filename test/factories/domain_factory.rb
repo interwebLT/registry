@@ -2,8 +2,7 @@ FactoryGirl.define do
   factory :domain do
     partner
     product
-    name 'domain'
-    extension '.ph'
+    name 'domain.ph'
     authcode 'ABCD123'
     registered_at '2014-01-01'.in_time_zone
     expires_at    '2015-01-01'.in_time_zone

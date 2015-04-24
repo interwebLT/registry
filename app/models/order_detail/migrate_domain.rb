@@ -16,12 +16,9 @@ class OrderDetail::MigrateDomain < OrderDetail
   end
 
   def complete!
-    domain_name_array = self.domain.split '.', 2
-
     product = Product.create product_type: 'domain'
 
-    domain = Domain.new name:               domain_name_array[0],
-                        extension:          ".#{domain_name_array[1]}",
+    domain = Domain.new name:               self.domain,
                         partner:            self.order.partner,
                         registered_at:      self.registered_at,
                         expires_at:         self.expires_at,

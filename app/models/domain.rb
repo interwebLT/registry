@@ -80,19 +80,15 @@ class Domain < ActiveRecord::Base
   end
 
   def self.available_tlds domain_name
-    available_tlds = ['ph', 'com.ph', 'net.ph', 'org.ph']
+    tlds = ['ph', 'com.ph', 'net.ph', 'org.ph']
 
-    where(name: domain_name).each do |domain|
-      available_tlds.delete domain.zone
+    tlds.reject do |tld|
+      Domain.find_by(name: "#{domain_name}.#{tld}")
     end
-
-    available_tlds
   end
 
   def self.named domain
-    domain_array = domain.split '.', 2
-
-    find_by(name: domain_array[0], extension: ".#{domain_array[1]}")
+    find_by(name: domain)
   end
 
   def renew period
@@ -105,11 +101,11 @@ class Domain < ActiveRecord::Base
   end
 
   def zone
-    extension.sub /\./, ''
+    name[name.index('.'), name.size - 1].sub /\./, ''
   end
 
   def full_name
-    name + extension
+    name
   end
 
   def expired? current_date = Date.today
