@@ -86,20 +86,25 @@ end
 
 def view_orders
   create :pending_register_domain_order,  partner: @current_partner
-  create :register_domain_order, partner: @current_partner
-  create :renew_domain_order, partner: @current_partner
-  create :replenish_credits_order, partner: @current_partner
-  create :transfer_domain_order, partner: @current_partner
+  create :register_domain_order,          partner: @current_partner
+  create :renew_domain_order,             partner: @current_partner
+  create :replenish_credits_order,        partner: @current_partner
+  create :transfer_domain_order,          partner: @current_partner
+
+  refund_order = create :refund_order,    partner: @current_partner
+  refund_order.order_details.first.refunded_order_detail.order.partner = @current_partner
+  refund_order.order_details.first.refunded_order_detail.order.save!
 
   get orders_path
 end
 
 def view_latest_orders
-  create :pending_register_domain_order, ordered_at: Time.now
-  create :register_domain_order, ordered_at: Time.now
-  create :renew_domain_order, ordered_at: Time.now
-  create :replenish_credits_order, ordered_at: Time.now
-  create :transfer_domain_order, ordered_at: Time.now
+  create :pending_register_domain_order,  ordered_at: Time.now
+  create :register_domain_order,          ordered_at: Time.now
+  create :renew_domain_order,             ordered_at: Time.now
+  create :replenish_credits_order,        ordered_at: Time.now
+  create :transfer_domain_order,          ordered_at: Time.now
+  create :refund_order,                   ordered_at: Time.now
 
   get orders_path
 end
@@ -111,11 +116,15 @@ def assert_orders_displayed
 end
 
 def assert_pending_orders_not_displayed
-  json_response.count.must_equal 3
+  json_response.count.must_equal 5
 end
 
 def assert_latest_orders_displayed
   json_response.must_equal latest_orders_response
+end
+
+def assert_refunded_orders_displayed
+  json_response.count.must_equal 5
 end
 
 private
@@ -178,6 +187,48 @@ def orders_response
           domain: 'domain.ph'
         }
       ]
+    },
+    {
+      id: 4,
+      partner: 'alpha',
+      order_number: 4,
+      total_price: -35.00,
+      fee: 0.00,
+      ordered_at: '2015-01-01T00:00:00Z',
+      status: 'complete',
+      currency_code: 'USD',
+      order_details: [
+        {
+          type: 'refund',
+          price:  -35.00,
+          refunded_order_detail: {
+            type: 'domain_renew',
+            price: 35.00,
+            domain: 'domain.ph',
+            period: 1,
+            renewed_at: '2015-02-14T01:01:00Z'
+          }
+        }
+      ]
+    },
+    {
+      id: 5,
+      partner: 'alpha',
+      order_number: 5,
+      total_price: 35.00,
+      fee: 0.00,
+      ordered_at: '2015-01-01T00:00:00Z',
+      status: 'reversed',
+      currency_code: 'USD',
+      order_details: [
+        {
+          type: 'domain_renew',
+          price: 35.00,
+          domain: 'domain.ph',
+          period: 1,
+          renewed_at: '2015-02-14T01:01:00Z'
+        }
+      ]
     }
   ]
 end
@@ -188,6 +239,29 @@ def latest_orders_response
       id: 1,
       partner: 'alpha',
       order_number: 1,
+      total_price: -35.00,
+      fee: 0.00,
+      ordered_at: '2015-01-01T00:00:00Z',
+      status: 'complete',
+      currency_code: 'USD',
+      order_details: [
+        {
+          type: 'refund',
+          price:  -35.00,
+          refunded_order_detail: {
+            type: 'domain_renew',
+            price: 35.00,
+            domain: 'domain.ph',
+            period: 1,
+            renewed_at: '2015-02-14T01:01:00Z'
+          }
+        }
+      ]
+    },
+    {
+      id: 2,
+      partner: 'alpha',
+      order_number: 2,
       total_price: 15.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -202,9 +276,9 @@ def latest_orders_response
       ]
     },
     {
-      id: 2,
+      id: 3,
       partner: 'alpha',
-      order_number: 2,
+      order_number: 3,
       total_price: 150.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -218,9 +292,9 @@ def latest_orders_response
       ]
     },
     {
-      id: 3,
+      id: 4,
       partner: 'alpha',
-      order_number: 3,
+      order_number: 4,
       total_price: 35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -237,9 +311,9 @@ def latest_orders_response
       ]
     },
     {
-      id: 4,
+      id: 5,
       partner: 'alpha',
-      order_number: 4,
+      order_number: 5,
       total_price: 35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -258,9 +332,9 @@ def latest_orders_response
       ]
     },
     {
-      id: 5,
+      id: 6,
       partner: 'alpha',
-      order_number: 5,
+      order_number: 6,
       total_price: 35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -275,6 +349,25 @@ def latest_orders_response
           period: 2,
           registrant_handle: 'domains_r',
           registered_at: '2015-02-17T00:00:00Z'
+        }
+      ]
+    },
+    {
+      id: 7,
+      partner: 'alpha',
+      order_number: 7,
+      total_price: 35.00,
+      fee: 0.00,
+      ordered_at: '2015-01-01T00:00:00Z',
+      status: 'reversed',
+      currency_code: 'USD',
+      order_details: [
+        {
+          type: 'domain_renew',
+          price: 35.00,
+          domain: 'domain.ph',
+          period: 1,
+          renewed_at: '2015-02-14T01:01:00Z'
         }
       ]
     }

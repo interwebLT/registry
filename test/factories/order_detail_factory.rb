@@ -53,6 +53,7 @@ FactoryGirl.define do
     end
 
     factory :refund_order_detail, class: OrderDetail::Refund do
+      type OrderDetail::Refund
       price -35.00
       refunded_order_detail
 
