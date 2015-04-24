@@ -41,4 +41,23 @@ describe OrderDetail::Refund do
     specify { Domain.named(domain.name).expires_at.must_equal expires_at }
     specify { subject.complete?.must_equal true }
   end
+
+  describe :execute do
+    subject { OrderDetail::Refund.execute order_id: order_detail.order.id }
+
+    before do
+      domain
+      domain.renew order_detail.period
+
+      subject
+    end
+
+    let(:order) { create :renew_domain_order }
+    let(:order_detail) { order.order_details.first }
+    let(:domain) { create :domain, name: order_detail.domain, expires_at: expires_at }
+    let(:expires_at) { '2015-04-24 2:30 PM'.in_time_zone }
+
+    specify { OrderDetail.find(order_detail.id).reversed?.must_equal true }
+    specify { Domain.named(order_detail.domain).expires_at.must_equal expires_at }
+  end
 end

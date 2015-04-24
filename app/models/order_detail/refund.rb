@@ -3,6 +3,11 @@ class OrderDetail::Refund < OrderDetail
 
   validates :refunded_order_detail, presence: true
 
+  def self.execute order_id:
+    o = Order.find(order_id)
+    o.reverse!
+  end
+
   def complete!
     self.refunded_order_detail.reverse!
 
