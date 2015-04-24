@@ -149,6 +149,16 @@ describe Order do
   end
 
   describe :reverse! do
+    subject { create :renew_domain_order }
 
+    before do
+      create :domain, name: subject.order_details.first.domain
+
+      subject.reverse!
+    end
+
+    specify { Order.last.wont_equal subject }
+    specify { Order.last.complete?.must_equal true }
+    specify { Order.last.total_price.must_equal subject.total_price * -1 }
   end
 end
