@@ -79,13 +79,11 @@ class Order < ActiveRecord::Base
 
   def reverse!
     reversed_order = Order.new  partner:  self.partner,
-                                total_price:  self.total_price * -1,
-                                status: Order::COMPLETE_ORDER
+                                total_price:  self.total_price * -1
 
     self.order_details.each do |order_detail|
       refund = OrderDetail::Refund.new  product:  order_detail.product,
                                         price:  order_detail.price * -1,
-                                        status: OrderDetail::COMPLETE_ORDER_DETAIL,
                                         refunded_order_detail: order_detail
 
       reversed_order.order_details << refund
