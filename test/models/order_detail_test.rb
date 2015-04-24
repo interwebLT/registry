@@ -1,6 +1,12 @@
 require 'test_helper'
 
 describe OrderDetail do
+  describe :new do
+    subject { OrderDetail.new }
+
+    specify { subject.pending?.must_equal true }
+  end
+
   describe :associations do
     subject { create :order_detail_for_domain }
 

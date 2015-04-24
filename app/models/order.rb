@@ -17,6 +17,10 @@ class Order < ActiveRecord::Base
   PENDING_ORDER = 'pending'
   ERROR_ORDER = 'error'
 
+  after_initialize do
+    self.status ||= PENDING_ORDER
+  end
+
   def self.build params, partner
     params[:order_details] ||= []
 

@@ -9,6 +9,10 @@ class OrderDetail < ActiveRecord::Base
   validates :price, presence: true
 #  validates :price, numericality: { greater_than: 0.00 }
 
+  after_initialize do
+    self.status ||= PENDING_ORDER_DETAIL
+  end
+
   PENDING_ORDER_DETAIL = 'pending'
   COMPLETE_ORDER_DETAIL = 'complete'
   ERROR_ORDER_DETAIL = 'error'
@@ -31,6 +35,10 @@ class OrderDetail < ActiveRecord::Base
     order_detail.price = (partner ? partner.pricing(action: type_action, period: order_detail.period) : 0.00.money) if order_detail.price == 0.00.money
 
     order_detail
+  end
+
+  def pending?
+    self.status == PENDING_ORDER_DETAIL
   end
 
   def complete?

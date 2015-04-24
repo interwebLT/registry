@@ -1,6 +1,12 @@
 require 'test_helper'
 
 describe Order do
+  describe :new do
+    subject { Order.new }
+
+    specify { subject.pending?.must_equal true }
+  end
+
   describe :valid? do
     subject { create :order }
 
