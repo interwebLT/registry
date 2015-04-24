@@ -85,11 +85,10 @@ class Order < ActiveRecord::Base
                                         refunded_order_detail: order_detail
 
       reversed_order.order_details << refund
-
-      order_detail.reverse!
     end
 
     reversed_order.save!
+    reversed_order.complete!
   end
 
   def generate_orderno
