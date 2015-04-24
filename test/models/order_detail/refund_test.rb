@@ -60,4 +60,24 @@ describe OrderDetail::Refund do
     specify { OrderDetail.find(order_detail.id).reversed?.must_equal true }
     specify { Domain.named(order_detail.domain).expires_at.must_equal expires_at }
   end
+
+  describe :as_json do
+    subject { build :refund_order_detail }
+
+    let(:expected_json) {
+      {
+        type: 'refund',
+        price:  -35.00,
+        refunded_order_detail: {
+          type: 'domain_renew',
+          price:  35.00,
+          domain: 'domain.ph',
+          period: 1,
+          renewed_at: '2015-02-14T01:01:00Z'
+        }
+      }
+    }
+
+    specify { subject.as_json.must_equal expected_json }
+  end
 end

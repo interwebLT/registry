@@ -14,4 +14,12 @@ class OrderDetail::Refund < OrderDetail
     self.status = OrderDetail::COMPLETE_ORDER_DETAIL
     self.save!
   end
+
+  def as_json options = nil
+    {
+      type: 'refund',
+      price:  self.price.to_f,
+      refunded_order_detail: self.refunded_order_detail.as_json
+    }
+  end
 end
