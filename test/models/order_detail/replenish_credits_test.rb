@@ -23,9 +23,7 @@ describe OrderDetail::ReplenishCredits do
   end
 
   describe :as_json do
-    subject { order_detail.as_json }
-
-    let(:order_detail) { create :replenish_credits_order_detail }
+    subject { build :replenish_credits_order_detail }
 
     let(:expected_json) {
       {
@@ -34,7 +32,7 @@ describe OrderDetail::ReplenishCredits do
       }
     }
 
-    specify { subject.must_equal expected_json }
+    specify { subject.as_json.must_equal expected_json }
   end
 
   describe :complete! do

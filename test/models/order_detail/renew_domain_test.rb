@@ -70,4 +70,20 @@ describe OrderDetail::RenewDomain do
 
     specify { Order.last.partner.credits.last.credits.must_equal BigDecimal.new(35) }
   end
+
+  describe :as_json do
+    subject { build :renew_domain_order_detail }
+
+    let(:expected_json) {
+      {
+        type: 'domain_renew',
+        price:  35.00,
+        domain: 'domain.ph',
+        period: 1,
+        renewed_at: '2015-02-14T01:01:00Z'
+      }
+    }
+
+    specify { subject.as_json.must_equal expected_json }
+  end
 end
