@@ -55,11 +55,14 @@ class OrderDetail::RenewDomain < OrderDetail
     domain = Domain.named(self.domain)
 
     domain.expires_at = (domain.expires_at - self.period.years)
-    domain.save
+    domain.save!
 
     self.order.partner.credits.create order: self.order,
                                              credits: self.price,
                                              activity_type: 'use'
+
+    self.status = REVERSED_ORDER_DETAIL
+    self.save!
   end
 
   def as_json options = nil

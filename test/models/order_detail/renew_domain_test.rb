@@ -59,9 +59,9 @@ describe OrderDetail::RenewDomain do
       subject.reverse!
     end
 
-    let(:saved_domain) { Domain.named(subject.domain) }
+    specify { subject.reversed?.must_equal true }
 
-    specify { saved_domain.expires_at.must_equal '2015-01-01'.in_time_zone }
+    specify { Domain.named(subject.domain).expires_at.must_equal '2015-01-01'.in_time_zone }
 
     specify { ObjectActivity.last.must_be_kind_of ObjectActivity::Update }
     specify { ObjectActivity.last.property_changed.must_equal 'expires_at' }

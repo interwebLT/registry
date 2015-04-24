@@ -13,9 +13,10 @@ class Order < ActiveRecord::Base
 
   validate :partner_must_exist
 
-  COMPLETE_ORDER = 'complete'
-  PENDING_ORDER = 'pending'
-  ERROR_ORDER = 'error'
+  COMPLETE_ORDER  = 'complete'
+  PENDING_ORDER   = 'pending'
+  ERROR_ORDER     = 'error'
+  REVERSED_ORDER  = 'reversed'
 
   after_initialize do
     self.status ||= PENDING_ORDER
@@ -50,6 +51,10 @@ class Order < ActiveRecord::Base
 
   def error?
     status == ERROR_ORDER
+  end
+
+  def reversed?
+    status == REVERSED_ORDER
   end
 
   def complete!
@@ -90,6 +95,10 @@ class Order < ActiveRecord::Base
     end
 
     reversed_order.save!
+
+    self.status = REVERSED_ORDER
+    self.save!
+
     reversed_order.complete!
   end
 

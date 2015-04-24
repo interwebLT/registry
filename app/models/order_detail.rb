@@ -13,9 +13,10 @@ class OrderDetail < ActiveRecord::Base
     self.status ||= PENDING_ORDER_DETAIL
   end
 
-  PENDING_ORDER_DETAIL = 'pending'
+  PENDING_ORDER_DETAIL  = 'pending'
   COMPLETE_ORDER_DETAIL = 'complete'
-  ERROR_ORDER_DETAIL = 'error'
+  ERROR_ORDER_DETAIL    = 'error'
+  REVERSED_ORDER_DETAIL = 'reversed'
 
   ORDER_DETAIL_TYPES = {
     domain_create: OrderDetail::RegisterDomain,
@@ -47,6 +48,10 @@ class OrderDetail < ActiveRecord::Base
 
   def error?
     status == ERROR_ORDER_DETAIL
+  end
+
+  def reversed?
+    status == REVERSED_ORDER_DETAIL
   end
 
   def complete!

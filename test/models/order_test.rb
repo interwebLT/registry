@@ -52,47 +52,24 @@ describe Order do
   end
 
   describe :complete? do
-    subject { Order.new(status: status).complete? }
-
-    context :when_status_complete do
-      let(:status) { Order::COMPLETE_ORDER }
-
-      specify { subject.must_equal true }
-    end
-
-    context :when_status_pending do
-      let(:status) { Order::PENDING_ORDER }
-
-      specify { subject.must_equal false }
-    end
-
-    context :when_status_error do
-      let(:status) { Order::ERROR_ORDER }
-
-      specify { subject.must_equal false }
-    end
+    specify { Order.new(status: Order::COMPLETE_ORDER).complete?.must_equal true }
+    specify { Order.new(status: Order::PENDING_ORDER).complete?.must_equal false }
+    specify { Order.new(status: Order::ERROR_ORDER).complete?.must_equal false }
+    specify { Order.new(status: Order::REVERSED_ORDER).complete?.must_equal false }
   end
 
   describe :pending? do
-    subject { Order.new(status: status).pending? }
+    specify { Order.new(status: Order::PENDING_ORDER).pending?.must_equal true }
+    specify { Order.new(status: Order::COMPLETE_ORDER).pending?.must_equal false }
+    specify { Order.new(status: Order::ERROR_ORDER).pending?.must_equal false }
+    specify { Order.new(status: Order::REVERSED_ORDER).pending?.must_equal false }
+  end
 
-    context :when_status_complete do
-      let(:status) { Order::COMPLETE_ORDER }
-
-      specify { subject.must_equal false }
-    end
-
-    context :when_status_pending do
-      let(:status) { Order::PENDING_ORDER }
-
-      specify { subject.must_equal true }
-    end
-
-    context :when_status_error do
-      let(:status) { Order::ERROR_ORDER }
-
-      specify { subject.must_equal false }
-    end
+  describe :reversed? do
+    specify { Order.new(status: Order::REVERSED_ORDER).reversed?.must_equal true }
+    specify { Order.new(status: Order::PENDING_ORDER).reversed?.must_equal false }
+    specify { Order.new(status: Order::COMPLETE_ORDER).reversed?.must_equal false }
+    specify { Order.new(status: Order::ERROR_ORDER).reversed?.must_equal false }
   end
 
   describe :complete! do
@@ -162,6 +139,8 @@ describe Order do
 
       subject.reverse!
     end
+
+    specify { subject.reversed?.must_equal true }
 
     specify { Order.last.wont_equal subject }
     specify { Order.last.complete?.must_equal true }

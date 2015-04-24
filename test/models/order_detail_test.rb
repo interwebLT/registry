@@ -18,15 +18,24 @@ describe OrderDetail do
     specify { OrderDetail.new(status: OrderDetail::COMPLETE_ORDER_DETAIL).complete?.must_equal true }
     specify { OrderDetail.new(status: OrderDetail::PENDING_ORDER_DETAIL).complete?.must_equal false }
     specify { OrderDetail.new(status: OrderDetail::ERROR_ORDER_DETAIL).complete?.must_equal false }
+    specify { OrderDetail.new(status: OrderDetail::REVERSED_ORDER_DETAIL).complete?.must_equal false }
   end
 
   describe :error? do
     specify { OrderDetail.new(status: OrderDetail::ERROR_ORDER_DETAIL).error?.must_equal true }
-    specify { OrderDetail.new(status: OrderDetail::COMPLETE_ORDER_DETAIL).error?.must_equal false }
     specify { OrderDetail.new(status: OrderDetail::PENDING_ORDER_DETAIL).error?.must_equal false }
+    specify { OrderDetail.new(status: OrderDetail::COMPLETE_ORDER_DETAIL).error?.must_equal false }
+    specify { OrderDetail.new(status: OrderDetail::REVERSED_ORDER_DETAIL).error?.must_equal false }
   end
 
-  describe :complete do
+  describe :reversed? do
+    specify { OrderDetail.new(status: OrderDetail::PENDING_ORDER_DETAIL).reversed?.must_equal false }
+    specify { OrderDetail.new(status: OrderDetail::REVERSED_ORDER_DETAIL).reversed?.must_equal true }
+    specify { OrderDetail.new(status: OrderDetail::COMPLETE_ORDER_DETAIL).reversed?.must_equal false }
+    specify { OrderDetail.new(status: OrderDetail::ERROR_ORDER_DETAIL).reversed?.must_equal false }
+  end
+
+  describe :complete! do
     subject { create :order_detail }
 
     specify { subject.complete!.must_equal true }
