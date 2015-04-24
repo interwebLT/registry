@@ -20,13 +20,9 @@ end
 def domain_exists domain: DOMAIN, factory: :domain, partner: nil
   domain_does_not_exist domain: domain
 
-  domain_array = domain.split '.', 2
-
   current_partner = partner ? Partner.find_by(name: partner) : @current_partner
 
-  create factory, partner: current_partner,
-                  name: domain_array[0],
-                  extension: ".#{domain_array[1]}"
+  create factory, partner: current_partner, name: domain
 end
 
 def domain_with_complete_contacts_exists domain: DOMAIN
@@ -110,10 +106,10 @@ end
 def view_latest_domains
   contact = create :contact
 
-  create :domain, registered_at: '2015-03-15 14:00'.in_time_zone, registrant: contact, name: 'abc'
-  create :domain, registered_at: '2015-03-15 14:01'.in_time_zone, registrant: contact, name: 'def'
-  create :domain, registered_at: '2015-03-15 14:02'.in_time_zone, registrant: contact, name: 'ghi'
-  create :domain, registered_at: '2015-03-15 14:03'.in_time_zone, registrant: contact, name: 'jkl'
+  create :domain, registered_at: '2015-03-15 14:00'.in_time_zone, registrant: contact, name: 'abc.ph'
+  create :domain, registered_at: '2015-03-15 14:01'.in_time_zone, registrant: contact, name: 'def.ph'
+  create :domain, registered_at: '2015-03-15 14:02'.in_time_zone, registrant: contact, name: 'ghi.ph'
+  create :domain, registered_at: '2015-03-15 14:03'.in_time_zone, registrant: contact, name: 'jkl.ph'
 
   get domains_path
 end
