@@ -8,3 +8,4 @@ Feature: View Orders
     When  I try to view my orders
     Then  I must see my orders
     And   I must not see any pending orders
+    And   I must see my orders that were refunded

@@ -9,9 +9,14 @@ class OrderDetail < ActiveRecord::Base
   validates :price, presence: true
 #  validates :price, numericality: { greater_than: 0.00 }
 
-  PENDING_ORDER_DETAIL = 'pending'
+  after_initialize do
+    self.status ||= PENDING_ORDER_DETAIL
+  end
+
+  PENDING_ORDER_DETAIL  = 'pending'
   COMPLETE_ORDER_DETAIL = 'complete'
-  ERROR_ORDER_DETAIL = 'error'
+  ERROR_ORDER_DETAIL    = 'error'
+  REVERSED_ORDER_DETAIL = 'reversed'
 
   ORDER_DETAIL_TYPES = {
     domain_create: OrderDetail::RegisterDomain,
@@ -33,12 +38,20 @@ class OrderDetail < ActiveRecord::Base
     order_detail
   end
 
+  def pending?
+    self.status == PENDING_ORDER_DETAIL
+  end
+
   def complete?
     status == COMPLETE_ORDER_DETAIL
   end
 
   def error?
     status == ERROR_ORDER_DETAIL
+  end
+
+  def reversed?
+    status == REVERSED_ORDER_DETAIL
   end
 
   def complete!

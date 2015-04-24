@@ -135,7 +135,7 @@ describe OrderDetail::RegisterDomain do
   end
 
   describe :as_json do
-    subject { build(:register_domain_order_detail).as_json }
+    subject { build :register_domain_order_detail }
 
     let(:expected_json) {
       {
@@ -149,6 +149,6 @@ describe OrderDetail::RegisterDomain do
       }
     }
 
-    specify { subject.must_equal expected_json }
+    specify { subject.as_json.must_equal expected_json }
   end
 end

@@ -46,5 +46,28 @@ FactoryGirl.define do
         order.order_details << order_detail
       end
     end
+
+    factory :refund_order do
+      total_price -35.00
+
+      before :create do |order|
+        order_detail = build :refund_order_detail, order: order
+        order.total_price = order_detail.price
+
+        order.order_details << order_detail
+      end
+
+      after :create do |order|
+        refunded_order_detail = order.order_details.first.refunded_order_detail
+        refunded_order = refunded_order_detail.order
+
+        refunded_order.status = Order::REVERSED_ORDER
+        refunded_order.partner = order.partner
+        refunded_order.total_price = refunded_order_detail.price
+        refunded_order.save!
+
+        OrderDetail::ReplenishCredits.find_by(order: refunded_order).destroy!
+      end
+    end
   end
 end

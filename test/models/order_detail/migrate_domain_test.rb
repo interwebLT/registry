@@ -2,15 +2,21 @@ require 'test_helper'
 
 describe OrderDetail::MigrateDomain do
   describe :as_json do
-    subject { build(:migrate_domain_order_detail).as_json }
+    subject { build :migrate_domain_order_detail }
 
-    specify { subject[:type].must_equal 'migrate_domain' }
-    specify { subject[:price].must_equal 0.00 }
-    specify { subject[:domain].must_equal 'domain.ph' }
-    specify { subject[:authcode].must_equal 'ABC123' }
-    specify { subject[:registrant_handle].must_equal 'domains_r' }
-    specify { subject[:registered_at].must_equal '2015-04-10T11:00:00Z' }
-    specify { subject[:expires_at].must_equal '2017-04-10T11:00:00Z' }
+    let(:expected_json) {
+      {
+        type: 'migrate_domain',
+        price:  0.00,
+        domain: 'domain.ph',
+        authcode: 'ABC123',
+        registrant_handle:  'domains_r',
+        registered_at:  '2015-04-10T11:00:00Z',
+        expires_at: '2017-04-10T11:00:00Z'
+      }
+    }
+
+    specify { subject.as_json.must_equal expected_json }
   end
 
   describe :complete! do

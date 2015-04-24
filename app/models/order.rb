@@ -13,9 +13,14 @@ class Order < ActiveRecord::Base
 
   validate :partner_must_exist
 
-  COMPLETE_ORDER = 'complete'
-  PENDING_ORDER = 'pending'
-  ERROR_ORDER = 'error'
+  COMPLETE_ORDER  = 'complete'
+  PENDING_ORDER   = 'pending'
+  ERROR_ORDER     = 'error'
+  REVERSED_ORDER  = 'reversed'
+
+  after_initialize do
+    self.status ||= PENDING_ORDER
+  end
 
   def self.build params, partner
     params[:order_details] ||= []
@@ -48,6 +53,10 @@ class Order < ActiveRecord::Base
     status == ERROR_ORDER
   end
 
+  def reversed?
+    status == REVERSED_ORDER
+  end
+
   def complete!
     self.status = COMPLETE_ORDER
     self.completed_at = Time.now
@@ -75,21 +84,22 @@ class Order < ActiveRecord::Base
 
   def reverse!
     reversed_order = Order.new  partner:  self.partner,
-                                total_price:  self.total_price,
-                                status: Order::COMPLETE_ORDER
+                                total_price:  self.total_price * -1
 
     self.order_details.each do |order_detail|
       refund = OrderDetail::Refund.new  product:  order_detail.product,
                                         price:  order_detail.price * -1,
-                                        status: OrderDetail::COMPLETE_ORDER_DETAIL,
                                         refunded_order_detail: order_detail
 
       reversed_order.order_details << refund
-
-      order_detail.reverse!
     end
 
     reversed_order.save!
+
+    self.status = REVERSED_ORDER
+    self.save!
+
+    reversed_order.complete!
   end
 
   def generate_orderno

@@ -134,6 +134,7 @@ describe Partner do
       create :replenish_credits_order,  partner: subject
       create :replenish_credits_order,  partner: subject
       create :register_domain_order,    partner: subject
+      create :refund_order,             partner: subject
     end
 
     specify { subject.credit_history.count.must_equal 2 }
@@ -144,12 +145,13 @@ describe Partner do
 
     before do
       create :pending_register_domain_order,  partner: subject
-      create :replenish_credits_order,    partner: subject
-      create :register_domain_order,      partner: subject
-      create :renew_domain_order,         partner: subject
-      create :transfer_domain_order,      partner: subject
+      create :replenish_credits_order,        partner: subject
+      create :register_domain_order,          partner: subject
+      create :renew_domain_order,             partner: subject
+      create :transfer_domain_order,          partner: subject
+      create :refund_order,                   partner: subject
     end
 
-    specify { subject.order_history.count.must_equal 3 }
+    specify { subject.order_history.count.must_equal 5 }
   end
 end

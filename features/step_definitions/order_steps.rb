@@ -101,3 +101,7 @@ end
 Then /^I must see the latest orders$/ do
   assert_latest_orders_displayed
 end
+
+Then /I must see my orders that were refunded$/ do
+  assert_refunded_orders_displayed
+end
