@@ -22,7 +22,7 @@ describe OrderDetail::RenewDomain do
   end
 
   describe :execute do
-    subject { OrderDetail::RenewDomain.execute domain: domain, period: period }
+    subject { OrderDetail::RenewDomain.execute domain: domain.name, period: period }
 
     before do
       subject
