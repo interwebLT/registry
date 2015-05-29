@@ -125,4 +125,33 @@ describe OrderDetail::MigrateDomain do
       specify { subject.errors[:authcode].must_equal ['invalid'] }
     end
   end
+
+  describe :execute do
+    subject { OrderDetail.last }
+
+    before do
+      OrderDetail::MigrateDomain.execute  partner: partner.name,
+                                          domain: domain,
+                                          registrant_handle: contact.handle,
+                                          registered_at: registered_at,
+                                          expires_at: expires_at
+    end
+
+    let(:partner) { create :partner }
+    let(:domain)  { 'test.ph' }
+    let(:contact) { create :contact }
+    let(:registered_at) { '2015-05-11 5:30 PM'.in_time_zone }
+    let(:expires_at)    { '2017-05-11 5:30 PM'.in_time_zone }
+
+    let(:saved_domain) { Domain.named(domain) }
+
+    specify { subject.must_be_kind_of OrderDetail::MigrateDomain }
+    specify { subject.complete?.must_equal true }
+    specify { subject.price.must_equal 0.00.money }
+    specify { subject.domain.must_equal domain }
+    specify { subject.authcode.wont_be_nil }
+    specify { subject.registrant_handle.must_equal contact.handle }
+    specify { subject.registered_at.must_equal registered_at }
+    specify { subject.expires_at.must_equal expires_at }
+  end
 end
