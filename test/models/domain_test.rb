@@ -467,4 +467,19 @@ describe Domain do
     specify { activities[7].old_value.must_equal 'ns5.domains.ph' }
     specify { activities[7].value.must_be_nil }
   end
+
+  describe :delete_domain! do
+    subject { create :domain }
+
+    before do
+      subject.delete_domain! on: deleted_at
+    end
+
+    let(:deleted_domain) { DeletedDomain.find_by(name: subject.name) }
+    let(:deleted_at) { '2015-06-05 6:00 PM'.in_time_zone }
+
+    specify { Domain.named(subject.name).must_be_nil }
+    specify { deleted_domain.wont_be_nil }
+    specify { deleted_domain.deleted_at.must_equal deleted_at }
+  end
 end
