@@ -8,11 +8,7 @@ class ObjectActivity::Update < ObjectActivity
       id: self.id,
       type: 'update',
       activity_at: self.activity_at.iso8601,
-      object: {
-        id: self.product.domain.id,
-        type: 'domain',
-        name: self.product.domain.full_name
-      },
+      object: self.product.as_json,
       property_changed: self.property_changed,
       old_value: self.old_value,
       new_value: self.value
