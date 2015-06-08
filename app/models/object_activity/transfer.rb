@@ -8,11 +8,7 @@ class ObjectActivity::Transfer < ObjectActivity
       id: self.id,
       type: 'transfer',
       activity_at: self.activity_at.iso8601,
-      object: {
-        id: self.product.domain.id,
-        type: 'domain',
-        name: self.product.domain.full_name
-      },
+      object: self.product.as_json,
       losing_partner: self.losing_partner.name
     }
   end

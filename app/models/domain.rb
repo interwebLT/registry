@@ -130,6 +130,25 @@ class Domain < ActiveRecord::Base
     result
   end
 
+  def delete_domain! on:
+    self.product.domain_hosts.map(&:destroy)
+
+    DeletedDomain.create  product:            self.product,
+                          partner:            self.partner,
+                          name:               self.full_name,
+                          authcode:           self.authcode,
+                          registrant_handle:  self.registrant_handle,
+                          admin_handle:       self.admin_handle,
+                          billing_handle:     self.billing_handle,
+                          tech_handle:        self.tech_handle,
+                          registered_at:      self.registered_at,
+                          expires_at:         self.expires_at,
+                          deleted_at:         on,
+                          domain_id:          self.id
+
+    self.delete
+  end
+
   private
 
   def contact_handle_associations_must_exist
@@ -192,19 +211,6 @@ class Domain < ActiveRecord::Base
   end
 
   def create_deleted_domain
-    self.product.domain_hosts.map(&:destroy)
-
-    DeletedDomain.create  product:            self.product,
-                          partner:            self.partner,
-                          name:               self.full_name,
-                          authcode:           self.authcode,
-                          registrant_handle:  self.registrant_handle,
-                          admin_handle:       self.admin_handle,
-                          billing_handle:     self.billing_handle,
-                          tech_handle:        self.tech_handle,
-                          registered_at:      self.registered_at,
-                          expires_at:         self.expires_at,
-                          deleted_at:         Time.now,
-                          domain_id:          self.id
+    delete_domain! on: DateTime.now
   end
 end

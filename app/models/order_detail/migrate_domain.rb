@@ -11,6 +11,25 @@ class OrderDetail::MigrateDomain < OrderDetail
     new params
   end
 
+  def self.execute partner:, domain:, registrant_handle:, registered_at:, expires_at:
+    saved_partner = Partner.find_by!(name: partner)
+
+    order = Order.new partner: saved_partner, status: Order::PENDING_ORDER, total_price: 0.00.money
+
+    order_detail = self.new status:             OrderDetail::PENDING_ORDER_DETAIL,
+                            price:              0.00.money,
+                            domain:             domain,
+                            authcode:           '1',
+                            registrant_handle:  registrant_handle,
+                            registered_at:      registered_at,
+                            expires_at:         expires_at
+
+    order.order_details << order_detail
+    order.save!
+
+    order.complete!
+  end
+
   def action
     'migrate_domain'
   end
