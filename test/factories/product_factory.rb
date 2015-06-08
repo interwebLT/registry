@@ -7,5 +7,13 @@ FactoryGirl.define do
         create :domain, product: product
       end
     end
+
+    factory :deleted_domain_product do
+      product_type  'deleted_domain'
+
+      after :create do |product, evaluator|
+        create :deleted_domain, product: product
+      end
+    end
   end
 end
