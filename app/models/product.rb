@@ -8,6 +8,14 @@ class Product < ActiveRecord::Base
 
   after_create :create_object_status
 
+  def as_json options = nil
+    {
+      id:   self.domain.id,
+      type: 'domain',
+      name: self.domain.full_name
+    }
+  end
+
   private
 
   def create_object_status

@@ -23,4 +23,20 @@ describe Product do
 
     specify { subject.object_status.wont_be_nil }
   end
+
+  describe :as_json do
+    context :when_domain_product do
+      subject { create :domain_product }
+
+      let(:expected_json) {
+        {
+          id:   subject.domain.id,
+          type: 'domain',
+          name: subject.domain.name
+        }
+      }
+
+      specify { subject.as_json.must_equal expected_json }
+    end
+  end
 end

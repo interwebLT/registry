@@ -3,7 +3,9 @@ FactoryGirl.define do
     product_type 'domain'
 
     factory :domain_product do
-      domain
+      after :create do |product, evaluator|
+        create :domain, product: product
+      end
     end
   end
 end
