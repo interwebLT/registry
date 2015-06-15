@@ -32,11 +32,11 @@ def register_domain partner: nil,
 end
 
 def assert_completed_register_domain_response domain: DOMAIN
-  assert_register_domain_response partner: NON_ADMIN_PARTNER, domain: domain, status: 'complete'
+  assert_register_domain_response partner: alpha_partner(credits: -70.0), domain: domain, status: 'complete'
 end
 
 def assert_register_domain_response domain: nil,
-                                    partner: 'alpha',
+                                    partner: alpha_partner,
                                     status: 'complete',
                                     registrant: CONTACT_HANDLE
   assert_response_status_must_be_created
@@ -73,7 +73,7 @@ def create_order json_request: {}
 end
 
 def register_domain_order_must_be_created
-  assert_register_domain_response status: 'pending'
+  assert_register_domain_response partner: nature_partner, status: 'pending'
 
   order_must_be_created status: 'pending', type: OrderDetail::RegisterDomain
 end
@@ -133,7 +133,26 @@ def orders_response
   [
     {
       id: 1,
-      partner: 'alpha',
+      partner:     {
+        id: 1,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.org',
+        nature: 'Nature',
+        representative: 'Representative',
+        position: 'Position',
+        street: 'Street',
+        city: 'City',
+        state: 'State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.21234567',
+        fax: '+63.21234567',
+        email: 'alpha@alpha.org',
+        local: true,
+        admin: false
+      },
       order_number: 1,
       total_price: 35.00,
       fee: 0.00,
@@ -154,7 +173,26 @@ def orders_response
     },
     {
       id: 2,
-      partner: 'alpha',
+      partner:     {
+        id: 2,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.org',
+        nature: 'Nature',
+        representative: 'Representative',
+        position: 'Position',
+        street: 'Street',
+        city: 'City',
+        state: 'State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.21234567',
+        fax: '+63.21234567',
+        email: 'alpha@alpha.org',
+        local: true,
+        admin: false
+      },
       order_number: 2,
       total_price: 35.00,
       fee: 0.00,
@@ -173,7 +211,26 @@ def orders_response
     },
     {
       id: 3,
-      partner: 'alpha',
+      partner:     {
+        id: 3,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.org',
+        nature: 'Nature',
+        representative: 'Representative',
+        position: 'Position',
+        street: 'Street',
+        city: 'City',
+        state: 'State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.21234567',
+        fax: '+63.21234567',
+        email: 'alpha@alpha.org',
+        local: true,
+        admin: false
+      },
       order_number: 3,
       total_price: 15.00,
       fee: 0.00,
@@ -190,7 +247,26 @@ def orders_response
     },
     {
       id: 4,
-      partner: 'alpha',
+      partner:     {
+        id: 4,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.org',
+        nature: 'Nature',
+        representative: 'Representative',
+        position: 'Position',
+        street: 'Street',
+        city: 'City',
+        state: 'State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.21234567',
+        fax: '+63.21234567',
+        email: 'alpha@alpha.org',
+        local: true,
+        admin: false
+      },
       order_number: 4,
       total_price: -35.00,
       fee: 0.00,
@@ -213,7 +289,26 @@ def orders_response
     },
     {
       id: 5,
-      partner: 'alpha',
+      partner:     {
+        id: 5,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.org',
+        nature: 'Nature',
+        representative: 'Representative',
+        position: 'Position',
+        street: 'Street',
+        city: 'City',
+        state: 'State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.21234567',
+        fax: '+63.21234567',
+        email: 'alpha@alpha.org',
+        local: true,
+        admin: false
+      },
       order_number: 5,
       total_price: 35.00,
       fee: 0.00,
@@ -237,7 +332,26 @@ def latest_orders_response
   [
     {
       id: 1,
-      partner: 'alpha',
+      partner:     {
+        id: 1,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.ph',
+        nature: 'Alpha Business',
+        representative: 'Alpha Guy',
+        position: 'Position',
+        street: 'Alpha Street',
+        city: 'Alpha City',
+        state: 'Alpha State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.1234567',
+        fax: '+63.1234567',
+        email: 'alpha@alpha.ph',
+        local: true,
+        admin: false
+      },
       order_number: 1,
       total_price: -35.00,
       fee: 0.00,
@@ -260,7 +374,26 @@ def latest_orders_response
     },
     {
       id: 2,
-      partner: 'alpha',
+      partner:     {
+        id: 2,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.ph',
+        nature: 'Alpha Business',
+        representative: 'Alpha Guy',
+        position: 'Position',
+        street: 'Alpha Street',
+        city: 'Alpha City',
+        state: 'Alpha State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.1234567',
+        fax: '+63.1234567',
+        email: 'alpha@alpha.ph',
+        local: true,
+        admin: false
+      },
       order_number: 2,
       total_price: 15.00,
       fee: 0.00,
@@ -277,7 +410,26 @@ def latest_orders_response
     },
     {
       id: 3,
-      partner: 'alpha',
+      partner:     {
+        id: 3,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.ph',
+        nature: 'Alpha Business',
+        representative: 'Alpha Guy',
+        position: 'Position',
+        street: 'Alpha Street',
+        city: 'Alpha City',
+        state: 'Alpha State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.1234567',
+        fax: '+63.1234567',
+        email: 'alpha@alpha.ph',
+        local: true,
+        admin: false
+      },
       order_number: 3,
       total_price: 150.00,
       fee: 0.00,
@@ -293,7 +445,26 @@ def latest_orders_response
     },
     {
       id: 4,
-      partner: 'alpha',
+      partner:     {
+        id: 4,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.ph',
+        nature: 'Alpha Business',
+        representative: 'Alpha Guy',
+        position: 'Position',
+        street: 'Alpha Street',
+        city: 'Alpha City',
+        state: 'Alpha State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.1234567',
+        fax: '+63.1234567',
+        email: 'alpha@alpha.ph',
+        local: true,
+        admin: false
+      },
       order_number: 4,
       total_price: 35.00,
       fee: 0.00,
@@ -312,7 +483,26 @@ def latest_orders_response
     },
     {
       id: 5,
-      partner: 'alpha',
+      partner:     {
+        id: 5,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.ph',
+        nature: 'Alpha Business',
+        representative: 'Alpha Guy',
+        position: 'Position',
+        street: 'Alpha Street',
+        city: 'Alpha City',
+        state: 'Alpha State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.1234567',
+        fax: '+63.1234567',
+        email: 'alpha@alpha.ph',
+        local: true,
+        admin: false
+      },
       order_number: 5,
       total_price: 35.00,
       fee: 0.00,
@@ -333,7 +523,26 @@ def latest_orders_response
     },
     {
       id: 6,
-      partner: 'alpha',
+      partner:     {
+        id: 6,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.ph',
+        nature: 'Alpha Business',
+        representative: 'Alpha Guy',
+        position: 'Position',
+        street: 'Alpha Street',
+        city: 'Alpha City',
+        state: 'Alpha State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.1234567',
+        fax: '+63.1234567',
+        email: 'alpha@alpha.ph',
+        local: true,
+        admin: false
+      },
       order_number: 6,
       total_price: 35.00,
       fee: 0.00,
@@ -354,7 +563,26 @@ def latest_orders_response
     },
     {
       id: 7,
-      partner: 'alpha',
+      partner:     {
+        id: 7,
+        name: 'alpha',
+        organization: 'Company',
+        credits: 0.00,
+        site: 'http://alpha.ph',
+        nature: 'Alpha Business',
+        representative: 'Alpha Guy',
+        position: 'Position',
+        street: 'Alpha Street',
+        city: 'Alpha City',
+        state: 'Alpha State',
+        postal_code: '1234',
+        country_code: 'PH',
+        phone: '+63.1234567',
+        fax: '+63.1234567',
+        email: 'alpha@alpha.ph',
+        local: true,
+        admin: false
+      },
       order_number: 7,
       total_price: 35.00,
       fee: 0.00,
@@ -372,4 +600,50 @@ def latest_orders_response
       ]
     }
   ]
+end
+
+def nature_partner
+  {
+    id: 1,
+    name: 'alpha',
+    organization: 'Company',
+    credits: 0.00,
+    site: 'http://alpha.org',
+    nature: 'Nature',
+    representative: 'Representative',
+    position: 'Position',
+    street: 'Street',
+    city: 'City',
+    state: 'State',
+    postal_code: '1234',
+    country_code: 'PH',
+    phone: '+63.21234567',
+    fax: '+63.21234567',
+    email: 'alpha@alpha.org',
+    local: true,
+    admin: false
+  }
+end
+
+def alpha_partner credits: 0.00
+  {
+    id: 1,
+    name: 'alpha',
+    organization: 'Company',
+    credits: credits,
+    site: 'http://alpha.ph',
+    nature: 'Alpha Business',
+    representative: 'Alpha Guy',
+    position: 'Position',
+    street: 'Alpha Street',
+    city: 'Alpha City',
+    state: 'Alpha State',
+    postal_code: '1234',
+    country_code: 'PH',
+    phone: '+63.1234567',
+    fax: '+63.1234567',
+    email: 'alpha@alpha.ph',
+    local: true,
+    admin: false
+  }
 end

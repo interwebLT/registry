@@ -32,7 +32,26 @@ def assert_completed_migrate_domain_response
 
   expected_response = {
     id: 1,
-    partner: NON_ADMIN_PARTNER,
+    partner:     {
+      id: 1,
+      name: 'alpha',
+      organization: 'Company',
+      credits: 0.00,
+      site: 'http://alpha.ph',
+      nature: 'Alpha Business',
+      representative: 'Alpha Guy',
+      position: 'Position',
+      street: 'Alpha Street',
+      city: 'Alpha City',
+      state: 'Alpha State',
+      postal_code: '1234',
+      country_code: 'PH',
+      phone: '+63.1234567',
+      fax: '+63.1234567',
+      email: 'alpha@alpha.ph',
+      local: true,
+      admin: false
+    },
     order_number: 1,
     total_price: 0.00,
     fee: 0.00,
