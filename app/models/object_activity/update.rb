@@ -7,6 +7,7 @@ class ObjectActivity::Update < ObjectActivity
     {
       id: self.id,
       type: 'update',
+      partner: PartnerSerializer.new(self.partner).serializable_hash,
       activity_at: self.activity_at.iso8601,
       object: self.product.as_json,
       property_changed: self.property_changed,

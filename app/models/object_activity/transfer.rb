@@ -7,6 +7,7 @@ class ObjectActivity::Transfer < ObjectActivity
     {
       id: self.id,
       type: 'transfer',
+      partner: PartnerSerializer.new(self.partner).serializable_hash,
       activity_at: self.activity_at.iso8601,
       object: self.product.as_json,
       losing_partner: self.losing_partner.name
