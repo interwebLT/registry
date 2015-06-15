@@ -10,7 +10,7 @@ describe OrderSerializer do
 
     {
       id: order.id,
-      partner: order.partner.name,
+      partner: PartnerSerializer.new(order.partner).serializable_hash,
       order_number: order.order_number,
       total_price: order.total_price.to_f,
       fee: order.fee.to_f,
