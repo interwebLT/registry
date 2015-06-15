@@ -7,6 +7,6 @@ class ObjectActivity < ActiveRecord::Base
   validates :activity_at, presence: true
 
   def self.latest
-    self.all.order(id: :desc).limit(1000)
+    self.all.includes(:partner, product: [:domain, :deleted_domain]).order(id: :desc).limit(1000)
   end
 end
