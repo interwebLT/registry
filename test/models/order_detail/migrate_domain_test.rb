@@ -9,6 +9,7 @@ describe OrderDetail::MigrateDomain do
         type: 'migrate_domain',
         price:  0.00,
         domain: 'domain.ph',
+        object: nil,
         authcode: 'ABC123',
         registrant_handle:  'domains_r',
         registered_at:  '2015-04-10T11:00:00Z',

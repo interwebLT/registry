@@ -31,14 +31,15 @@ def register_domain partner: nil,
   post orders_url, json_request
 end
 
-def assert_completed_register_domain_response domain: DOMAIN
-  assert_register_domain_response partner: alpha_partner(credits: -70.0), domain: domain, status: 'complete'
+def assert_completed_register_domain_response domain: DOMAIN, object: product
+  assert_register_domain_response partner: alpha_partner(credits: -70.0), domain: domain, status: 'complete', object: object
 end
 
 def assert_register_domain_response domain: nil,
                                     partner: alpha_partner,
                                     status: 'complete',
-                                    registrant: CONTACT_HANDLE
+                                    registrant: CONTACT_HANDLE,
+                                    object: product
   assert_response_status_must_be_created
 
   domain_name = domain || DOMAIN
@@ -57,6 +58,7 @@ def assert_register_domain_response domain: nil,
         type: 'domain_create',
         price: 70.00,
         domain: domain_name,
+        object: object,
         authcode: AUTHCODE,
         period: 2,
         registrant_handle: registrant,
@@ -73,7 +75,7 @@ def create_order json_request: {}
 end
 
 def register_domain_order_must_be_created
-  assert_register_domain_response partner: nature_partner, status: 'pending'
+  assert_register_domain_response partner: nature_partner, status: 'pending', object: nil
 
   order_must_be_created status: 'pending', type: OrderDetail::RegisterDomain
 end
@@ -164,6 +166,7 @@ def orders_response
           type: 'domain_create',
           price: 35.00,
           domain: 'domains.ph',
+          object: nil,
           authcode: 'ABC123',
           period: 2,
           registrant_handle: 'domains_r',
@@ -204,6 +207,7 @@ def orders_response
           type: 'domain_renew',
           price: 35.00,
           domain: 'domain.ph',
+          object: nil,
           period: 1,
           renewed_at: '2015-02-14T01:01:00Z'
         }
@@ -241,7 +245,8 @@ def orders_response
         {
           type: 'transfer_domain',
           price: 15.00,
-          domain: 'domain.ph'
+          domain: 'domain.ph',
+          object: nil,
         }
       ]
     },
@@ -281,6 +286,7 @@ def orders_response
             type: 'domain_renew',
             price: 35.00,
             domain: 'domain.ph',
+            object: nil,
             period: 1,
             renewed_at: '2015-02-14T01:01:00Z'
           }
@@ -320,6 +326,7 @@ def orders_response
           type: 'domain_renew',
           price: 35.00,
           domain: 'domain.ph',
+          object: nil,
           period: 1,
           renewed_at: '2015-02-14T01:01:00Z'
         }
@@ -366,6 +373,7 @@ def latest_orders_response
             type: 'domain_renew',
             price: 35.00,
             domain: 'domain.ph',
+            object: nil,
             period: 1,
             renewed_at: '2015-02-14T01:01:00Z'
           }
@@ -404,7 +412,8 @@ def latest_orders_response
         {
           type: 'transfer_domain',
           price: 15.00,
-          domain: 'domain.ph'
+          domain: 'domain.ph',
+          object: nil
         }
       ]
     },
@@ -439,7 +448,8 @@ def latest_orders_response
       order_details: [
         {
           type: 'credits',
-          price: 150.00
+          price: 150.00,
+          object: nil
         }
       ]
     },
@@ -476,6 +486,7 @@ def latest_orders_response
           type: 'domain_renew',
           price: 35.00,
           domain: 'domain.ph',
+          object: nil,
           period: 1,
           renewed_at: '2015-02-14T01:01:00Z'
         }
@@ -514,6 +525,7 @@ def latest_orders_response
           type: 'domain_create',
           price: 35.00,
           domain: 'domains.ph',
+          object: nil,
           authcode: 'ABC123',
           period: 2,
           registrant_handle: 'domains_r',
@@ -554,6 +566,7 @@ def latest_orders_response
           type: 'domain_create',
           price: 35.00,
           domain: 'domains.ph',
+          object: nil,
           authcode: 'ABC123',
           period: 2,
           registrant_handle: 'domains_r',
@@ -594,6 +607,7 @@ def latest_orders_response
           type: 'domain_renew',
           price: 35.00,
           domain: 'domain.ph',
+          object: nil,
           period: 1,
           renewed_at: '2015-02-14T01:01:00Z'
         }
@@ -645,5 +659,13 @@ def alpha_partner credits: 0.00
     email: 'alpha@alpha.ph',
     local: true,
     admin: false
+  }
+end
+
+def product id: 1, type: 'domain', name: 'domain.ph'
+  {
+    id: id,
+    type: type,
+    name: name
   }
 end

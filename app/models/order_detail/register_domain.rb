@@ -45,6 +45,7 @@ class OrderDetail::RegisterDomain < OrderDetail
       type:               'domain_create',
       price:              self.price.to_f,
       domain:             self.domain,
+      object:             self.product.as_json,
       authcode:           self.authcode,
       period:             (self.period.to_i unless self.period.nil?),
       registrant_handle:  self.registrant_handle,

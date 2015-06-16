@@ -72,6 +72,7 @@ class OrderDetail::RenewDomain < OrderDetail
       type: 'domain_renew',
       price: self.price.to_f,
       domain: self.domain,
+      object: self.product.as_json,
       period: self.period.to_i,
       renewed_at: self.renewed_at.iso8601
     }

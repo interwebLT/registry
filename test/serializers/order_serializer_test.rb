@@ -22,6 +22,7 @@ describe OrderSerializer do
           type: 'domain_create',
           price: order_detail.price.to_f,
           domain: order_detail.domain,
+          object: nil,
           authcode: order_detail.authcode,
           period: order_detail.period,
           registrant_handle: order_detail.registrant_handle,

@@ -142,6 +142,7 @@ describe OrderDetail::RegisterDomain do
         type: 'domain_create',
         price: 35.0,
         domain: 'domains.ph',
+        object: nil,
         authcode: 'ABC123',
         period: 2,
         registrant_handle: 'domains_r',

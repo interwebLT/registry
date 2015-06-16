@@ -10,7 +10,8 @@ describe OrderDetail::TransferDomain do
       {
         type: 'transfer_domain',
         price: 15.00,
-        domain: 'domain.ph'
+        domain: 'domain.ph',
+        object: nil
       }
     }
 

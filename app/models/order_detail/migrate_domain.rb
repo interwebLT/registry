@@ -67,6 +67,7 @@ class OrderDetail::MigrateDomain < OrderDetail
       type:               'migrate_domain',
       price:              self.price.to_f,
       domain:             self.domain,
+      object:             self.product.as_json,
       authcode:           self.authcode,
       registrant_handle:  self.registrant_handle,
       registered_at:      self.registered_at.iso8601,
