@@ -41,7 +41,8 @@ class OrderDetail::TransferDomain < OrderDetail
     {
       type: self.action,
       price: self.price.to_f,
-      domain: self.domain
+      domain: self.domain,
+      object: self.product.as_json
     }
   end
 end

@@ -28,6 +28,7 @@ describe OrderDetail::ReplenishCredits do
     let(:expected_json) {
       {
         type: 'credits',
+        object: nil,
         price: 150.00
       }
     }

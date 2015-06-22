@@ -35,6 +35,7 @@ class OrderDetail::ReplenishCredits < OrderDetail
   def as_json options = nil
     {
       type: 'credits',
+      object: self.product.as_json,
       price: price.to_f,
     }
   end

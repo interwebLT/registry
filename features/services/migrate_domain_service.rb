@@ -63,6 +63,11 @@ def assert_completed_migrate_domain_response
         type: 'migrate_domain',
         price: 0.00,
         domain: DOMAIN,
+        object: {
+            id: 1,
+            type: 'domain',
+            name: 'domain.ph'
+          },
         authcode: 'ABC123',
         registrant_handle: CONTACT_HANDLE,
         registered_at: REGISTERED_AT.iso8601,
