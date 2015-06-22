@@ -47,7 +47,6 @@ describe Order do
   describe :aliases do
     subject { build :order }
 
-    specify { subject.order_number.must_equal subject.id }
     specify { subject.ordered_at.must_equal subject.created_at }
   end
 
@@ -128,6 +127,7 @@ describe Order do
       }
 
       specify { subject.order_details.first.must_be_kind_of OrderDetail::MigrateDomain }
+      specify { subject.order_number.wont_be_nil }
     end
   end
 
