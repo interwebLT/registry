@@ -38,7 +38,7 @@ class Order < ActiveRecord::Base
   end
 
   def self.latest
-    all.includes(:order_details, partner: :credits).order(ordered_at: :desc)
+    all.includes(:order_details, partner: :credits).order(ordered_at: :desc).limit(500)
   end
 
   def complete?
