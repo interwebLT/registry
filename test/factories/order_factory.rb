@@ -2,6 +2,9 @@ FactoryGirl.define do
   factory :base_order, class: Order do
     partner
     total_price 150.00
+    sequence(:order_number) do |n|
+      n.to_s(16).rjust(10, '0').upcase
+    end
     fee 0.00
     status Order::COMPLETE_ORDER
     ordered_at '2015-02-27 14:30'.in_time_zone

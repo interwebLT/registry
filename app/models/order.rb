@@ -6,7 +6,6 @@ class Order < ActiveRecord::Base
   monetize :total_price_cents
   monetize :fee_cents
 
-  alias_attribute :order_number, :id
   alias_attribute :ordered_at, :created_at
 
   validates :order_details, presence: true
@@ -33,6 +32,7 @@ class Order < ActiveRecord::Base
     order.updated_at = Time.now
     order.order_details << params[:order_details].collect { |o| OrderDetail.build(o, partner) }
     order.total_price = order.order_details.map(&:price).reduce(0.00, :+)
+    order.generate_orderno
 
     order
   end
@@ -103,7 +103,7 @@ class Order < ActiveRecord::Base
   end
 
   def generate_orderno
-    self.receiptnum = loop do
+    self.order_number = loop do
       orderno = SecureRandom.hex(5).upcase
       break orderno unless self.class.exists? orderno
     end
