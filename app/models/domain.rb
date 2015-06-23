@@ -182,10 +182,10 @@ class Domain < ActiveRecord::Base
   def object_status_must_be_valid
     message = I18n.t 'errors.messages.invalid'
 
-    errors.add :client_hold,                message if client_hold_changed?                and not valid_status self.client_hold
-    errors.add :client_delete_prohibited,   message if client_delete_prohibited_changed?   and not valid_status self.client_delete_prohibited
-    errors.add :client_renew_prohibited,    message if client_renew_prohibited_changed?    and not valid_status self.client_renew_prohibited
-    errors.add :client_transfer_prohibited, message if client_transfer_prohibited_changed? and not valid_status self.client_transfer_prohibited
-    errors.add :client_update_prohibited,   message if client_update_prohibited_changed?   and not valid_status self.client_update_prohibited
+    errors.add :client_hold,                message if not valid_status self.client_hold
+    errors.add :client_delete_prohibited,   message if not valid_status self.client_delete_prohibited
+    errors.add :client_renew_prohibited,    message if not valid_status self.client_renew_prohibited
+    errors.add :client_transfer_prohibited, message if not valid_status self.client_transfer_prohibited
+    errors.add :client_update_prohibited,   message if not valid_status self.client_update_prohibited
   end
 end
