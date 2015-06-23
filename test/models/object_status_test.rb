@@ -2,20 +2,15 @@ require 'test_helper'
 
 describe ObjectStatus do
   describe :associations do
-    subject { create :object_status }
+    subject { create :domain }
 
     specify { subject.product.wont_be_nil }
-    specify { subject.object_status_histories.wont_be_empty }
   end
 
   describe :enforce_status do
-    subject { create :object_status }
+    subject { create :domain }
 
-    before do
-      create :domain, product: subject.product
-    end
-
-    let(:domain) { subject.product.domain }
+    let(:domain) { subject }
     let(:activities) { domain.domain_activities }
 
     context :when_created do
@@ -30,6 +25,8 @@ describe ObjectStatus do
 
     context :when_domain_hosts_exists do
       before do
+
+
         create :domain_host, product: subject.product, name: 'ns3.domains.ph'
         create :domain_host, product: subject.product, name: 'ns4.domains.ph'
       end

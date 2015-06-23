@@ -1,16 +1,10 @@
+# This class should no longer be actively used. However, it's required so that
+# the migrations still work properly.
 class ObjectStatus < ActiveRecord::Base
   belongs_to :product
 
-  has_many :object_status_histories
-
-  before_save :enforce_status
-  before_save :create_object_activity
-
-  after_save  :create_object_status_history
-
   def update_status
     enforce_status
-    self.save
   end
 
   private
@@ -30,7 +24,7 @@ class ObjectStatus < ActiveRecord::Base
 
   def create_object_activity
     return true unless self.product.domain
-
+    
     create_update_activity :ok                          if ok_changed?
     create_update_activity :inactive                    if inactive_changed?
     create_update_activity :client_hold                 if client_hold_changed?
@@ -47,16 +41,5 @@ class ObjectStatus < ActiveRecord::Base
                                   property_changed: status.to_s,
                                   old_value: self.send(status.to_s + '_was').to_s,
                                   value: self.send(status.to_s).to_s
-  end
-
-  def create_object_status_history
-    ObjectStatusHistory.create  object_status:              self,
-                                ok:                         self.ok,
-                                inactive:                   self.inactive,
-                                client_hold:                self.client_hold,
-                                client_delete_prohibited:   self.client_delete_prohibited,
-                                client_renew_prohibited:    self.client_renew_prohibited,
-                                client_transfer_prohibited: self.client_transfer_prohibited,
-                                client_update_prohibited:   self.client_update_prohibited
   end
 end

@@ -25,6 +25,9 @@ class Domain < ActiveRecord::Base
 
   before_destroy :create_deleted_domain
 
+  before_save :enforce_status
+  # before_save :create_object_activity
+
   def self.latest
     all.includes(:registrant, :partner, product: :object_status).order(registered_at: :desc).limit(1000)
   end
@@ -99,6 +102,10 @@ class Domain < ActiveRecord::Base
     self.delete
   end
 
+  def update_status
+    self.save
+  end
+
   private
 
   def contact_handle_associations_must_exist
@@ -127,6 +134,14 @@ class Domain < ActiveRecord::Base
 
     create_update_activity :expires_at  if expires_at_changed?
     create_update_activity :authcode    if authcode_changed?
+
+    create_update_activity :ok                          if ok_changed?
+    create_update_activity :inactive                    if inactive_changed?
+    create_update_activity :client_hold                 if client_hold_changed?
+    create_update_activity :client_delete_prohibited    if client_delete_prohibited_changed?
+    create_update_activity :client_renew_prohibited     if client_renew_prohibited_changed?
+    create_update_activity :client_transfer_prohibited  if client_transfer_prohibited_changed?
+    create_update_activity :client_update_prohibited    if client_update_prohibited_changed?
   end
 
   def create_update_activity field
@@ -148,5 +163,18 @@ class Domain < ActiveRecord::Base
 
   def create_deleted_domain
     delete_domain! on: DateTime.now
+  end
+  
+  def enforce_status
+    prohibited = client_delete_prohibited
+    prohibited = (prohibited or client_renew_prohibited)
+    prohibited = (prohibited or client_transfer_prohibited)
+    prohibited = (prohibited or client_update_prohibited)
+
+    self.inactive = self.product.domain_hosts.empty?
+
+    self.ok = (not (inactive or client_hold or prohibited))
+
+    true
   end
 end

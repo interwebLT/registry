@@ -20,12 +20,6 @@ describe Product do
     specify { subject.deleted_domain.wont_be_nil }
   end
 
-  describe :callbacks do
-    subject { create :product }
-
-    specify { subject.object_status.wont_be_nil }
-  end
-
   describe :as_json do
     context :when_domain_product do
       subject { create :domain_product }

@@ -79,7 +79,7 @@ describe DomainHost do
     end
 
     let(:activities) { Domain.last.domain_activities }
-    let(:object_status) { Domain.last.product.object_status }
+    let(:object_status) { Domain.last }
 
     context :when_adding_domain_host do
       specify { activities.count.must_equal 4 }

@@ -7,7 +7,7 @@ def saved_domain name: DOMAIN
 end
 
 def object_status
-  saved_domain.product.object_status
+  saved_domain
 end
 
 def domain_does_not_exist domain: DOMAIN

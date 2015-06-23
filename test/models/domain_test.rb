@@ -240,7 +240,7 @@ describe Domain do
 
     let(:expires_at) { '2015-01-01 00:00'.in_time_zone }
     let(:activities) { subject.domain_activities }
-    let(:object_status) { subject.product.object_status }
+    let(:object_status) { subject }
 
     context :when_created do
       specify { activities.count.must_equal 1 }
@@ -303,7 +303,7 @@ describe Domain do
 
     let(:before_action) { }
     let(:update_result) { @update_result }
-    let(:object_status) { subject.product.object_status }
+    let(:object_status) { subject }
 
     context :when_successful do
       let(:params) {

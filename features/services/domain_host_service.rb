@@ -97,5 +97,5 @@ end
 def assert_domain_status_must_not_be_client_hold
   saved_domain = Domain.named(DOMAIN)
 
-  saved_domain.product.object_status.client_hold.must_equal false
+  saved_domain.client_hold.must_equal false
 end
