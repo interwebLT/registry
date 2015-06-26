@@ -12,6 +12,8 @@ class Order < ActiveRecord::Base
 
   validate :partner_must_exist
 
+  before_create :generate_order_number
+
   COMPLETE_ORDER  = 'complete'
   PENDING_ORDER   = 'pending'
   ERROR_ORDER     = 'error'
@@ -32,7 +34,6 @@ class Order < ActiveRecord::Base
     order.updated_at = Time.now
     order.order_details << params[:order_details].collect { |o| OrderDetail.build(o, partner) }
     order.total_price = order.order_details.map(&:price).reduce(0.00, :+)
-    order.generate_orderno
 
     order
   end
@@ -102,14 +103,14 @@ class Order < ActiveRecord::Base
     reversed_order.complete!
   end
 
-  def generate_orderno
+  private
+
+  def generate_order_number
     self.order_number = loop do
-      orderno = SecureRandom.hex(5).upcase
-      break orderno unless self.class.exists? orderno
+      order_number = SecureRandom.hex(10).upcase
+      break order_number unless self.class.exists? order_number: order_number
     end
   end
-
-  private
 
   def partner_must_exist
     errors.add :partner, I18n.t('errors.messages.invalid') if partner.nil?
