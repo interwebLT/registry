@@ -107,7 +107,7 @@ class Order < ActiveRecord::Base
 
   def generate_order_number
     self.order_number = loop do
-      order_number = SecureRandom.hex(10).upcase
+      order_number = SecureRandom.hex(5).upcase
       break order_number unless self.class.exists? order_number: order_number
     end
   end
