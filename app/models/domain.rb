@@ -27,6 +27,8 @@ class Domain < ActiveRecord::Base
 
   before_save :enforce_status
 
+  after_initialize :enforce_status
+
   validate :object_status_must_be_valid
 
   def self.latest
@@ -165,14 +167,20 @@ class Domain < ActiveRecord::Base
   def create_deleted_domain
     delete_domain! on: DateTime.now
   end
-  
+
   def enforce_status
+    self.client_delete_prohibited = false if client_delete_prohibited.nil?
+    self.client_renew_prohibited = false if client_renew_prohibited.nil?
+    self.client_update_prohibited = false if client_update_prohibited.nil?
+    self.client_transfer_prohibited = false if client_transfer_prohibited.nil?
+    self.client_hold = false if client_hold.nil?
+
     prohibited = client_delete_prohibited
     prohibited = (prohibited or client_renew_prohibited)
     prohibited = (prohibited or client_transfer_prohibited)
     prohibited = (prohibited or client_update_prohibited)
 
-    self.inactive = self.product.domain_hosts.empty?
+    self.inactive = self.product.nil? || self.product.domain_hosts.empty?
 
     self.ok = (not (inactive or client_hold or prohibited))
 

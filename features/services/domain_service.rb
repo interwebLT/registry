@@ -6,10 +6,6 @@ def saved_domain name: DOMAIN
   Domain.named(name)
 end
 
-def object_status
-  saved_domain
-end
-
 def domain_does_not_exist domain: DOMAIN
   saved_domain = Domain.named(domain)
   saved_domain.delete if saved_domain
@@ -92,7 +88,7 @@ end
 def domain_changes_not_allowed status: status
   status_field = status.gsub(' ', '_')
 
-  object_status.update(status_field.to_sym => true)
+  saved_domain.update(status_field.to_sym => true)
 end
 
 def view_domain_info
@@ -133,25 +129,23 @@ def assert_register_domain_activity_must_be_created
 end
 
 def assert_domain_status_must_be_ok
-  object_status.ok.must_equal true
-  object_status.inactive.must_equal false
-  object_status.client_hold.must_equal false
-  object_status.client_delete_prohibited.must_equal false
-  object_status.client_renew_prohibited.must_equal false
-  object_status.client_transfer_prohibited.must_equal false
-  object_status.client_update_prohibited.must_equal false
+  saved_domain.ok.must_equal true
+  saved_domain.inactive.must_equal false
+  saved_domain.client_hold.must_equal false
+  saved_domain.client_delete_prohibited.must_equal false
+  saved_domain.client_renew_prohibited.must_equal false
+  saved_domain.client_transfer_prohibited.must_equal false
+  saved_domain.client_update_prohibited.must_equal false
 end
 
 def assert_domain_status_must_be_inactive
-  object_status.ok.must_equal false
-  object_status.inactive.must_equal true
-  object_status.client_hold.must_equal false
-  object_status.client_delete_prohibited.must_equal false
-  object_status.client_renew_prohibited.must_equal false
-  object_status.client_transfer_prohibited.must_equal false
-  object_status.client_update_prohibited.must_equal false
-
-  object_status.object_status_histories.last.inactive.must_equal true
+  saved_domain.ok.must_equal false
+  saved_domain.inactive.must_equal true
+  saved_domain.client_hold.must_equal false
+  saved_domain.client_delete_prohibited.must_equal false
+  saved_domain.client_renew_prohibited.must_equal false
+  saved_domain.client_transfer_prohibited.must_equal false
+  saved_domain.client_update_prohibited.must_equal false
 end
 
 def assert_domain_must_not_have_hosts
@@ -165,7 +159,7 @@ def assert_domain_status_response status:, action:
 
   assert_response_must_be_updated_domain with: { status_field.to_sym => action_flag }
 
-  object_status.send(status_field).must_equal action_flag
+  saved_domain.send(status_field).must_equal action_flag
 end
 
 def assert_domain_info_displayed

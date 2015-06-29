@@ -44,11 +44,14 @@ class OrderDetail::MigrateDomain < OrderDetail
                         authcode:           self.authcode,
                         registrant_handle:  self.registrant_handle,
                         product:            product
+    p domain
 
     if domain.save
       self.order.partner.credits.create order: self.order,
                                         credits: 0.00,
                                         activity_type: 'use'
+
+      p domain
 
       self.product = domain.product
       self.status = COMPLETE_ORDER_DETAIL
