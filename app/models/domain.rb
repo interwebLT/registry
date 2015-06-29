@@ -166,10 +166,6 @@ class Domain < ActiveRecord::Base
     [true, false, 'true', 'false'].include? value
   end
 
-  def object_status
-    self.product.object_status
-  end
-
   def create_deleted_domain
     delete_domain! on: DateTime.now
   end
