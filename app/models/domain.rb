@@ -18,7 +18,7 @@ class Domain < ActiveRecord::Base
   validate :contact_handle_associations_must_exist
   validate :object_status_must_be_valid
 
-  validates :domain, uniqueness: { scope: [:name, :extension], message: 'invalid' }
+  validates :domain, uniqueness: { scope: [:name], message: 'invalid' }
 
   after_create :create_domain_registered_activity
 
