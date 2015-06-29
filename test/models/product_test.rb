@@ -15,15 +15,8 @@ describe Product do
 
     specify { subject.order_details.wont_be_empty }
     specify { subject.domain.wont_be_nil }
-    specify { subject.object_status.wont_be_nil }
     specify { subject.object_activities.wont_be_empty }
     specify { subject.deleted_domain.wont_be_nil }
-  end
-
-  describe :callbacks do
-    subject { create :product }
-
-    specify { subject.object_status.wont_be_nil }
   end
 
   describe :as_json do

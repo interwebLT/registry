@@ -47,6 +47,18 @@ Feature: Update Domain as Administrator
       | unset   | client transfer prohibited  |
       | unset   | client update prohibited    |
 
+  Scenario Outline: Non-boolean status values
+    When  I update an existing domain with <invalid parameter>
+    Then  response must be ok
+
+    Examples:
+      | invalid parameter                   |
+      | invalid client hold                 |
+      | invalid client delete prohibited    |
+      | invalid client transfer prohibited  |
+      | invalid client renew prohibited     |
+      | invalid client update prohibited    |
+
   Scenario Outline: Invalid parameters
     When  I update an existing domain with <invalid parameter>
     Then  error must be validation failed
@@ -59,13 +71,8 @@ Feature: Update Domain as Administrator
       | non-existing admin handle           | admin_handle                | invalid |
       | non-existing billing handle         | billing_handle              | invalid |
       | non-existing tech handle            | tech_handle                 | invalid |
-      | invalid client hold                 | client_hold                 | invalid |
-      | invalid client delete prohibited    | client_delete_prohibited    | invalid |
-      | invalid client transfer prohibited  | client_transfer_prohibited  | invalid |
-      | invalid client renew prohibited     | client_renew_prohibited     | invalid |
-      | invalid client update prohibited    | client_update_prohibited    | invalid |
-      | nil client hold                     | client_hold                 | invalid |
-      | nil client delete prohibited        | client_delete_prohibited    | invalid |
+      | nil client hold                     | client_hold                 | invalid | 
+      | nil client delete prohibited        | client_delete_prohibited    | invalid | 
       | nil client transfer prohibited      | client_transfer_prohibited  | invalid |
       | nil client renew prohibited         | client_renew_prohibited     | invalid |
       | nil client update prohibited        | client_update_prohibited    | invalid |

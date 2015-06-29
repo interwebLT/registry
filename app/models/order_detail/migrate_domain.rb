@@ -44,7 +44,6 @@ class OrderDetail::MigrateDomain < OrderDetail
                         authcode:           self.authcode,
                         registrant_handle:  self.registrant_handle,
                         product:            product
-
     if domain.save
       self.order.partner.credits.create order: self.order,
                                         credits: 0.00,

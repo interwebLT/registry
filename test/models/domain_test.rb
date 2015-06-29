@@ -256,7 +256,6 @@ describe Domain do
 
     let(:expires_at) { '2015-01-01 00:00'.in_time_zone }
     let(:activities) { subject.domain_activities }
-    let(:object_status) { subject.product.object_status }
 
     context :when_created do
       specify { activities.count.must_equal 1 }
@@ -319,7 +318,6 @@ describe Domain do
 
     let(:before_action) { }
     let(:update_result) { @update_result }
-    let(:object_status) { subject.product.object_status }
 
     context :when_successful do
       let(:params) {
@@ -334,21 +332,21 @@ describe Domain do
 
       specify { update_result.must_equal true }
       specify { subject.errors.must_be_empty }
-      specify { object_status.client_hold.must_equal true }
-      specify { object_status.client_delete_prohibited.must_equal true }
-      specify { object_status.client_transfer_prohibited.must_equal true }
-      specify { object_status.client_renew_prohibited.must_equal true }
-      specify { object_status.client_update_prohibited.must_equal true }
+      specify { subject.client_hold.must_equal true }
+      specify { subject.client_delete_prohibited.must_equal true }
+      specify { subject.client_transfer_prohibited.must_equal true }
+      specify { subject.client_renew_prohibited.must_equal true }
+      specify { subject.client_update_prohibited.must_equal true }
     end
 
     context :when_unset_successful do
       let(:before_action) do
-        object_status.client_hold = true
-        object_status.client_delete_prohibited = true
-        object_status.client_renew_prohibited = true
-        object_status.client_transfer_prohibited = true
-        object_status.client_update_prohibited = true
-        object_status.save
+        subject.client_hold = true
+        subject.client_delete_prohibited = true
+        subject.client_renew_prohibited = true
+        subject.client_transfer_prohibited = true
+        subject.client_update_prohibited = true
+        subject.save
       end
 
       let(:params) {
@@ -363,56 +361,46 @@ describe Domain do
 
       specify { update_result.must_equal true }
       specify { subject.errors.must_be_empty }
-      specify { object_status.client_hold.must_equal false }
-      specify { object_status.client_delete_prohibited.must_equal false }
-      specify { object_status.client_transfer_prohibited.must_equal false }
-      specify { object_status.client_renew_prohibited.must_equal false }
-      specify { object_status.client_update_prohibited.must_equal false }
+      specify { subject.client_hold.must_equal false }
+      specify { subject.client_delete_prohibited.must_equal false }
+      specify { subject.client_transfer_prohibited.must_equal false }
+      specify { subject.client_renew_prohibited.must_equal false }
+      specify { subject.client_update_prohibited.must_equal false }
     end
 
     context :when_client_hold_invalid do
       let(:params) { { client_hold: 'invalid' } }
 
-      specify { update_result.must_equal false }
-      specify { subject.errors.count.must_equal 1 }
-      specify { subject.errors[:client_hold].must_equal ['invalid'] }
-      specify { object_status.client_hold.must_equal false }
+      specify { update_result.must_equal true }
+      specify { subject.client_hold.must_equal false }
     end
 
     context :when_client_delete_prohibited_invalid do
       let(:params) { { client_delete_prohibited: 'invalid' } }
 
-      specify { update_result.must_equal false }
-      specify { subject.errors.count.must_equal 1 }
-      specify { subject.errors[:client_delete_prohibited].must_equal ['invalid'] }
-      specify { object_status.client_delete_prohibited.must_equal false }
+      specify { update_result.must_equal true }
+      specify { subject.client_delete_prohibited.must_equal false }
     end
 
     context :when_client_renew_prohibited_invalid do
       let(:params) { { client_renew_prohibited: 'invalid' } }
 
-      specify { update_result.must_equal false }
-      specify { subject.errors.count.must_equal 1 }
-      specify { subject.errors[:client_renew_prohibited].must_equal ['invalid'] }
-      specify { object_status.client_renew_prohibited.must_equal false }
+      specify { update_result.must_equal true }
+      specify { subject.client_renew_prohibited.must_equal false }
     end
 
     context :when_client_transfer_prohibited_invalid do
       let(:params) { { client_transfer_prohibited: 'invalid' } }
 
-      specify { update_result.must_equal false }
-      specify { subject.errors.count.must_equal 1 }
-      specify { subject.errors[:client_transfer_prohibited].must_equal ['invalid'] }
-      specify { object_status.client_transfer_prohibited.must_equal false }
+      specify { update_result.must_equal true }
+      specify { subject.client_transfer_prohibited.must_equal false }
     end
 
     context :when_client_update_prohibited_invalid do
       let(:params) { { client_update_prohibited: 'invalid' } }
 
-      specify { update_result.must_equal false }
-      specify { subject.errors.count.must_equal 1 }
-      specify { subject.errors[:client_update_prohibited].must_equal ['invalid'] }
-      specify { object_status.client_update_prohibited.must_equal false }
+      specify { update_result.must_equal true }
+      specify { subject.client_update_prohibited.must_equal false }
     end
   end
 
@@ -477,6 +465,14 @@ describe Domain do
     specify { subject.domain_id.must_equal domain.id }
 
     specify { subject.product.domain_hosts.must_be_empty }
+
+    specify { subject.ok.must_equal domain.ok }
+    specify { subject.inactive.must_equal domain.inactive }
+    specify { subject.client_hold.must_equal domain.client_hold }
+    specify { subject.client_update_prohibited.must_equal domain.client_update_prohibited }
+    specify { subject.client_transfer_prohibited.must_equal domain.client_transfer_prohibited }
+    specify { subject.client_renew_prohibited.must_equal domain.client_renew_prohibited }
+    specify { subject.client_delete_prohibited.must_equal domain.client_delete_prohibited }
 
     specify { activities[7].must_be_kind_of ObjectActivity::Update }
     specify { activities[7].property_changed.must_equal 'domain_host' }

@@ -48,6 +48,6 @@ class DomainSerializer < ActiveModel::Serializer
   private
 
   def object_status
-    object.product.object_status
+    object
   end
 end
