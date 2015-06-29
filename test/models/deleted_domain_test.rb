@@ -19,10 +19,20 @@ describe DeletedDomain do
 
     before do
       subject.restore!
+
+      @restored = Domain.find_by name: domain_name
     end
 
     specify { DeletedDomain.exists?(name: domain_name).wont_equal true }
     specify { Domain.exists?(name: domain_name).must_equal true }
+
+    specify { subject.ok.must_equal @restored.ok }
+    specify { subject.inactive.must_equal @restored.inactive }
+    specify { subject.client_hold.must_equal @restored.client_hold }
+    specify { subject.client_update_prohibited.must_equal @restored.client_update_prohibited }
+    specify { subject.client_transfer_prohibited.must_equal @restored.client_transfer_prohibited }
+    specify { subject.client_renew_prohibited.must_equal @restored.client_renew_prohibited }
+    specify { subject.client_delete_prohibited.must_equal @restored.client_delete_prohibited }
   end
 end
 

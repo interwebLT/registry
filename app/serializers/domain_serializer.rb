@@ -24,30 +24,4 @@ class DomainSerializer < ActiveModel::Serializer
   def expires_at
     object.expires_at.iso8601
   end
-
-  def client_hold
-    object_status.client_hold
-  end
-
-  def client_delete_prohibited
-    object_status.client_delete_prohibited
-  end
-
-  def client_renew_prohibited
-    object_status.client_renew_prohibited
-  end
-
-  def client_transfer_prohibited
-    object_status.client_transfer_prohibited
-  end
-
-  def client_update_prohibited
-    object_status.client_update_prohibited
-  end
-
-  private
-
-  def object_status
-    object.product.object_status
-  end
 end

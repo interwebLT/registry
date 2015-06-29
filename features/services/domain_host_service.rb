@@ -85,9 +85,9 @@ end
 def assert_remove_domain_host_domain_activity_must_be_created
   saved_domain = Domain.named(DOMAIN)
 
-  saved_domain.domain_activities.count.must_equal 5
+  saved_domain.domain_activities.count.must_equal 7
 
-  domain_activity = saved_domain.domain_activities.last
+  domain_activity = saved_domain.domain_activities[4]
   domain_activity.must_be_instance_of ObjectActivity::Update
   domain_activity.property_changed.must_equal 'domain_host'
   domain_activity.old_value.must_equal HOST_NAME
@@ -97,5 +97,5 @@ end
 def assert_domain_status_must_not_be_client_hold
   saved_domain = Domain.named(DOMAIN)
 
-  saved_domain.product.object_status.client_hold.must_equal false
+  saved_domain.client_hold.must_equal false
 end

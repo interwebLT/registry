@@ -16,7 +16,6 @@ class Domain < ActiveRecord::Base
   alias_attribute :domain, :name
 
   validate :contact_handle_associations_must_exist
-  validate :object_status_must_be_valid
 
   validates :domain, uniqueness: { scope: [:name], message: 'invalid' }
 
@@ -24,59 +23,14 @@ class Domain < ActiveRecord::Base
 
   before_update :create_domain_changed_activity
 
-  after_save :update_object_status
-
   before_destroy :create_deleted_domain
 
-  attr_accessor :actual_client_hold_value
-  attr_accessor :actual_client_delete_prohibited_value
-  attr_accessor :actual_client_transfer_prohibited_value
-  attr_accessor :actual_client_renew_prohibited_value
-  attr_accessor :actual_client_update_prohibited_value
+  before_save :enforce_status
 
-  attr_accessor :client_hold_changed
-  attr_accessor :client_delete_prohibited_changed
-  attr_accessor :client_transfer_prohibited_changed
-  attr_accessor :client_renew_prohibited_changed
-  attr_accessor :client_update_prohibited_changed
+  validate :domain_status_must_be_valid
 
   def self.latest
-    all.includes(:registrant, :partner, product: :object_status).order(registered_at: :desc).limit(1000)
-  end
-
-  def client_hold= value
-    self.client_hold_changed = true
-    self.actual_client_hold_value = value
-
-    object_status.client_hold = value
-  end
-
-  def client_delete_prohibited= value
-    self.client_delete_prohibited_changed = true
-    self.actual_client_delete_prohibited_value = value
-
-    object_status.client_delete_prohibited = value
-  end
-
-  def client_renew_prohibited= value
-    self.client_renew_prohibited_changed = true
-    self.actual_client_renew_prohibited_value = value
-
-    object_status.client_renew_prohibited = value
-  end
-
-  def client_transfer_prohibited= value
-    self.client_transfer_prohibited_changed = true
-    self.actual_client_transfer_prohibited_value  = value
-
-    object_status.client_transfer_prohibited = value
-  end
-
-  def client_update_prohibited= value
-    self.client_update_prohibited_changed = true
-    self.actual_client_update_prohibited_value  = value
-
-    object_status.client_update_prohibited = value
+    all.includes(:registrant, :partner).order(registered_at: :desc).limit(1000)
   end
 
   def self.available_tlds domain_name
@@ -133,20 +87,30 @@ class Domain < ActiveRecord::Base
   def delete_domain! on:
     self.product.domain_hosts.map(&:destroy)
 
-    DeletedDomain.create  product:            self.product,
-                          partner:            self.partner,
-                          name:               self.full_name,
-                          authcode:           self.authcode,
-                          registrant_handle:  self.registrant_handle,
-                          admin_handle:       self.admin_handle,
-                          billing_handle:     self.billing_handle,
-                          tech_handle:        self.tech_handle,
-                          registered_at:      self.registered_at,
-                          expires_at:         self.expires_at,
-                          deleted_at:         on,
-                          domain_id:          self.id
+    DeletedDomain.create  product:                    self.product,
+                          partner:                    self.partner,
+                          name:                       self.full_name,
+                          authcode:                   self.authcode,
+                          registrant_handle:          self.registrant_handle,
+                          admin_handle:               self.admin_handle,
+                          billing_handle:             self.billing_handle,
+                          tech_handle:                self.tech_handle,
+                          registered_at:              self.registered_at,
+                          expires_at:                 self.expires_at,
+                          deleted_at:                 on,
+                          domain_id:                  self.id,
+                          ok:                         self.ok,
+                          inactive:                   self.inactive,
+                          client_renew_prohibited:    self.client_renew_prohibited,
+                          client_delete_prohibited:   self.client_delete_prohibited,
+                          client_transfer_prohibited: self.client_transfer_prohibited,
+                          client_update_prohibited:   self.client_update_prohibited
 
     self.delete
+  end
+
+  def update_status
+    self.save
   end
 
   private
@@ -177,6 +141,14 @@ class Domain < ActiveRecord::Base
 
     create_update_activity :expires_at  if expires_at_changed?
     create_update_activity :authcode    if authcode_changed?
+
+    create_update_activity :ok                          if ok_changed?
+    create_update_activity :inactive                    if inactive_changed?
+    create_update_activity :client_hold                 if client_hold_changed?
+    create_update_activity :client_delete_prohibited    if client_delete_prohibited_changed?
+    create_update_activity :client_renew_prohibited     if client_renew_prohibited_changed?
+    create_update_activity :client_transfer_prohibited  if client_transfer_prohibited_changed?
+    create_update_activity :client_update_prohibited    if client_update_prohibited_changed?
   end
 
   def create_update_activity field
@@ -192,25 +164,36 @@ class Domain < ActiveRecord::Base
     [true, false, 'true', 'false'].include? value
   end
 
-  def object_status
-    self.product.object_status
-  end
-
-  def update_object_status
-    object_status.save
-  end
-
-  def object_status_must_be_valid
-    message = I18n.t 'errors.messages.invalid'
-
-    errors.add :client_hold,                message if client_hold_changed                and not valid_status self.actual_client_hold_value
-    errors.add :client_delete_prohibited,   message if client_delete_prohibited_changed   and not valid_status self.actual_client_delete_prohibited_value
-    errors.add :client_renew_prohibited,    message if client_renew_prohibited_changed    and not valid_status self.actual_client_renew_prohibited_value
-    errors.add :client_transfer_prohibited, message if client_transfer_prohibited_changed and not valid_status self.actual_client_transfer_prohibited_value
-    errors.add :client_update_prohibited,   message if client_update_prohibited_changed   and not valid_status self.actual_client_update_prohibited_value
-  end
-
   def create_deleted_domain
     delete_domain! on: DateTime.now
+  end
+
+  def enforce_status
+    self.client_delete_prohibited = false if client_delete_prohibited.nil?
+    self.client_renew_prohibited = false if client_renew_prohibited.nil?
+    self.client_update_prohibited = false if client_update_prohibited.nil?
+    self.client_transfer_prohibited = false if client_transfer_prohibited.nil?
+    self.client_hold = false if client_hold.nil?
+
+    prohibited = client_delete_prohibited
+    prohibited = (prohibited or client_renew_prohibited)
+    prohibited = (prohibited or client_transfer_prohibited)
+    prohibited = (prohibited or client_update_prohibited)
+
+    self.inactive = self.product.nil? || self.product.domain_hosts.empty?
+
+    self.ok = (not (inactive or client_hold or prohibited))
+
+    true
+  end
+
+  def domain_status_must_be_valid
+    message = I18n.t 'errors.messages.invalid'
+
+    errors.add :client_hold,                message if client_hold_changed?                and not valid_status self.client_hold
+    errors.add :client_delete_prohibited,   message if client_delete_prohibited_changed?   and not valid_status self.client_delete_prohibited
+    errors.add :client_renew_prohibited,    message if client_renew_prohibited_changed?    and not valid_status self.client_renew_prohibited
+    errors.add :client_transfer_prohibited, message if client_transfer_prohibited_changed? and not valid_status self.client_transfer_prohibited
+    errors.add :client_update_prohibited,   message if client_update_prohibited_changed?   and not valid_status self.client_update_prohibited
   end
 end

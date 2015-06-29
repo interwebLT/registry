@@ -8,6 +8,7 @@ class DomainHost < ActiveRecord::Base
 
   after_create :create_add_domain_host_domain_activity
   before_destroy :create_remove_domain_host_domain_activity
+  after_destroy :update_domain_status
 
   private
 
@@ -24,7 +25,7 @@ class DomainHost < ActiveRecord::Base
                                   property_changed: :domain_host,
                                   value: self.name
 
-    product.object_status.update_status
+    product.domain.update_status
   end
 
   def create_remove_domain_host_domain_activity
@@ -33,7 +34,9 @@ class DomainHost < ActiveRecord::Base
                                   product: self.product,
                                   property_changed: :domain_host,
                                   old_value: self.name
+  end
 
-    product.object_status.update_status
+  def update_domain_status
+    product.domain.save
   end
 end

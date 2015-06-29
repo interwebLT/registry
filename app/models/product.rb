@@ -7,8 +7,6 @@ class Product < ActiveRecord::Base
   has_one :deleted_domain
   has_one :object_status
 
-  after_create :create_object_status
-
   def as_json options = nil
     if self.domain
       domain_json
@@ -18,10 +16,6 @@ class Product < ActiveRecord::Base
   end
 
   private
-
-  def create_object_status
-    ObjectStatus.create product: self
-  end
 
   def domain_json
     {

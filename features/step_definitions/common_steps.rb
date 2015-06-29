@@ -18,6 +18,10 @@ Then /^error must be not found$/ do
   assert_response_message_must_be_not_found
 end
 
+Then /^response must be ok$/ do
+  assert_response_status_must_be_ok
+end
+
 Then /^validation error on (.*?) must be "(.*?)"$/ do |field, error|
   assert_validation_failed_errors_must_include field, error
 end
