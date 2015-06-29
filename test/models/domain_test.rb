@@ -233,6 +233,22 @@ describe Domain do
       specify { subject.errors.count.must_equal 1 }
       specify { subject.errors[:domain].must_equal ['invalid'] }
     end
+
+    context :when_domain_name_exists_extension do
+      before do
+        create :domain, name:       'existing.ph',
+                        registrant: subject.registrant,
+                        extension:  '.ph'
+
+        subject.name = 'existing.ph'
+
+        subject.valid?
+      end
+
+      specify { subject.valid?.must_equal false }
+      specify { subject.errors.count.must_equal 1 }
+      specify { subject.errors[:domain].must_equal ['invalid'] }
+    end
   end
 
   describe :callbacks do
