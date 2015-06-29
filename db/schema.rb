@@ -124,26 +124,26 @@ ActiveRecord::Schema.define(version: 20150623055846) do
   end
 
   create_table "domains", force: :cascade do |t|
-    t.integer  "product_id",                             null: false
-    t.integer  "partner_id",                             null: false
-    t.string   "name",                       limit: 128, null: false
+    t.integer  "product_id",                                             null: false
+    t.integer  "partner_id",                                             null: false
+    t.string   "name",                       limit: 128,                 null: false
     t.string   "extension",                  limit: 10
-    t.string   "authcode",                   limit: 64,  null: false
-    t.datetime "registered_at",                          null: false
-    t.datetime "expires_at",                             null: false
-    t.string   "registrant_handle",          limit: 16,  null: false
+    t.string   "authcode",                   limit: 64,                  null: false
+    t.datetime "registered_at",                                          null: false
+    t.datetime "expires_at",                                             null: false
+    t.string   "registrant_handle",          limit: 16,                  null: false
     t.string   "admin_handle",               limit: 16
     t.string   "tech_handle",                limit: 16
     t.string   "billing_handle",             limit: 16
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.boolean  "ok"
-    t.boolean  "inactive"
-    t.boolean  "client_hold"
-    t.boolean  "client_delete_prohibited"
-    t.boolean  "client_renew_prohibited"
-    t.boolean  "client_transfer_prohibited"
-    t.boolean  "client_update_prohibited"
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
+    t.boolean  "ok",                                     default: false, null: false
+    t.boolean  "inactive",                               default: true,  null: false
+    t.boolean  "client_hold",                            default: false, null: false
+    t.boolean  "client_delete_prohibited",               default: false, null: false
+    t.boolean  "client_renew_prohibited",                default: false, null: false
+    t.boolean  "client_transfer_prohibited",             default: false, null: false
+    t.boolean  "client_update_prohibited",               default: false, null: false
   end
 
   create_table "host_addresses", force: :cascade do |t|
