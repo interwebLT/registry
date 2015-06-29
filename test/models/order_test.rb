@@ -127,7 +127,6 @@ describe Order do
       }
 
       specify { subject.order_details.first.must_be_kind_of OrderDetail::MigrateDomain }
-      specify { subject.order_number.wont_be_nil }
     end
   end
 

@@ -10,12 +10,14 @@ describe Partner do
       create :domain, partner: subject, registrant: contact
       create :partner_pricing, partner: subject
       create :credit, partner: subject
+      create :host, partner: subject
     end
 
     specify { subject.domains.wont_be_empty }
     specify { subject.credits.wont_be_empty }
     specify { subject.partner_configurations.wont_be_empty }
     specify { subject.partner_pricings.wont_be_empty }
+    specify { subject.hosts.wont_be_empty }
   end
 
   describe :current_balance do
