@@ -29,10 +29,10 @@ class Domain < ActiveRecord::Base
 
   after_initialize :enforce_status
 
-  validate :object_status_must_be_valid
+  validate :domain_status_must_be_valid
 
   def self.latest
-    all.includes(:registrant, :partner, product: :object_status).order(registered_at: :desc).limit(1000)
+    all.includes(:registrant, :partner).order(registered_at: :desc).limit(1000)
   end
 
   def self.available_tlds domain_name
@@ -193,7 +193,7 @@ class Domain < ActiveRecord::Base
     true
   end
 
-  def object_status_must_be_valid
+  def domain_status_must_be_valid
     message = I18n.t 'errors.messages.invalid'
 
     errors.add :client_hold,                message if client_hold_changed?                and not valid_status self.client_hold
