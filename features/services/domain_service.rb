@@ -85,7 +85,7 @@ def update_domain with: {}, scenario: nil
   patch domain_path(DOMAIN), json_request
 end
 
-def domain_changes_not_allowed status: status
+def domain_changes_not_allowed status:
   status_field = status.gsub(' ', '_')
 
   saved_domain.update(status_field.to_sym => true)
