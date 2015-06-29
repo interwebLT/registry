@@ -89,18 +89,24 @@ class Domain < ActiveRecord::Base
   def delete_domain! on:
     self.product.domain_hosts.map(&:destroy)
 
-    DeletedDomain.create  product:            self.product,
-                          partner:            self.partner,
-                          name:               self.full_name,
-                          authcode:           self.authcode,
-                          registrant_handle:  self.registrant_handle,
-                          admin_handle:       self.admin_handle,
-                          billing_handle:     self.billing_handle,
-                          tech_handle:        self.tech_handle,
-                          registered_at:      self.registered_at,
-                          expires_at:         self.expires_at,
-                          deleted_at:         on,
-                          domain_id:          self.id
+    DeletedDomain.create  product:                    self.product,
+                          partner:                    self.partner,
+                          name:                       self.full_name,
+                          authcode:                   self.authcode,
+                          registrant_handle:          self.registrant_handle,
+                          admin_handle:               self.admin_handle,
+                          billing_handle:             self.billing_handle,
+                          tech_handle:                self.tech_handle,
+                          registered_at:              self.registered_at,
+                          expires_at:                 self.expires_at,
+                          deleted_at:                 on,
+                          domain_id:                  self.id,
+                          ok:                         self.ok,
+                          inactive:                   self.inactive,
+                          client_renew_prohibited:    client_renew_prohibited,
+                          client_delete_prohibited:   client_delete_prohibited,
+                          client_transfer_prohibited: client_transfer_prohibited,
+                          client_update_prohibited:   client_update_prohibited
 
     self.delete
   end

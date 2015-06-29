@@ -450,6 +450,14 @@ describe Domain do
 
     specify { subject.product.domain_hosts.must_be_empty }
 
+    specify { subject.ok.must_equal domain.ok }
+    specify { subject.inactive.must_equal domain.inactive }
+    specify { subject.client_hold.must_equal domain.client_hold }
+    specify { subject.client_update_prohibited.must_equal domain.client_update_prohibited }
+    specify { subject.client_transfer_prohibited.must_equal domain.client_transfer_prohibited }
+    specify { subject.client_renew_prohibited.must_equal domain.client_renew_prohibited }
+    specify { subject.client_delete_prohibited.must_equal domain.client_delete_prohibited }
+
     specify { activities[7].must_be_kind_of ObjectActivity::Update }
     specify { activities[7].property_changed.must_equal 'domain_host' }
     specify { activities[7].old_value.must_equal 'ns5.domains.ph' }
