@@ -103,10 +103,10 @@ class Domain < ActiveRecord::Base
                           domain_id:                  self.id,
                           ok:                         self.ok,
                           inactive:                   self.inactive,
-                          client_renew_prohibited:    client_renew_prohibited,
-                          client_delete_prohibited:   client_delete_prohibited,
-                          client_transfer_prohibited: client_transfer_prohibited,
-                          client_update_prohibited:   client_update_prohibited
+                          client_renew_prohibited:    self.client_renew_prohibited,
+                          client_delete_prohibited:   self.client_delete_prohibited,
+                          client_transfer_prohibited: self.client_transfer_prohibited,
+                          client_update_prohibited:   self.client_update_prohibited
 
     self.delete
   end
