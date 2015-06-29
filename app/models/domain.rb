@@ -27,8 +27,6 @@ class Domain < ActiveRecord::Base
 
   before_save :enforce_status
 
-  after_initialize :enforce_status
-
   validate :domain_status_must_be_valid
 
   def self.latest

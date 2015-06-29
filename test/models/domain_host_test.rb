@@ -98,7 +98,7 @@ describe DomainHost do
         DomainHost.last.destroy!
       end
 
-      specify { activities.count.must_equal 5 }
+      specify { activities.count.must_equal 7 }
 
       specify { activities[4].must_be_instance_of ObjectActivity::Update }
       specify { activities[4].property_changed.must_equal 'domain_host' }
