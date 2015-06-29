@@ -49,25 +49,15 @@ Feature: Update Domain as Administrator
 
   Scenario Outline: Non-boolean status values
     When  I update an existing domain with <invalid parameter>
-    Then  error must be validation failed
-    And   validation error on <field> must be "<code>"
+    Then  response must be ok
 
     Examples:
-      | invalid client hold                 | client_hold                 | valid |
-      | invalid client delete prohibited    | client_delete_prohibited    | valid |
-      | invalid client transfer prohibited  | client_transfer_prohibited  | valid |
-      | invalid client renew prohibited     | client_renew_prohibited     | valid |
-      | invalid client update prohibited    | client_update_prohibited    | valid |
-      | nil client hold                     | client_hold                 | invalid |
-      | nil client delete prohibited        | client_delete_prohibited    | invalid |
-      | nil client transfer prohibited      | client_transfer_prohibited  | invalid |
-      | nil client renew prohibited         | client_renew_prohibited     | invalid |
-      | nil client update prohibited        | client_update_prohibited    | invalid |
-      | blank client hold                   | client_hold                 | invalid |
-      | blank client delete prohibited      | client_delete_prohibited    | invalid |
-      | blank client transfer prohibited    | client_transfer_prohibited  | invalid |
-      | blank client renew prohibited       | client_renew_prohibited     | invalid |
-      | blank client update prohibited      | client_update_prohibited    | invalid |
+      | invalid parameter                   |
+      | invalid client hold                 |
+      | invalid client delete prohibited    |
+      | invalid client transfer prohibited  |
+      | invalid client renew prohibited     |
+      | invalid client update prohibited    |
 
   Scenario Outline: Invalid parameters
     When  I update an existing domain with <invalid parameter>
@@ -81,6 +71,16 @@ Feature: Update Domain as Administrator
       | non-existing admin handle           | admin_handle                | invalid |
       | non-existing billing handle         | billing_handle              | invalid |
       | non-existing tech handle            | tech_handle                 | invalid |
+      | nil client hold                     | client_hold                 | invalid | 
+      | nil client delete prohibited        | client_delete_prohibited    | invalid | 
+      | nil client transfer prohibited      | client_transfer_prohibited  | invalid |
+      | nil client renew prohibited         | client_renew_prohibited     | invalid |
+      | nil client update prohibited        | client_update_prohibited    | invalid |
+      | blank client hold                   | client_hold                 | invalid |
+      | blank client delete prohibited      | client_delete_prohibited    | invalid |
+      | blank client transfer prohibited    | client_transfer_prohibited  | invalid |
+      | blank client renew prohibited       | client_renew_prohibited     | invalid |
+      | blank client update prohibited      | client_update_prohibited    | invalid |
 
   Scenario: Update domain contact and status
     When  I update an existing domain to enable client hold but with invalid admin_handle

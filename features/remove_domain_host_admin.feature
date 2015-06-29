@@ -8,7 +8,7 @@ Feature: Remove Domain Host as Administrator
   Scenario: Successfully remove domain host entry
     When  I remove a domain host entry from an existing domain
     Then  domain host entry must be removed
-    And   domain status must be ok
+    And   domain status must be inactive
 
   @wip
   Scenario: Remove all domain host entries

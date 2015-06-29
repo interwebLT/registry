@@ -78,8 +78,8 @@ describe DomainHost do
       create :domain_host, product: domain.product
     end
 
+    let(:domain) { Domain.last }
     let(:activities) { Domain.last.domain_activities }
-    let(:object_status) { Domain.last }
 
     context :when_adding_domain_host do
       specify { activities.count.must_equal 4 }
@@ -89,8 +89,8 @@ describe DomainHost do
       specify { activities[1].old_value.must_be_nil }
       specify { activities[1].value.must_equal 'ns5.domains.ph' }
 
-      specify { object_status.ok.must_equal true }
-      specify { object_status.inactive.must_equal false }
+      specify { domain.ok.must_equal true }
+      specify { domain.inactive.must_equal false }
     end
 
     context :when_removing_domain_host do
@@ -105,8 +105,8 @@ describe DomainHost do
       specify { activities[4].old_value.must_equal 'ns5.domains.ph' }
       specify { activities[4].value.must_be_nil }
 
-      specify { object_status.ok.must_equal true }
-      specify { object_status.inactive.must_equal false }
+      specify { domain.ok.must_equal false }
+      specify { domain.inactive.must_equal true }
     end
   end
 end
