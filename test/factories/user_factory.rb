@@ -21,6 +21,12 @@ FactoryGirl.define do
       admin true
     end
 
+    factory :staff do
+      name 'staff'
+      admin false
+      staff true
+    end
+
     factory :dummy do
       name 'beta'
     end
