@@ -25,7 +25,7 @@ Rails.application.routes.draw do
 
   resources :contacts, only: [:create, :show, :update]
 
-  resources :hosts, only: [:create, :show], id: /.*/ do
+  resources :hosts, only: [:index, :create, :show], id: /.*/ do
     resources :addresses, controller: :host_addresses, only: [:create, :show, :destroy]
   end
 

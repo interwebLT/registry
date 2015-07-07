@@ -9,6 +9,10 @@ class HostsController < SecureController
     end
   end
 
+  def index
+    render json: DomainHost.all
+  end
+
   def show
 
   end
