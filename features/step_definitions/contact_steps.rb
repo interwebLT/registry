@@ -79,6 +79,17 @@ When /^I update a contact that I do not own$/ do
   update_contact
 end
 
+When /^I try to view contacts$/ do
+  contact_exists
+  other_contact_exists
+  
+  view_contacts
+end
+
+Then /^I must see all contacts$/ do
+  assert_contacts_displayed
+end
+
 Then /^contact must be created$/ do
   assert_contact_created
   assert_create_contact_history_created
@@ -88,3 +99,4 @@ Then /^contact must be updated$/ do
   assert_contact_updated
   assert_update_contact_history_created
 end
+
