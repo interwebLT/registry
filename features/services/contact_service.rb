@@ -189,8 +189,13 @@ def assert_contacts_displayed
   assert_response_status_must_be_ok
 
   json_response.length.must_equal 2
-  p json_response
   json_response.must_equal contacts_response
+end
+
+def assert_no_contacts_displayed
+  assert_response_status_must_be_ok
+
+  json_response.length.must_equal 0
 end
 
 def view_contacts

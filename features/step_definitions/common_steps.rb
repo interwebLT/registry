@@ -6,6 +6,10 @@ Given /^I am authenticated as partner$/ do
   partner_authenticated
 end
 
+Given /^I am authenticated as staff$/ do
+  staff_authenticated
+end
+
 Then /^error must be bad request$/ do
   assert_response_message_must_be_bad_request
 end

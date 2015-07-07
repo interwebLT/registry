@@ -3,10 +3,12 @@ Feature: View Contacts
   As an admin
   I want to be able to view all contacts
 
-  Background:
-    Given I am authenticated as administrator
-
   Scenario: View contacts
+    Given I am authenticated as administrator
     When  I try to view contacts
     Then  I must see all contacts
 
+  Scenario: View contacts without permission
+    Given I am authenticated as staff
+    When  I try to view contacts
+    Then  I must see no contacts
