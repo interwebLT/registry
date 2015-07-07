@@ -7,6 +7,10 @@ class ContactsController < SecureController
     end
   end
 
+  def index
+    render json: Contact.all
+  end
+
   def show
     head :not_implemented
   end

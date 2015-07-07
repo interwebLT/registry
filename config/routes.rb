@@ -23,7 +23,7 @@ Rails.application.routes.draw do
 
   resources :credits, only: [:index]
 
-  resources :contacts, only: [:create, :show, :update]
+  resources :contacts, only: [:index, :create, :show, :update]
 
   resources :hosts, only: [:index, :create, :show], id: /.*/ do
     resources :addresses, controller: :host_addresses, only: [:create, :show, :destroy]
