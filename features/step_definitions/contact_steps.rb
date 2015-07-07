@@ -104,6 +104,10 @@ Then /^I must see no contacts$/ do
   assert_no_contacts_displayed
 end
 
+Then /^I must see no contact info$/ do
+  assert_no_contact_displayed
+end
+
 Then /^contact must be created$/ do
   assert_contact_created
   assert_create_contact_history_created
