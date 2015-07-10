@@ -8,12 +8,11 @@ class ContactsController < SecureController
   end
 
   def index
-    unless current_user.admin?
+    if current_user.admin?
+      render json: Contact.all
+    else
       render json: []
-      return
     end
-
-    render json: Contact.all
   end
 
   def show
