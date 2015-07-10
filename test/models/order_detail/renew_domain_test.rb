@@ -49,6 +49,8 @@ describe OrderDetail::RenewDomain do
     specify { saved_domain.partner.credits.last.activity_type.must_equal 'use' }
 
     specify { saved_domain.expires_at.must_equal '2017-01-01'.in_time_zone }
+
+    specify { saved_domain.domain_activities.last.activity_at.must_equal renewed_at }
   end
 
   describe :reverse! do

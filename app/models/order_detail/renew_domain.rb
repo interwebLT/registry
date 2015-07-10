@@ -28,6 +28,8 @@ class OrderDetail::RenewDomain < OrderDetail
     o.save!
 
     o.complete!
+
+    saved_domain.domain_activities.last.update! activity_at: renewed_at
   end
 
   def action
