@@ -77,6 +77,14 @@ def partner_authenticated
   authenticate!
 end
 
+def staff_authenticated
+  @current_user = create :staff
+
+  authenticate!
+
+  partner_exists NON_ADMIN_PARTNER
+end
+
 def admin_authenticated
   @current_user = create :admin
   authenticate!

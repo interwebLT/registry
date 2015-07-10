@@ -7,6 +7,14 @@ class ContactsController < SecureController
     end
   end
 
+  def index
+    if current_user.admin?
+      render json: Contact.all.limit(1000)
+    else
+      render json: []
+    end
+  end
+
   def show
     head :not_implemented
   end
