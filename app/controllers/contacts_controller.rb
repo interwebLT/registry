@@ -9,7 +9,7 @@ class ContactsController < SecureController
 
   def index
     if current_user.admin?
-      render json: Contact.all
+      render json: Contact.all.limit(1000)
     else
       render json: []
     end
