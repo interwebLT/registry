@@ -30,6 +30,10 @@ def create_host partner: NON_ADMIN_PARTNER, name: HOST_NAME
   post hosts_url, json_request
 end
 
+def view_hosts
+  get hosts_path
+end
+
 def assert_response_must_be_created_host
   assert_response_status_must_be_created
 
@@ -50,4 +54,36 @@ def assert_host_must_be_created
 
   host.partner.name.must_equal NON_ADMIN_PARTNER
   host.name.must_equal HOST_NAME
+end
+
+def assert_hosts_displayed
+  assert_response_status_must_be_ok
+
+  json_response.length.must_equal 3
+  json_response.must_equal hosts_response
+end
+
+def assert_host_info_displayed
+  assert_response_status_must_be_ok
+
+  json_response.must_equal host_info_response
+end
+
+def assert_no_hosts_displayed
+  assert_response_status_must_be_ok
+
+  json_response.length.must_equal 0
+end
+
+def assert_no_host_displayed
+  assert_response_status_must_be_ok
+
+  json_response.must_equal []
+end
+
+def hosts_response
+  [{:id=>1, :partner=>"admin", :name=>"ns3.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}, 
+   {:id=>2, :partner=>"admin", :name=>"ns4.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}, 
+   {:id=>3, :partner=>"alpha", :name=>"ns5.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}
+  ]
 end

@@ -10,7 +10,12 @@ class HostsController < SecureController
   end
 
   def index
-    render json: DomainHost.all
+    unless current_user.admin?
+      render json: []
+      return
+    end
+
+    render json: Host.all
   end
 
   def show
