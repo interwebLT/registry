@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150629072050) do
+ActiveRecord::Schema.define(version: 20150713064945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -169,12 +169,14 @@ ActiveRecord::Schema.define(version: 20150629072050) do
   end
 
   create_table "ledger", force: :cascade do |t|
-    t.integer  "partner_id",                                        null: false
-    t.integer  "order_id",                                          null: false
-    t.decimal  "credits",                  precision: 20, scale: 2, null: false
-    t.string   "activity_type", limit: 10,                          null: false
-    t.datetime "created_at",                                        null: false
-    t.datetime "updated_at",                                        null: false
+    t.integer  "partner_id",                                 null: false
+    t.integer  "order_id",                                   null: false
+    t.decimal  "credits"
+    t.string   "activity_type",   limit: 10,                 null: false
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
+    t.integer  "amount_cents",               default: 0,     null: false
+    t.string   "amount_currency",            default: "USD", null: false
   end
 
   create_table "object_activities", force: :cascade do |t|
