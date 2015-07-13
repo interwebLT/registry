@@ -18,6 +18,12 @@ def host_exists name: HOST_NAME
   create :host, name: name
 end
 
+def host_with_addresses_exists name: HOST_NAME
+  host_does_not_exist name: name
+
+  create :host_with_addresses, name: name
+end
+
 def create_host partner: NON_ADMIN_PARTNER, name: HOST_NAME
   json_request = {
     partner: partner,
@@ -82,8 +88,10 @@ def assert_no_host_displayed
 end
 
 def hosts_response
-  [{:id=>1, :partner=>"admin", :name=>"ns3.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}, 
-   {:id=>2, :partner=>"admin", :name=>"ns4.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}, 
-   {:id=>3, :partner=>"alpha", :name=>"ns5.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}
-  ]
+[{:id=>1, :partner=>"admin", :name=>"ns3.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}, 
+{:id=>2, :partner=>"admin", :name=>"ns4.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}, 
+{:id=>3, :partner=>"alpha", :name=>"ns5.domains.ph", :host_addresses=>[
+    {:address=>"123.456.789.001", :type=>"v4"}, 
+    {:address=>"123.456.789.002", :type=>"v4"}
+  ], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}]
 end

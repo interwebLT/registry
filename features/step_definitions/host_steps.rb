@@ -33,13 +33,13 @@ When /I create a host entry with existing host name$/ do
 end
 
 When /^I try to view hosts$/ do
-  host_exists
+  host_with_addresses_exists
 
   view_hosts
 end
 
 When /^I try to view the info of a host$/ do
-  host_exists
+  host_with_addresses_exists
 
   view_host_info
 end
