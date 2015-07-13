@@ -13,3 +13,12 @@ Feature: View hosts
     When  I try to view hosts
     Then  I must see no hosts
 
+  Scenario: View host info
+    Given I am authenticated as administrator
+    When  I try to view the info of a host
+    Then  I must see the info of the host
+
+  Scenario: View host info without permission
+    Given I am authenticated as staff
+    When  I try to view the info of a host
+    Then  I must see no host info

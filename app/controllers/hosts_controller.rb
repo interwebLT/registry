@@ -19,7 +19,12 @@ class HostsController < SecureController
   end
 
   def show
+    unless current_user.admin?
+      render json: []
+      return
+    end
 
+    render json: Host.find(params[:id])
   end
 
   private

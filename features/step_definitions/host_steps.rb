@@ -56,6 +56,10 @@ Then /^I must see no hosts$/ do
   assert_no_hosts_displayed
 end
 
+Then /^I must see no host info$/ do
+  assert_no_host_displayed
+end
+
 Then /host entry must be created under given partner$/ do
   assert_response_must_be_created_host
 
