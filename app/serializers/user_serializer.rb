@@ -14,7 +14,7 @@ class UserSerializer < ActiveModel::Serializer
   end
 
   def credits
-    object.partner.current_balance
+    object.partner.current_balance.to_f
   end
 
   def transactions_allowed
