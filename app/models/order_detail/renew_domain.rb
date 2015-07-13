@@ -43,7 +43,7 @@ class OrderDetail::RenewDomain < OrderDetail
       self.status = COMPLETE_ORDER_DETAIL
 
       self.order.partner.credits.create order: self.order,
-                                        credits: self.price * -1,
+                                        amount: self.price * -1,
                                         activity_type: 'use'
     else
       self.status = ERROR_ORDER_DETAIL

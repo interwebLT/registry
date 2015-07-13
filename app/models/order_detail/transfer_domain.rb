@@ -1,6 +1,6 @@
 class OrderDetail::TransferDomain < OrderDetail
   def self.build params, partner
-    new params
+    new params.merge(period: 0)
   end
 
   def self.execute domain:, to:, fee: true
@@ -23,7 +23,7 @@ class OrderDetail::TransferDomain < OrderDetail
 
     if domain.transfer! to: self.order.partner
       self.order.partner.credits.create order: self.order,
-                                        credits: self.price * -1,
+                                        amount: self.price * -1,
                                         activity_type: 'use'
 
       self.product = domain.product

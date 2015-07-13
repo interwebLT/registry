@@ -155,8 +155,8 @@ def assert_latest_object_activity(scenario:)
 end
 
 CREDITS_FEE_SCENARIOS = {
-  'register domain' => -30.00.money,
-  'renew domain'    => -30.00.money,
+  'register domain' => -70.00.money,
+  'renew domain'    => -64.00.money,
   'migrate domain'  => 0.00.money,
   'transfer domain' => -15.00.money
 }
@@ -165,6 +165,6 @@ def assert_credits_must_be_deducted scenario:
   credits = @current_partner.credits.last
 
   credits.wont_be_nil
-  credits.activity_type = 'use'
-  credits.credits = CREDITS_FEE_SCENARIOS[scenario]
+  credits.activity_type.must_equal 'use'
+  credits.amount.must_equal CREDITS_FEE_SCENARIOS[scenario]
 end

@@ -18,7 +18,7 @@ describe OrderDetail::RenewDomain do
     specify { subject.product.must_equal saved_domain.product }
 
     specify { latest_ledger_entry.activity_type.must_equal 'use' }
-    specify { latest_ledger_entry.credits.must_equal -35.money }
+    specify { latest_ledger_entry.amount.must_equal -35.00.money }
   end
 
   describe :execute do
@@ -45,7 +45,7 @@ describe OrderDetail::RenewDomain do
     specify { OrderDetail.last.order.complete?.must_equal true }
     specify { OrderDetail.last.order.partner.must_equal domain.partner }
 
-    specify { saved_domain.partner.credits.last.credits.must_equal BigDecimal.new(-64) }
+    specify { saved_domain.partner.credits.last.amount.must_equal -64.00.money }
     specify { saved_domain.partner.credits.last.activity_type.must_equal 'use' }
 
     specify { saved_domain.expires_at.must_equal '2017-01-01'.in_time_zone }
