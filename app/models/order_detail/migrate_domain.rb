@@ -45,7 +45,7 @@ class OrderDetail::MigrateDomain < OrderDetail
                         product:            product
     if domain.save
       self.order.partner.credits.create order: self.order,
-                                        credits: 0.00,
+                                        amount: 0.00,
                                         activity_type: 'use'
 
       self.product = domain.product
