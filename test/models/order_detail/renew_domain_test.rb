@@ -72,7 +72,7 @@ describe OrderDetail::RenewDomain do
     specify { ObjectActivity.last.old_value.must_equal '2016-01-01 00:00:00 UTC' }
     specify { ObjectActivity.last.value.must_equal '2015-01-01 00:00:00 UTC' }
 
-    specify { Order.last.partner.credits.last.credits.must_equal BigDecimal.new(35) }
+    specify { Order.last.partner.credits.last.amount.must_equal 35.00.money }
   end
 
   describe :as_json do

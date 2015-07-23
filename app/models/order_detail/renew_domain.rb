@@ -61,8 +61,8 @@ class OrderDetail::RenewDomain < OrderDetail
     domain.save!
 
     self.order.partner.credits.create order: self.order,
-                                             credits: self.price,
-                                             activity_type: 'use'
+                                      amount: self.price,
+                                      activity_type: 'use'
 
     self.status = REVERSED_ORDER_DETAIL
     self.save!

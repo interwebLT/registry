@@ -26,7 +26,7 @@ class OrderDetail::ReplenishCredits < OrderDetail
     self.status = COMPLETE_ORDER_DETAIL
 
     self.order.partner.credits.create order: self.order,
-                                      credits: self.price,
+                                      amount: self.price,
                                       activity_type: 'topup'
 
     self.save
