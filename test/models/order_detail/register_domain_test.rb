@@ -51,7 +51,7 @@ describe OrderDetail::RegisterDomain do
       specify { subject.product.must_equal saved_domain.product }
 
       specify { latest_ledger_entry.activity_type.must_equal 'use' }
-      specify { latest_ledger_entry.credits.must_equal BigDecimal.new(-35) }
+      specify { latest_ledger_entry.amount.must_equal -35.00.money }
     end
 
     context :when_registrant_does_not_exist do

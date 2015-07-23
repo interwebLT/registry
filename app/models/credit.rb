@@ -3,4 +3,6 @@ class Credit < ActiveRecord::Base
 
   belongs_to :partner
   belongs_to :order
+
+  monetize :amount_cents
 end

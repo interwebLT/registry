@@ -29,11 +29,11 @@ describe Partner do
         create :credit, partner: subject
       end
 
-      specify { subject.current_balance.must_equal 2000.00 }
+      specify { subject.current_balance.must_equal 2000.00.money }
     end
 
     context :when_partner_has_no_credits do
-      specify { subject.current_balance.must_equal 0.00 }
+      specify { subject.current_balance.must_equal 0.00.money }
     end
   end
 

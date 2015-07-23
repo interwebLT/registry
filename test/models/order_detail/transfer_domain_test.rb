@@ -37,7 +37,7 @@ describe OrderDetail::TransferDomain do
     specify { saved_domain.partner.must_equal subject.order.partner }
 
     specify { latest_ledger_entry.activity_type.must_equal 'use' }
-    specify { latest_ledger_entry.credits.must_equal BigDecimal.new(-15) }
+    specify { latest_ledger_entry.amount.must_equal -15.00.money }
   end
 
   describe :execute do
@@ -59,7 +59,7 @@ describe OrderDetail::TransferDomain do
     specify { OrderDetail.last.order.complete?.must_equal true }
     specify { OrderDetail.last.order.partner.must_equal partner }
 
-    specify { partner.credits.last.credits.must_equal BigDecimal.new(-15) }
+    specify { partner.credits.last.amount.must_equal -15.00.money }
     specify { partner.credits.last.activity_type.must_equal 'use' }
 
     context :when_no_transfer_fee do
@@ -67,7 +67,18 @@ describe OrderDetail::TransferDomain do
 
       specify { OrderDetail.last.price.must_equal 0.00.money }
       specify { OrderDetail.last.order.total_price.must_equal 0.00.money }
-    specify { partner.credits.last.credits.must_equal BigDecimal.new(0) }
+      specify { partner.credits.last.amount.must_equal 0.00.money }
     end
+  end
+
+  describe :build do
+    subject { OrderDetail::TransferDomain.build params, nil }
+
+    let(:params) {
+      {
+      }
+    }
+
+    specify { subject.period.must_equal 0 }
   end
 end

@@ -192,14 +192,36 @@ def assert_contacts_displayed
   json_response.must_equal contacts_response
 end
 
+def assert_contact_info_displayed
+  assert_response_status_must_be_ok
+
+  json_response.must_equal contact_info_response
+end
+
 def assert_no_contacts_displayed
   assert_response_status_must_be_ok
 
   json_response.length.must_equal 0
 end
 
+def assert_no_contact_displayed
+  assert_response_status_must_be_ok
+
+  json_response.must_equal []
+end
+
 def view_contacts
   get contacts_path
+end
+
+def view_contact_info
+  get contacts_path(CONTACT_HANDLE)
+end
+
+def contact_info_response
+  [
+    {:handle=>"contact", :name=>nil, :organization=>nil, :street=>nil, :street2=>nil, :street3=>nil, :city=>nil, :state=>nil, :postal_code=>nil, :country_code=>nil, :local_name=>nil, :local_organization=>nil, :local_street=>nil, :local_street2=>nil, :local_street3=>nil, :local_city=>nil, :local_state=>nil, :local_postal_code=>nil, :local_country_code=>nil, :voice=>nil, :voice_ext=>nil, :fax=>nil, :fax_ext=>nil, :email=>nil}
+  ]
 end
 
 def contacts_response

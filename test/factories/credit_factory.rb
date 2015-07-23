@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :credit do
     partner
     order
-    credits 1000
+    amount  1000.money
     activity_type 'topup'
   end
 end

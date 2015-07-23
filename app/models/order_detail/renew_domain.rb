@@ -16,10 +16,9 @@ class OrderDetail::RenewDomain < OrderDetail
 
     price = saved_domain.partner.pricing action: OrderDetail::RenewDomain.new.action, period: period
 
-    o = Order.new partner: saved_domain.partner, status: Order::PENDING_ORDER, total_price: price
+    o = Order.new partner: saved_domain.partner, total_price: price
 
-    od = self.new status:     OrderDetail::PENDING_ORDER_DETAIL,
-                  price:      price,
+    od = self.new price:      price,
                   domain:     saved_domain.name,
                   period:     period,
                   renewed_at: renewed_at
@@ -28,6 +27,8 @@ class OrderDetail::RenewDomain < OrderDetail
     o.save!
 
     o.complete!
+
+    saved_domain.domain_activities.last.update! activity_at: renewed_at
   end
 
   def action
@@ -42,7 +43,7 @@ class OrderDetail::RenewDomain < OrderDetail
       self.status = COMPLETE_ORDER_DETAIL
 
       self.order.partner.credits.create order: self.order,
-                                        credits: self.price * -1,
+                                        amount: self.price * -1,
                                         activity_type: 'use'
     else
       self.status = ERROR_ORDER_DETAIL
