@@ -44,12 +44,6 @@ describe Order do
     specify { subject.order_details.wont_be_empty }
   end
 
-  describe :aliases do
-    subject { build :order }
-
-    specify { subject.ordered_at.must_equal subject.created_at }
-  end
-
   describe :complete? do
     specify { Order.new(status: Order::COMPLETE_ORDER).complete?.must_equal true }
     specify { Order.new(status: Order::PENDING_ORDER).complete?.must_equal false }

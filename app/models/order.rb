@@ -6,8 +6,6 @@ class Order < ActiveRecord::Base
   monetize :total_price_cents
   monetize :fee_cents
 
-  alias_attribute :ordered_at, :created_at
-
   validates :order_details, presence: true
 
   validate :partner_must_exist
@@ -21,6 +19,7 @@ class Order < ActiveRecord::Base
 
   after_initialize do
     self.status ||= PENDING_ORDER
+    self.ordered_at ||= Time.current
   end
 
   def self.build params, partner

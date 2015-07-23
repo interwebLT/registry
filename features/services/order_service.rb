@@ -273,23 +273,19 @@ def orders_response
         admin: false
       },
       order_number: 4,
-      total_price: -35.00,
+      total_price: 35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
-      status: 'complete',
+      status: 'reversed',
       currency_code: 'USD',
       order_details: [
         {
-          type: 'refund',
-          price:  -35.00,
-          refunded_order_detail: {
-            type: 'domain_renew',
-            price: 35.00,
-            domain: 'domain.ph',
-            object: nil,
-            period: 1,
-            renewed_at: '2015-02-14T01:01:00Z'
-          }
+          type: 'domain_renew',
+          price: 35.00,
+          domain: 'domain.ph',
+          object: nil,
+          period: 1,
+          renewed_at: '2015-02-14T01:01:00Z'
         }
       ]
     },
@@ -316,19 +312,23 @@ def orders_response
         admin: false
       },
       order_number: 5,
-      total_price: 35.00,
+      total_price: -35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
-      status: 'reversed',
+      status: 'complete',
       currency_code: 'USD',
       order_details: [
         {
-          type: 'domain_renew',
-          price: 35.00,
-          domain: 'domain.ph',
-          object: nil,
-          period: 1,
-          renewed_at: '2015-02-14T01:01:00Z'
+          type: 'refund',
+          price:  -35.00,
+          refunded_order_detail: {
+            type: 'domain_renew',
+            price: 35.00,
+            domain: 'domain.ph',
+            object: nil,
+            period: 1,
+            renewed_at: '2015-02-14T01:01:00Z'
+          }
         }
       ]
     }
