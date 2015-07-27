@@ -15,7 +15,7 @@ class DomainInfoSerializer < DomainSerializer
   end
 
   def activities
-    object.domain_activities.order(id: :asc).collect do |activity|
+    object.domain_activities.order(activity_at: :asc).collect do |activity|
       activity.as_json
     end
   end
