@@ -15,9 +15,9 @@ class DomainInfoSerializer < DomainSerializer
   end
 
   def activities
-    object.domain_activities.order(activity_at: :asc).collect do |activity|
-      activity.as_json
-    end
+    (object.domain_activities.order(activity_at: :asc).collect do |activity|
+      activity.as_json if current_user.partner.admin || activity.partner.name == current_user.name
+    end).compact
   end
 
   def hosts
