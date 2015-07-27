@@ -3,6 +3,7 @@ require 'test_helper'
 describe DomainInfoSerializer do
   let(:current_user) { create :user }
   let(:other_user) { create :other_user }
+  let(:admin) { create :admin }
 
   subject { 
     d = DomainInfoSerializer.new(domain)
@@ -39,6 +40,21 @@ describe DomainInfoSerializer do
     specify { subject[:admin_contact].wont_be_nil }
     specify { subject[:billing_contact].wont_be_nil }
     specify { subject[:tech_contact].wont_be_nil }
+  end
+
+  context :when_admin do
+    let(:domain) { create :domain }
+
+    subject { 
+      d = DomainInfoSerializer.new(domain)
+      d.class.module_eval {
+        attr_accessor :current_user
+      }
+      d.current_user = admin
+      d.serializable_hash 
+    }
+
+    specify { subject[:activities].wont_be_empty }
   end
 
   context :when_other_partner do
