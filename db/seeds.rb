@@ -216,3 +216,13 @@ complete_domain.admin_contact   = complete_contact
 complete_domain.billing_contact = complete_contact
 complete_domain.tech_contact    = complete_contact
 complete_domain.save!
+
+beta = create_partner name: 'beta', domain_count: 5
+
+complete_contact_2 = create_complete_contact partner: beta, handle: 'Complete-2'
+complete_domain_2 = create_domain beta, complete_contact, 'complete-2.ph'
+
+complete_domain_2.admin_contact   = complete_contact_2
+complete_domain_2.billing_contact = complete_contact_2
+complete_domain_2.tech_contact    = complete_contact_2
+complete_domain_2.save!
