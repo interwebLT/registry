@@ -69,7 +69,9 @@ class DomainsController < SecureController
   end
 
   def search_domains
-    [{name: 'foo'}]
+    get_domains.select do |domain|
+      domain.name.include? params[:search]
+    end
   end
 
   def fetch_domain

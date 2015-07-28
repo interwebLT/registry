@@ -99,6 +99,10 @@ def view_domains
   get domains_path
 end
 
+def search_domains search_term
+  get domains_path(search: search_term)
+end
+
 def view_latest_domains
   contact = create :contact
 
@@ -192,6 +196,11 @@ def assert_latest_domains_displayed
 
 
   json_response.must_equal expected_response
+end
+
+def assert_domains_count_must_be count
+  assert_response_status_must_be_ok
+  json_response.length.must_equal count
 end
 
 private
