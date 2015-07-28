@@ -71,7 +71,7 @@ FactoryGirl.define do
 
     factory :other_user do
       name 'beta'
-      partner Partner.find_by(name: 'other_partner')
+      # partner Partner.find_by(name: 'other_partner')
     end
   end
 end
