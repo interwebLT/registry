@@ -1,5 +1,7 @@
 User.delete_all
 
+Partner.delete_all
+
 PartnerPricing.delete_all
 PartnerConfiguration.delete_all
 
@@ -52,8 +54,11 @@ def create_domain partner, contact, name, registered_at = Date.today
 
   domain = Domain.named(name)
 
-  create_domain_host domain: domain, host_name: 'ns3.domains.ph'
-  create_domain_host domain: domain, host_name: 'ns4.domains.ph'
+  ['ns3.domains.ph', 'ns4.domains.ph'].each do |host|
+    Host.create! partner: partner, name: host unless Host.exists? name: host
+
+    create_domain_host domain: domain, host_name: host
+  end
 
   domain
 end
