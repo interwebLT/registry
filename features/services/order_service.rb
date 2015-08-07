@@ -14,14 +14,13 @@ def register_domain partner: nil,
                     registered_at: REGISTERED_AT
   json_request = {
     currency_code: 'USD',
-    ordered_at: '2015-08-07T16:00:00Z',
+    ordered_at: registered_at,
     order_details: [
       type: 'domain_create',
       domain: name,
       authcode: AUTHCODE,
       period: period,
-      registrant_handle: registrant,
-      registered_at: registered_at
+      registrant_handle: registrant
     ]
   }
 
@@ -62,8 +61,7 @@ def assert_register_domain_response domain: nil,
         object: object,
         authcode: AUTHCODE,
         period: 2,
-        registrant_handle: registrant,
-        registered_at: '2015-01-01T00:00:00Z'
+        registrant_handle: registrant
       }
     ]
   }
@@ -170,8 +168,7 @@ def orders_response
           object: nil,
           authcode: 'ABC123',
           period: 2,
-          registrant_handle: 'domains_r',
-          registered_at: '2015-02-17T00:00:00Z'
+          registrant_handle: 'domains_r'
         }
       ]
     },
@@ -524,8 +521,7 @@ def latest_orders_response
           object: nil,
           authcode: 'ABC123',
           period: 2,
-          registrant_handle: 'domains_r',
-          registered_at: '2015-02-17T00:00:00Z'
+          registrant_handle: 'domains_r'
         }
       ]
     },
@@ -565,8 +561,7 @@ def latest_orders_response
           object: nil,
           authcode: 'ABC123',
           period: 2,
-          registrant_handle: 'domains_r',
-          registered_at: '2015-02-17T00:00:00Z'
+          registrant_handle: 'domains_r'
         }
       ]
     },

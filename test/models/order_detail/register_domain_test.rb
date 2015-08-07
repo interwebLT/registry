@@ -10,8 +10,7 @@ describe OrderDetail::RegisterDomain do
         domain: 'domains.ph',
         authcode: 'ABC123',
         period: 2,
-        registrant_handle: 'domains_registrant',
-        registered_at: '2015-04-10T00:00:00Z'
+        registrant_handle: 'domains_registrant'
       }
     }
 
@@ -24,7 +23,6 @@ describe OrderDetail::RegisterDomain do
     specify { subject.authcode.must_equal 'ABC123' }
     specify { subject.period.must_equal 2 }
     specify { subject.registrant_handle.must_equal 'domains_registrant' }
-    specify { subject.registered_at.must_equal '2015-04-10 00:00:00'.in_time_zone }
     specify { subject.credits.must_equal 0.00.money }
   end
 
@@ -46,7 +44,7 @@ describe OrderDetail::RegisterDomain do
       specify { subject.complete?.must_equal true }
 
       specify { saved_domain.wont_be_nil }
-      specify { saved_domain.registered_at.must_equal subject.registered_at }
+      specify { saved_domain.registered_at.must_equal subject.order.ordered_at }
       specify { saved_domain.authcode.must_equal subject.authcode }
       specify { subject.product.must_equal saved_domain.product }
 
@@ -109,18 +107,6 @@ describe OrderDetail::RegisterDomain do
       specify { subject.errors[:registrant_handle].must_equal ['invalid'] }
     end
 
-    context :when_registered_at_missing do
-      before do
-        subject.registered_at = nil
-
-        subject.valid?
-      end
-
-      specify { subject.valid?.wont_equal true }
-      specify { subject.errors.count.must_equal 1 }
-      specify { subject.errors[:registered_at].must_equal ['invalid'] }
-    end
-
     context :when_no_authcode do
       before do
         subject.authcode = nil
@@ -145,8 +131,7 @@ describe OrderDetail::RegisterDomain do
         object: nil,
         authcode: 'ABC123',
         period: 2,
-        registrant_handle: 'domains_r',
-        registered_at: '2015-02-17T00:00:00Z'
+        registrant_handle: 'domains_r'
       }
     }
 
