@@ -16,7 +16,9 @@ class OrderDetail::RenewDomain < OrderDetail
 
     price = saved_domain.partner.pricing action: OrderDetail::RenewDomain.new.action, period: period
 
-    o = Order.new partner: saved_domain.partner, total_price: price
+    o = Order.new partner: saved_domain.partner,
+                  total_price: price,
+                  ordered_at: renewed_at
 
     od = self.new price:      price,
                   domain:     saved_domain.name,

@@ -23,7 +23,7 @@ describe Order do
     end
 
     context :when_missing_order_details do
-      subject { Order.new partner: partner }
+      subject { Order.new partner: partner, ordered_at: Time.now }
 
       let(:partner) { create :partner }
 
@@ -34,6 +34,18 @@ describe Order do
       specify { subject.valid?.wont_equal true }
       specify { subject.errors.count.must_equal 1 }
       specify { subject.errors[:order_details].must_equal ['invalid'] }
+    end
+
+    context :when_missing_ordered_at do
+      before do
+        subject.ordered_at = nil
+
+        subject.valid?
+      end
+
+      specify { subject.valid?.wont_equal true }
+      specify { subject.errors.count.must_equal 1 }
+      specify { subject.errors[:ordered_at].must_equal ['invalid'] }
     end
   end
 

@@ -7,6 +7,7 @@ class Order < ActiveRecord::Base
   monetize :fee_cents
 
   validates :order_details, presence: true
+  validates :ordered_at, presence: true
 
   validate :partner_must_exist
 
@@ -19,7 +20,6 @@ class Order < ActiveRecord::Base
 
   after_initialize do
     self.status ||= PENDING_ORDER
-    self.ordered_at ||= Time.current
   end
 
   def self.build params, partner
@@ -84,7 +84,8 @@ class Order < ActiveRecord::Base
 
   def reverse!
     reversed_order = Order.new  partner:  self.partner,
-                                total_price:  self.total_price * -1
+                                total_price:  self.total_price * -1,
+                                ordered_at: Time.current
 
     self.order_details.each do |order_detail|
       refund = OrderDetail::Refund.new  product:  order_detail.product,
