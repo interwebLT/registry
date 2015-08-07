@@ -14,6 +14,7 @@ def register_domain partner: nil,
                     registered_at: REGISTERED_AT
   json_request = {
     currency_code: 'USD',
+    ordered_at: '2015-08-07T16:00:00Z',
     order_details: [
       type: 'domain_create',
       domain: name,

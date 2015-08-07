@@ -30,7 +30,7 @@ class OrdersController < SecureController
   private
 
   def order_params
-    params.permit(:partner, :currency_code, order_details: [:type, :domain, :authcode, :period, :registrant_handle, :registered_at, :credits, :renewed_at])
+    params.permit(:partner, :currency_code, :ordered_at, order_details: [:type, :domain, :authcode, :period, :registrant_handle, :registered_at, :credits, :renewed_at])
   end
 
   def create_order

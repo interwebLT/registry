@@ -12,6 +12,7 @@ def migrate_domain scenario: nil
   json_request = {
     partner: NON_ADMIN_PARTNER,
     currency_code: 'USD',
+    ordered_at: '2015-08-07T15:00:00Z',
     order_details: [
       type: 'migrate_domain',
       domain: DOMAIN,
