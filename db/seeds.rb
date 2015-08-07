@@ -12,8 +12,8 @@ ObjectActivity.delete_all
 
 Domain.delete_all
 
-Host.delete_all
 HostAddress.delete_all
+Host.delete_all
 
 Contact.delete_all
 ContactHistory.delete_all
@@ -66,6 +66,7 @@ end
 def create_register_domain_order partner, period, domain_name, registrant, registered_at
   params = {
     currency_code: 'USD',
+    ordered_at: Time.current.iso8601,
     order_details: [
       {
         type: 'domain_create',
@@ -86,6 +87,7 @@ end
 def create_replenish_credits_order partner, credits = 5000.00
   params = {
     currency_code: 'USD',
+    ordered_at: Time.current.iso8601,
     order_details: [
       {
         type: 'credits',
@@ -100,6 +102,7 @@ end
 def create_renew_domain_order partner, period, domain_name, renewed_at = Time.now
   params = {
     currency_code: 'USD',
+    ordered_at: Time.current.iso8601,
     order_details: [
       {
         type: 'domain_renew',
