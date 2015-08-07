@@ -1,12 +1,11 @@
 def renew_domain partner: nil
   json_request = {
     currency_code: 'USD',
-    ordered_at: '2015-08-07T16:00:00Z',
+    ordered_at: REGISTERED_AT + 1,
     order_details: [
       type: 'domain_renew',
       domain: DOMAIN,
-      period: 2,
-      renewed_at: REGISTERED_AT + 1
+      period: 2
     ]
   }
 

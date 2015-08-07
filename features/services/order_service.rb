@@ -209,8 +209,7 @@ def orders_response
           price: 35.00,
           domain: 'domain.ph',
           object: nil,
-          period: 1,
-          renewed_at: '2015-02-14T01:01:00Z'
+          period: 1
         }
       ]
     },
@@ -285,8 +284,7 @@ def orders_response
           price: 35.00,
           domain: 'domain.ph',
           object: nil,
-          period: 1,
-          renewed_at: '2015-02-14T01:01:00Z'
+          period: 1
         }
       ]
     },
@@ -327,8 +325,7 @@ def orders_response
             price: 35.00,
             domain: 'domain.ph',
             object: nil,
-            period: 1,
-            renewed_at: '2015-02-14T01:01:00Z'
+            period: 1
           }
         }
       ]
@@ -375,8 +372,7 @@ def latest_orders_response
             price: 35.00,
             domain: 'domain.ph',
             object: nil,
-            period: 1,
-            renewed_at: '2015-02-14T01:01:00Z'
+            period: 1
           }
         }
       ]
@@ -488,8 +484,7 @@ def latest_orders_response
           price: 35.00,
           domain: 'domain.ph',
           object: nil,
-          period: 1,
-          renewed_at: '2015-02-14T01:01:00Z'
+          period: 1
         }
       ]
     },
@@ -609,8 +604,7 @@ def latest_orders_response
           price: 35.00,
           domain: 'domain.ph',
           object: nil,
-          period: 1,
-          renewed_at: '2015-02-14T01:01:00Z'
+          period: 1
         }
       ]
     }
