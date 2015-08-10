@@ -22,7 +22,7 @@ describe OrderDetail::RenewDomain do
   end
 
   describe :execute do
-    subject { OrderDetail::RenewDomain.execute domain: domain.name, period: period, renewed_at: renewed_at }
+    subject { OrderDetail::RenewDomain.execute domain: domain.name, period: period, at: renewed_at }
 
     before do
       subject
@@ -43,6 +43,7 @@ describe OrderDetail::RenewDomain do
     specify { OrderDetail.last.order.total_price.must_equal 64.00.money }
     specify { OrderDetail.last.order.complete?.must_equal true }
     specify { OrderDetail.last.order.partner.must_equal domain.partner }
+    specify { OrderDetail.last.order.ordered_at.must_equal renewed_at }
 
     specify { saved_domain.partner.credits.last.amount.must_equal -64.00.money }
     specify { saved_domain.partner.credits.last.activity_type.must_equal 'use' }

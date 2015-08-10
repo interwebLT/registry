@@ -10,25 +10,25 @@ class OrderDetail::RenewDomain < OrderDetail
     order_detail
   end
 
-  def self.execute domain:, period:, renewed_at: Time.now
+  def self.execute domain:, period:, at: Time.current
     saved_domain = Domain.named(domain)
 
-    price = saved_domain.partner.pricing action: OrderDetail::RenewDomain.new.action, period: period
+    price = saved_domain.partner.pricing action: self.new.action, period: period
 
     o = Order.new partner: saved_domain.partner,
-                  total_price: price,
-                  ordered_at: renewed_at
+                  total_price:  price,
+                  ordered_at: at
 
-    od = self.new price:      price,
-                  domain:     saved_domain.name,
-                  period:     period
+    od = self.new price:  price,
+                  domain: saved_domain.name,
+                  period: period
 
     o.order_details << od
     o.save!
 
     o.complete!
 
-    saved_domain.domain_activities.last.update! activity_at: renewed_at
+    saved_domain.domain_activities.last.update! activity_at: at
   end
 
   def action
