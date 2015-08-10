@@ -3,19 +3,23 @@ class OrderDetail::TransferDomain < OrderDetail
     new params.merge(period: 0)
   end
 
-  def self.execute domain:, to:, fee: true
-    price = fee ? (to.pricing action: OrderDetail::TransferDomain.new.action, period: 0) : 0.00.money
+  def self.execute domain:, to:, fee: true, at: Time.current
+    partner = Partner.find_by! name: to
 
-    o = Order.new partner: to,
-                  total_price: price,
-                  ordered_at: Time.current
+    price = fee ? (partner.pricing action: self.new.action, period: 0) : 0.00.money
 
-    od = self.new price: price, domain: domain.full_name
+    o = Order.new partner:  partner,
+                  total_price:  price,
+                  ordered_at: at
+
+    od = self.new price: price, domain: domain
 
     o.order_details << od
     o.save!
 
     o.complete!
+
+    Domain.named(domain).domain_activities.last.update! activity_at: at
   end
 
   def action
