@@ -19,9 +19,6 @@
 
 # Learn more: http://github.com/javan/whenever
 
-# Developers, uncomment this if you need your crontabs working!
-# set :environment, "development"
-
-every 1.minutes do 
+every 3.minutes do 
   runner "ExpireDomainsJob.perform_now"
 end
