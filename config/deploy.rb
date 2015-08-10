@@ -29,8 +29,6 @@ namespace :deploy do
   end
 end
 
-set :whenever_environment, defer { stage }
-
 after 'deploy:publishing',  'deploy:restart'
 after 'deploy:restart',     'resque:restart'
 after 'deploy:updated',     'whenever:update_crontab'
