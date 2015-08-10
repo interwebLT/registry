@@ -31,5 +31,5 @@ end
 
 require 'whenever/capistrano'
 
-# set :whenever_environment, lambda { stage }
-set :whenever_command, 'whenever --update-crontab'
+after 'deploy:updated',     'whenever:update_crontab'
+after 'deploy:reverted',    'whenever:update_crontab'
