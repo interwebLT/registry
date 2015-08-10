@@ -12,6 +12,10 @@ describe ExpireDomainsJob do
     create :expired_domain2, registrant: contact
   end
 
+  after do 
+    Timecop.return
+  end
+
   it "deletes expired domains" do
     Domain.all.length.must_equal 3
     DeletedDomain.all.length.must_equal 0
