@@ -41,25 +41,27 @@ describe OrderDetail::TransferDomain do
   end
 
   describe :execute do
-    subject { OrderDetail::TransferDomain.execute domain: domain.name, to: partner.name, at: transferred_at }
+    subject { OrderDetail.last }
 
     before do
-      subject
+      OrderDetail::TransferDomain.execute domain: domain.name,
+                                          to: partner.name,
+                                          at: transferred_at
     end
 
     let(:domain) { create :domain }
     let(:partner) { create :other_partner }
     let(:transferred_at) { '2015-08-10 3:00 PM'.in_time_zone }
 
-    specify { OrderDetail.last.must_be_kind_of OrderDetail::TransferDomain }
-    specify { OrderDetail.last.complete?.must_equal true }
-    specify { OrderDetail.last.price.must_equal 15.00.money }
-    specify { OrderDetail.last.domain.must_equal domain.full_name }
+    specify { subject.must_be_kind_of OrderDetail::TransferDomain }
+    specify { subject.complete?.must_equal true }
+    specify { subject.price.must_equal 15.00.money }
+    specify { subject.domain.must_equal domain.full_name }
 
-    specify { OrderDetail.last.order.total_price.must_equal 15.00.money }
-    specify { OrderDetail.last.order.complete?.must_equal true }
-    specify { OrderDetail.last.order.partner.must_equal partner }
-    specify { OrderDetail.last.order.ordered_at.must_equal transferred_at }
+    specify { subject.order.total_price.must_equal 15.00.money }
+    specify { subject.order.complete?.must_equal true }
+    specify { subject.order.partner.must_equal partner }
+    specify { subject.order.ordered_at.must_equal transferred_at }
 
     specify { partner.credits.last.amount.must_equal -15.00.money }
     specify { partner.credits.last.activity_type.must_equal 'use' }
@@ -67,10 +69,15 @@ describe OrderDetail::TransferDomain do
     specify { domain.domain_activities.last.activity_at.must_equal transferred_at }
 
     context :when_no_transfer_fee do
-      subject { OrderDetail::TransferDomain.execute domain: domain.name, to: partner.name, fee: false }
+      before do
+        OrderDetail::TransferDomain.execute domain: domain.name,
+                                            to: partner.name,
+                                            at: transferred_at,
+                                            fee: false
+      end
 
-      specify { OrderDetail.last.price.must_equal 0.00.money }
-      specify { OrderDetail.last.order.total_price.must_equal 0.00.money }
+      specify { subject.price.must_equal 0.00.money }
+      specify { subject.order.total_price.must_equal 0.00.money }
       specify { partner.credits.last.amount.must_equal 0.00.money }
     end
   end
