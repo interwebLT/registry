@@ -204,6 +204,7 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (2.0.1)
+    timecop (0.7.3)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     unf (0.1.4)
@@ -244,5 +245,6 @@ DEPENDENCIES
   resque
   rest-client
   spring
+  timecop
   unicorn
   webmock

@@ -5,6 +5,13 @@ class ExpireDomainsJob < ActiveJob::Base
     config = Rails.application.config_for(:expiring_domains).with_indifferent_access
 
     contact = config[:contact]
-    # Do something later
+
+    # TODO: send out emails
+
+    Domain.all.each do |domain|
+      if domain.for_purging?
+        domain.destroy!
+      end
+    end
   end
 end
