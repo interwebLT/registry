@@ -32,4 +32,4 @@ end
 require 'whenever/capistrano'
 
 # set :whenever_environment, lambda { stage }
-set :whenever_command, 'bundle exec whenever --update-crontab'
+set :whenever_command, 'whenever --update-crontab'
