@@ -11,12 +11,12 @@ class OrderDetail::MigrateDomain < OrderDetail
     new params
   end
 
-  def self.execute partner:, domain:, registrant_handle:, registered_at:, expires_at:
+  def self.execute partner:, domain:, registrant_handle:, registered_at:, expires_at:, at: Time.current
     saved_partner = Partner.find_by!(name: partner)
 
-    order = Order.new partner: saved_partner,
-                      total_price: 0.00.money,
-                      ordered_at: Time.current
+    order = Order.new partner:  saved_partner,
+                      total_price:  0.00.money,
+                      ordered_at: at
 
     order_detail = self.new price:              0.00.money,
                             domain:             domain,
