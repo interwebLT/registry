@@ -51,22 +51,26 @@ describe OrderDetail::ReplenishCredits do
   end
 
   describe :execute do
-    subject { OrderDetail::ReplenishCredits.execute partner: partner, credits: credits }
+    subject { OrderDetail.last }
 
     before do
-      subject
+      OrderDetail::ReplenishCredits.execute partner: partner,
+                                            credits: credits,
+                                            at: replenished_at
     end
 
     let(:partner) { create :partner }
     let(:credits) { 123.45 }
+    let(:replenished_at) { '2015-08-10 4:30 PM'.in_time_zone }
 
-    specify { OrderDetail.last.must_be_kind_of OrderDetail::ReplenishCredits }
-    specify { OrderDetail.last.complete?.must_equal true }
-    specify { OrderDetail.last.price.must_equal credits.money }
-    specify { OrderDetail.last.credits.must_equal credits.money }
+    specify { subject.must_be_kind_of OrderDetail::ReplenishCredits }
+    specify { subject.complete?.must_equal true }
+    specify { subject.price.must_equal credits.money }
+    specify { subject.credits.must_equal credits.money }
 
-    specify { OrderDetail.last.order.total_price.must_equal credits.money }
-    specify { OrderDetail.last.order.complete?.must_equal true }
+    specify { subject.order.total_price.must_equal credits.money }
+    specify { subject.order.complete?.must_equal true }
+    specify { subject.order.ordered_at.must_equal replenished_at }
 
     specify { partner.credits.last.amount.must_equal credits.money }
     specify { partner.credits.last.activity_type.must_equal 'topup' }

@@ -43,13 +43,12 @@ describe OrderDetail::Refund do
   end
 
   describe :execute do
-    subject { OrderDetail::Refund.execute order_id: order_detail.order.id }
+    subject { OrderDetail.last }
 
     before do
-      domain
       domain.renew order_detail.period
 
-      subject
+      OrderDetail::Refund.execute order_id: order_detail.order.id
     end
 
     let(:order) { create :renew_domain_order }

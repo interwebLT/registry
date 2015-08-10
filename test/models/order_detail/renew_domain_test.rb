@@ -22,35 +22,33 @@ describe OrderDetail::RenewDomain do
   end
 
   describe :execute do
-    subject { OrderDetail::RenewDomain.execute domain: domain.name, period: period, at: renewed_at }
+    subject { OrderDetail.last }
 
     before do
-      subject
+      OrderDetail::RenewDomain.execute  domain: domain.name,
+                                        period: period,
+                                        at: renewed_at
     end
 
     let(:domain) { create :domain }
     let(:period) { 2 }
     let(:renewed_at) { '2015-05-08 8:00 PM'.in_time_zone }
 
-    let(:saved_domain) { Domain.named(domain.full_name) }
+    specify { subject.must_be_kind_of OrderDetail::RenewDomain }
+    specify { subject.complete?.must_equal true }
+    specify { subject.price.must_equal 64.00.money }
+    specify { subject.domain.must_equal domain.full_name }
+    specify { subject.period.must_equal period }
 
-    specify { OrderDetail.last.must_be_kind_of OrderDetail::RenewDomain }
-    specify { OrderDetail.last.complete?.must_equal true }
-    specify { OrderDetail.last.price.must_equal 64.00.money }
-    specify { OrderDetail.last.domain.must_equal domain.full_name }
-    specify { OrderDetail.last.period.must_equal period }
+    specify { subject.order.total_price.must_equal 64.00.money }
+    specify { subject.order.complete?.must_equal true }
+    specify { subject.order.partner.must_equal domain.partner }
+    specify { subject.order.ordered_at.must_equal renewed_at }
 
-    specify { OrderDetail.last.order.total_price.must_equal 64.00.money }
-    specify { OrderDetail.last.order.complete?.must_equal true }
-    specify { OrderDetail.last.order.partner.must_equal domain.partner }
-    specify { OrderDetail.last.order.ordered_at.must_equal renewed_at }
-
-    specify { saved_domain.partner.credits.last.amount.must_equal -64.00.money }
-    specify { saved_domain.partner.credits.last.activity_type.must_equal 'use' }
-
-    specify { saved_domain.expires_at.must_equal '2017-01-01'.in_time_zone }
-
-    specify { saved_domain.domain_activities.last.activity_at.must_equal renewed_at }
+    specify { domain.partner.credits.last.amount.must_equal -64.00.money }
+    specify { domain.partner.credits.last.activity_type.must_equal 'use' }
+    specify { Domain.named(domain.name).expires_at.must_equal '2017-01-01'.in_time_zone }
+    specify { domain.domain_activities.last.activity_at.must_equal renewed_at }
   end
 
   describe :reverse! do
