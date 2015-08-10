@@ -1,0 +1,8 @@
+development:
+  contact: test@local.test
+
+test:
+  contact: test@local.test
+
+production:
+  contact: test@local.test

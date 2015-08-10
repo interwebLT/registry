@@ -6,5 +6,9 @@ FactoryGirl.define do
     factory :other_contact do
       handle 'other_contact'
     end
+
+    factory :third_contact do
+      handle 'third_contact'
+    end
   end
 end
