@@ -18,3 +18,7 @@ Feature: View Domains
     When  I try to view the info of a domain with complete contacts
     Then  I must see the info of my domain with all contacts
 
+  Scenario: Search for a domain
+    Given I have the domains foobar.ph, barbaz.ph, bazqux.ph
+    When I search for bar
+    Then I must see 2 domains

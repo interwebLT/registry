@@ -39,7 +39,6 @@ describe OrderDetail::RenewDomain do
     specify { OrderDetail.last.price.must_equal 64.00.money }
     specify { OrderDetail.last.domain.must_equal domain.full_name }
     specify { OrderDetail.last.period.must_equal period }
-    specify { OrderDetail.last.renewed_at.must_equal renewed_at }
 
     specify { OrderDetail.last.order.total_price.must_equal 64.00.money }
     specify { OrderDetail.last.order.complete?.must_equal true }
@@ -84,8 +83,7 @@ describe OrderDetail::RenewDomain do
         price:  35.00,
         domain: 'domain.ph',
         object: nil,
-        period: 1,
-        renewed_at: '2015-02-14T01:01:00Z'
+        period: 1
       }
     }
 

@@ -28,7 +28,6 @@ Feature: Register Domain as Administrator
       | no domain name          | order_details     | invalid |
       | no period               | order_details     | invalid |
       | no registrant handle    | order_details     | invalid |
-      | no registered at        | order_details     | invalid |
 
     Examples: Administrator-specific
       | invalid parameter       | field             | code    |

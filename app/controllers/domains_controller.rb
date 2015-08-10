@@ -3,7 +3,9 @@ class DomainsController < SecureController
     if params[:available_tlds]
       render json: available_tlds
     elsif params[:name]
-      render json: search_domain
+      render json: fetch_domain
+    elsif params[:search]
+      render json: search_domains
     else
       render json: get_domains
     end
@@ -66,8 +68,14 @@ class DomainsController < SecureController
     result
   end
 
-  def search_domain
-    Domain.where("name || extension = '#{params[:name]}'")
+  def search_domains
+    get_domains.select do |domain|
+      domain.name.include? params[:search]
+    end
+  end
+
+  def fetch_domain
+    Domain.where("name = '#{params[:name]}'")
   end
 
   def get_domains

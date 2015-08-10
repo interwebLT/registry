@@ -23,7 +23,7 @@ describe Order do
     end
 
     context :when_missing_order_details do
-      subject { Order.new partner: partner }
+      subject { Order.new partner: partner, ordered_at: Time.now }
 
       let(:partner) { create :partner }
 
@@ -35,6 +35,18 @@ describe Order do
       specify { subject.errors.count.must_equal 1 }
       specify { subject.errors[:order_details].must_equal ['invalid'] }
     end
+
+    context :when_missing_ordered_at do
+      before do
+        subject.ordered_at = nil
+
+        subject.valid?
+      end
+
+      specify { subject.valid?.wont_equal true }
+      specify { subject.errors.count.must_equal 1 }
+      specify { subject.errors[:ordered_at].must_equal ['invalid'] }
+    end
   end
 
   describe :associations do
@@ -42,12 +54,6 @@ describe Order do
 
     specify { subject.partner.wont_be_nil }
     specify { subject.order_details.wont_be_empty }
-  end
-
-  describe :aliases do
-    subject { build :order }
-
-    specify { subject.ordered_at.must_equal subject.created_at }
   end
 
   describe :complete? do
@@ -114,10 +120,12 @@ describe Order do
         {
           partner: partner.name,
           currency_code: 'USD',
+          ordered_at: '2015-08-07T15:00:00Z',
           order_details: [
             {
               type: 'migrate_domain',
               domain: 'test.ph',
+              authcode: 'ABC123',
               registrant_handle: 'registrant',
               registered_at: '2015-01-01T00:00:00Z',
               expires_at: '2017-01-01T00:00:00Z'
@@ -126,6 +134,7 @@ describe Order do
         }
       }
 
+      specify { subject.valid?.must_equal true }
       specify { subject.order_details.first.must_be_kind_of OrderDetail::MigrateDomain }
     end
   end

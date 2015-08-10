@@ -6,9 +6,8 @@ class Order < ActiveRecord::Base
   monetize :total_price_cents
   monetize :fee_cents
 
-  alias_attribute :ordered_at, :created_at
-
   validates :order_details, presence: true
+  validates :ordered_at, presence: true
 
   validate :partner_must_exist
 
@@ -30,8 +29,7 @@ class Order < ActiveRecord::Base
     order.partner = partner
     order.fee = Money.new(params[:fee])
     order.status = 'pending'
-    order.ordered_at = Time.now
-    order.updated_at = Time.now
+    order.ordered_at = params[:ordered_at]
     order.order_details << params[:order_details].collect { |o| OrderDetail.build(o, partner) }
     order.total_price = order.order_details.map(&:price).reduce(0.00, :+)
 
@@ -85,7 +83,8 @@ class Order < ActiveRecord::Base
 
   def reverse!
     reversed_order = Order.new  partner:  self.partner,
-                                total_price:  self.total_price * -1
+                                total_price:  self.total_price * -1,
+                                ordered_at: Time.current
 
     self.order_details.each do |order_detail|
       refund = OrderDetail::Refund.new  product:  order_detail.product,

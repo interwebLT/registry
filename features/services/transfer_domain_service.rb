@@ -2,6 +2,7 @@ def transfer_domain
   json_request = {
     partner: @current_partner.name,
     currency_code: 'USD',
+    ordered_at: '2015-08-07T16:00:00Z',
     order_details: [
       {
         type: 'transfer_domain',

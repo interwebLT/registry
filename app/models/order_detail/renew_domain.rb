@@ -1,13 +1,12 @@
 class OrderDetail::RenewDomain < OrderDetail
   validates :domain, presence: true
-  validates :renewed_at, presence: true
   validates :period, presence: true
 
   def self.build params, partner
     order_detail = self.new
     order_detail.domain = params[:domain]
     order_detail.period = params[:period].to_i
-    order_detail.renewed_at = params[:renewed_at].in_time_zone
+
     order_detail
   end
 
@@ -16,12 +15,13 @@ class OrderDetail::RenewDomain < OrderDetail
 
     price = saved_domain.partner.pricing action: OrderDetail::RenewDomain.new.action, period: period
 
-    o = Order.new partner: saved_domain.partner, total_price: price
+    o = Order.new partner: saved_domain.partner,
+                  total_price: price,
+                  ordered_at: renewed_at
 
     od = self.new price:      price,
                   domain:     saved_domain.name,
-                  period:     period,
-                  renewed_at: renewed_at
+                  period:     period
 
     o.order_details << od
     o.save!
@@ -74,8 +74,7 @@ class OrderDetail::RenewDomain < OrderDetail
       price: self.price.to_f,
       domain: self.domain,
       object: self.product.as_json,
-      period: self.period.to_i,
-      renewed_at: self.renewed_at.iso8601
+      period: self.period.to_i
     }
   end
 end

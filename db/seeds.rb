@@ -1,5 +1,7 @@
 User.delete_all
 
+Partner.delete_all
+
 PartnerPricing.delete_all
 PartnerConfiguration.delete_all
 
@@ -10,8 +12,8 @@ ObjectActivity.delete_all
 
 Domain.delete_all
 
-Host.delete_all
 HostAddress.delete_all
+Host.delete_all
 
 Contact.delete_all
 ContactHistory.delete_all
@@ -52,8 +54,11 @@ def create_domain partner, contact, name, registered_at = Date.today
 
   domain = Domain.named(name)
 
-  create_domain_host domain: domain, host_name: 'ns3.domains.ph'
-  create_domain_host domain: domain, host_name: 'ns4.domains.ph'
+  ['ns3.domains.ph', 'ns4.domains.ph'].each do |host|
+    Host.create! partner: partner, name: host unless Host.exists? name: host
+
+    create_domain_host domain: domain, host_name: host
+  end
 
   domain
 end
@@ -61,6 +66,7 @@ end
 def create_register_domain_order partner, period, domain_name, registrant, registered_at
   params = {
     currency_code: 'USD',
+    ordered_at: Time.current.iso8601,
     order_details: [
       {
         type: 'domain_create',
@@ -81,6 +87,7 @@ end
 def create_replenish_credits_order partner, credits = 5000.00
   params = {
     currency_code: 'USD',
+    ordered_at: Time.current.iso8601,
     order_details: [
       {
         type: 'credits',
@@ -95,6 +102,7 @@ end
 def create_renew_domain_order partner, period, domain_name, renewed_at = Time.now
   params = {
     currency_code: 'USD',
+    ordered_at: Time.current.iso8601,
     order_details: [
       {
         type: 'domain_renew',
@@ -216,3 +224,13 @@ complete_domain.admin_contact   = complete_contact
 complete_domain.billing_contact = complete_contact
 complete_domain.tech_contact    = complete_contact
 complete_domain.save!
+
+beta = create_partner name: 'beta', domain_count: 5
+
+complete_contact_2 = create_complete_contact partner: beta, handle: 'Complete-2'
+complete_domain_2 = create_domain beta, complete_contact, 'complete-2.ph'
+
+complete_domain_2.admin_contact   = complete_contact_2
+complete_domain_2.billing_contact = complete_contact_2
+complete_domain_2.tech_contact    = complete_contact_2
+complete_domain_2.save!

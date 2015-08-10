@@ -6,8 +6,12 @@ class OrderDetail::TransferDomain < OrderDetail
   def self.execute domain:, to:, fee: true
     price = fee ? (to.pricing action: OrderDetail::TransferDomain.new.action, period: 0) : 0.00.money
 
-    o = Order.new partner: to, total_price: price
+    o = Order.new partner: to,
+                  total_price: price,
+                  ordered_at: Time.current
+
     od = self.new price: price, domain: domain.full_name
+
     o.order_details << od
     o.save!
 
