@@ -80,6 +80,16 @@ describe Domain do
     end
   end
 
+  describe :for_purging? do
+    subject { Domain.new(expires_at: '2014-09-01T00:59:29.777Z'.to_date) }
+
+    specify { subject.for_purging?('2014-06-20'.to_date).must_equal false }
+    specify { subject.for_purging?('2014-08-31'.to_date).must_equal false }
+    specify { subject.for_purging?('2014-09-01T01:00:00.777Z'.to_date).must_equal false }
+    specify { subject.for_purging?('2014-11-01'.to_date).must_equal false }
+    specify { subject.for_purging?('2014-11-07'.to_date).must_equal true }
+  end
+
   describe :expired? do
     subject { Domain.new(expires_at: '2014-09-01T00:59:29.777Z'.to_date) }
 
