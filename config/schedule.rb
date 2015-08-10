@@ -19,6 +19,6 @@
 
 # Learn more: http://github.com/javan/whenever
 
-every 3.minutes do 
+every 1.days do 
   runner "ExpireDomainsJob.perform_now"
 end
