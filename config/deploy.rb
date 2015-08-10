@@ -29,7 +29,7 @@ namespace :deploy do
   end
 end
 
-require 'whenever/capistrano'
+set :whenever_roles, ->{ :app }
 
 after 'deploy:updated',     'whenever:update_crontab'
 after 'deploy:reverted',    'whenever:update_crontab'
