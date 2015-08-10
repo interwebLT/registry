@@ -29,7 +29,7 @@ namespace :deploy do
   end
 end
 
-after 'deploy:publishing',  'deploy:restart'
-after 'deploy:restart',     'resque:restart'
-after 'deploy:updated',     'whenever:update_crontab'
-after 'deploy:reverted',    'whenever:update_crontab'
+require 'whenever/capistrano'
+
+set :whenever_environment, defer { stage }
+set :whenever_command, 'bundle exec whenever --update-crontab'
