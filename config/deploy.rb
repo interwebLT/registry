@@ -28,3 +28,10 @@ namespace :deploy do
     invoke 'unicorn:restart'
   end
 end
+
+set :whenever_environment, defer { stage }
+
+after 'deploy:publishing',  'deploy:restart'
+after 'deploy:restart',     'resque:restart'
+after 'deploy:updated',     'whenever:update_crontab'
+after 'deploy:reverted',    'whenever:update_crontab'

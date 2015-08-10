@@ -22,6 +22,6 @@
 # Developers, uncomment this if you need your crontabs working!
 # set :environment, "development"
 
-every 1.days do 
+every 1.minutes do 
   runner "ExpireDomainsJob.perform_now"
 end
