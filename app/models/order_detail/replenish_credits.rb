@@ -8,9 +8,10 @@ class OrderDetail::ReplenishCredits < OrderDetail
   end
 
   def self.execute partner:, credits:, at: Time.current
+    saved_partner = Partner.find_by! name: partner
     price = credits.money
 
-    o = Order.new partner:  partner,
+    o = Order.new partner:  saved_partner,
                   total_price:  price,
                   ordered_at: at
 

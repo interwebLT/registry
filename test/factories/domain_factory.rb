@@ -24,5 +24,17 @@ FactoryGirl.define do
         domain.save
       end
     end
+
+    factory :expired_domain do
+      name 'should-expire.ph'
+      registered_at '2012-01-01'.in_time_zone
+      expires_at    '2014-01-01'.in_time_zone
+    end
+
+    factory :expired_domain2 do
+      name 'should-expire2.ph'
+      registered_at '2012-01-02'.in_time_zone
+      expires_at    '2014-10-27'.in_time_zone
+    end
   end
 end

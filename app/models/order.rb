@@ -29,7 +29,7 @@ class Order < ActiveRecord::Base
     order.partner = partner
     order.fee = Money.new(params[:fee])
     order.status = 'pending'
-    order.ordered_at = params[:ordered_at]
+    order.ordered_at = params[:ordered_at] || Time.current
     order.order_details << params[:order_details].collect { |o| OrderDetail.build(o, partner) }
     order.total_price = order.order_details.map(&:price).reduce(0.00, :+)
 
@@ -58,7 +58,7 @@ class Order < ActiveRecord::Base
 
   def complete!
     self.status = COMPLETE_ORDER
-    self.completed_at = Time.now
+    self.completed_at = Time.current
 
     saved_errors = {}
 

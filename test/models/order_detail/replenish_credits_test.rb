@@ -54,7 +54,7 @@ describe OrderDetail::ReplenishCredits do
     subject { OrderDetail.last }
 
     before do
-      OrderDetail::ReplenishCredits.execute partner: partner,
+      OrderDetail::ReplenishCredits.execute partner: partner.name,
                                             credits: credits,
                                             at: replenished_at
     end

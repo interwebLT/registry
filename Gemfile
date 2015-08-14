@@ -28,6 +28,7 @@ group :test do
   gem 'cucumber-rails', require: false
   gem 'database_cleaner'
   gem 'factory_girl_rails'
+  gem 'timecop'
 end
 
 group :development do
@@ -44,3 +45,4 @@ gem 'resque'
 gem 'rest-client'
 gem 'exception_notification'
 gem 'money-rails'
+gem 'whenever'

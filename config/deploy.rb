@@ -28,3 +28,8 @@ namespace :deploy do
     invoke 'unicorn:restart'
   end
 end
+
+set :whenever_roles, ->{ :app }
+
+after 'deploy:updated',     'whenever:update_crontab'
+after 'deploy:reverted',    'whenever:update_crontab'

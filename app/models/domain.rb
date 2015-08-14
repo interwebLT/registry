@@ -62,6 +62,10 @@ class Domain < ActiveRecord::Base
     name
   end
 
+  def for_purging? current_date = Date.today
+    current_date >= (expires_at.to_date + 65.days)
+  end
+
   def expired? current_date = Date.today
     current_date >= expires_at.to_date
   end
