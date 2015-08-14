@@ -31,5 +31,5 @@ end
 
 set :whenever_roles, ->{ :app }
 
-after 'deploy:updated',     'whenever:update_crontab'
-after 'deploy:reverted',    'whenever:update_crontab'
+# after 'deploy:updated',     'whenever:update_crontab'
+# after 'deploy:reverted',    'whenever:update_crontab'
