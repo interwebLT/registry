@@ -16,14 +16,28 @@ def order_must_be_created(status:, type:)
 end
 
 def view_orders
-  create :pending_register_domain_order,  partner: @current_partner
-  create :register_domain_order,          partner: @current_partner
-  create :renew_domain_order,             partner: @current_partner
-  create :replenish_credits_order,        partner: @current_partner
-  create :transfer_domain_order,          partner: @current_partner
+  current_time = DateTime.now
 
-  refund_order = create :refund_order,    partner: @current_partner
+  create :pending_register_domain_order,  partner: @current_partner,
+                                          ordered_at: (current_time + 1.minute)
+
+  create :register_domain_order,          partner: @current_partner,
+                                          ordered_at: (current_time + 2.minute)
+
+  create :renew_domain_order,             partner: @current_partner,
+                                          ordered_at: (current_time + 3.minute)
+
+  create :replenish_credits_order,        partner: @current_partner,
+                                          ordered_at: (current_time + 4.minute)
+
+  create :transfer_domain_order,          partner: @current_partner,
+                                          ordered_at: (current_time + 5.minute)
+
+  refund_order = create :refund_order,    partner: @current_partner,
+                                          ordered_at: (current_time + 7.minute)
+
   refund_order.order_details.first.refunded_order_detail.order.partner = @current_partner
+  refund_order.order_details.first.refunded_order_detail.order.ordered_at = (current_time + 6.minute)
   refund_order.order_details.first.refunded_order_detail.order.save!
 
   get orders_path
@@ -124,6 +138,25 @@ def orders_response
       id: 4,
       partner: 'alpha',
       order_number: 4,
+      total_price: 35.00,
+      fee: 0.00,
+      ordered_at: '2015-01-01T00:00:00Z',
+      status: 'reversed',
+      currency_code: 'USD',
+      order_details: [
+        {
+          type: 'domain_renew',
+          price: 35.00,
+          domain: 'domain.ph',
+          object: nil,
+          period: 1
+        }
+      ]
+    },
+    {
+      id: 5,
+      partner: 'alpha',
+      order_number: 5,
       total_price: -35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -143,25 +176,6 @@ def orders_response
         }
       ]
     },
-    {
-      id: 5,
-      partner: 'alpha',
-      order_number: 5,
-      total_price: 35.00,
-      fee: 0.00,
-      ordered_at: '2015-01-01T00:00:00Z',
-      status: 'reversed',
-      currency_code: 'USD',
-      order_details: [
-        {
-          type: 'domain_renew',
-          price: 35.00,
-          domain: 'domain.ph',
-          object: nil,
-          period: 1
-        }
-      ]
-    }
   ]
 end
 
