@@ -1,6 +1,10 @@
 class DomainInfoSerializer < DomainSerializer
-  attributes  :admin_contact, :billing_contact, :tech_contact,
+  attributes  :registrant, :admin_contact, :billing_contact, :tech_contact,
               :activities, :hosts
+
+  def registrant
+    ContactSerializer.new(object.registrant).serializable_hash
+  end
 
   def admin_contact
     ContactSerializer.new(object.admin_contact).serializable_hash if object.admin_contact

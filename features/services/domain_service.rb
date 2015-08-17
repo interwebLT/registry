@@ -216,32 +216,6 @@ def domain_response id: 1,
     partner: 'alpha',
     registered_at: registered_at,
     expires_at: '2015-01-01T00:00:00Z',
-    registrant: {
-      handle: 'contact',
-      name: nil,
-      organization: nil,
-      street: nil,
-      street2: nil,
-      street3: nil,
-      city: nil,
-      state: nil,
-      postal_code: nil,
-      country_code: nil,
-      local_name: nil,
-      local_organization: nil,
-      local_street: nil,
-      local_street2: nil,
-      local_street3: nil,
-      local_city: nil,
-      local_state: nil,
-      local_postal_code: nil,
-      local_country_code: nil,
-      voice: nil,
-      voice_ext: nil,
-      fax: nil,
-      fax_ext: nil,
-      email: nil
-    },
     registrant_handle: registrant,
     admin_handle: nil,
     billing_handle: nil,
@@ -264,6 +238,7 @@ def domain_info_response
     partner: 'alpha',
     registered_at: '2014-01-01T00:00:00Z',
     expires_at: '2015-01-01T00:00:00Z',
+    registrant_handle: 'contact',
     registrant: {
       handle: 'contact',
       name: nil,
@@ -290,7 +265,6 @@ def domain_info_response
       fax_ext: nil,
       email: nil
     },
-    registrant_handle: 'contact',
     admin_handle: nil,
     billing_handle: nil,
     tech_handle: nil,
@@ -339,6 +313,7 @@ def domain_info_response
     hosts: []
   }
 end
+
 def domain_with_complete_contacts_response
   {
     id: 1,

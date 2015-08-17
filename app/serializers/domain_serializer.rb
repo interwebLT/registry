@@ -1,6 +1,6 @@
 class DomainSerializer < ActiveModel::Serializer
   attributes  :id, :zone, :name, :partner, :registered_at, :expires_at,
-              :registrant, :registrant_handle, :admin_handle, :billing_handle, :tech_handle,
+              :registrant_handle, :admin_handle, :billing_handle, :tech_handle,
               :client_hold, :client_delete_prohibited, :client_renew_prohibited,
               :client_transfer_prohibited, :client_update_prohibited,
               :expired?, :expiring?
@@ -11,10 +11,6 @@ class DomainSerializer < ActiveModel::Serializer
 
   def partner
     object.partner.name
-  end
-
-  def registrant
-    ContactSerializer.new(object.registrant).serializable_hash
   end
 
   def registered_at
