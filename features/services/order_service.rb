@@ -124,25 +124,6 @@ def orders_response
       id: 4,
       partner: 'alpha',
       order_number: 4,
-      total_price: 35.00,
-      fee: 0.00,
-      ordered_at: '2015-01-01T00:00:00Z',
-      status: 'reversed',
-      currency_code: 'USD',
-      order_details: [
-        {
-          type: 'domain_renew',
-          price: 35.00,
-          domain: 'domain.ph',
-          object: nil,
-          period: 1
-        }
-      ]
-    },
-    {
-      id: 5,
-      partner: 'alpha',
-      order_number: 5,
       total_price: -35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -159,6 +140,25 @@ def orders_response
             object: nil,
             period: 1
           }
+        }
+      ]
+    },
+    {
+      id: 5,
+      partner: 'alpha',
+      order_number: 5,
+      total_price: 35.00,
+      fee: 0.00,
+      ordered_at: '2015-01-01T00:00:00Z',
+      status: 'reversed',
+      currency_code: 'USD',
+      order_details: [
+        {
+          type: 'domain_renew',
+          price: 35.00,
+          domain: 'domain.ph',
+          object: nil,
+          period: 1
         }
       ]
     }
