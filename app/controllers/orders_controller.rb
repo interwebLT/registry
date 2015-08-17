@@ -33,22 +33,15 @@ class OrdersController < SecureController
     params.permit(:partner, :currency_code, :ordered_at, order_details: [:type, :domain, :authcode, :period, :registrant_handle, :registered_at, :credits])
   end
 
-  def complete order
-    if current_user.admin?
-      return order.complete!
-    elsif current_user.staff && order.total_price < current_user.partner.current_balance
-      return order.complete!
-    end
-    return true
-  end
-
   def create_order
     order = Order.build order_params, order_partner
 
     if order.save
-      unless complete order
-        render validation_failed order
-        return
+      if current_user.admin?
+        unless order.complete!
+          render validation_failed order
+          return
+        end
       end
 
       render  json: order,

@@ -73,14 +73,6 @@ When /^I try to view the latest purchases in my zone$/ do
   view_latest_orders
 end
 
-When(/^I have enough balance$/) do
-  @current_user.partner.credits << (create :credit, partner: @current_user.partner)
-end
-
-Then(/^complete register domain order is created$/) do
-  complete_domain_order_must_be_created 
-end
-
 Then /^domain must be registered under non\-admin partner$/ do
   assert_completed_register_domain_response
 

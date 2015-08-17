@@ -64,7 +64,7 @@ def assert_register_domain_response domain: nil,
 end
 
 def register_domain_order_must_be_created
-  assert_register_domain_response partner: 'staff', status: 'pending', object: nil
+  assert_register_domain_response status: 'pending', object: nil
 
   order_must_be_created status: 'pending', type: OrderDetail::RegisterDomain
 end

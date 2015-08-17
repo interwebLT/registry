@@ -9,18 +9,6 @@ def create_order json_request: {}
   post orders_url, json_request
 end
 
-def complete_domain_order_must_be_created
-  assert_register_domain_response partner: 'staff', status: 'complete', object: {:id=>1, :type=>"domain", :name=>"domain.ph"}
-
-  order_must_be_created status: 'complete', type: OrderDetail::RegisterDomain
-end
-
-def register_domain_order_must_be_created
-  assert_register_domain_response partner: staff_partner, status: 'pending', object: nil
-
-  order_must_be_created status: 'pending', type: OrderDetail::RegisterDomain
-end
-
 def order_must_be_created(status:, type:)
   saved_order = Order.last
   saved_order.status.must_equal status
@@ -318,81 +306,4 @@ def latest_orders_response
       ]
     }
   ]
-end
-
-def nature_partner
-  {
-    id: 1,
-    name: 'alpha',
-    organization: 'Company',
-    credits: 0.00,
-    site: 'http://alpha.org',
-    nature: 'Nature',
-    representative: 'Representative',
-    position: 'Position',
-    street: 'Street',
-    city: 'City',
-    state: 'State',
-    postal_code: '1234',
-    country_code: 'PH',
-    phone: '+63.21234567',
-    fax: '+63.21234567',
-    email: 'alpha@alpha.org',
-    local: true,
-    admin: false
-  }
-end
-
-def staff_partner credits: 0.00
-  {
-    id: 1,
-    name: 'staff',
-    organization: 'Company',
-    credits: credits,
-    site: 'http://alpha.org',
-    nature: 'Nature',
-    representative: 'Representative',
-    position: 'Position',
-    street: 'Street',
-    city: 'City',
-    state: 'State',
-    postal_code: '1234',
-    country_code: 'PH',
-    phone: '+63.21234567',
-    fax: '+63.21234567',
-    email: 'alpha@alpha.org',
-    local: true,
-    admin: false
-  }
-end
-
-def alpha_partner credits: 0.00
-  {
-    id: 1,
-    name: 'alpha',
-    organization: 'Company',
-    credits: credits,
-    site: 'http://alpha.ph',
-    nature: 'Alpha Business',
-    representative: 'Alpha Guy',
-    position: 'Position',
-    street: 'Alpha Street',
-    city: 'Alpha City',
-    state: 'Alpha State',
-    postal_code: '1234',
-    country_code: 'PH',
-    phone: '+63.1234567',
-    fax: '+63.1234567',
-    email: 'alpha@alpha.ph',
-    local: true,
-    admin: false
-  }
-end
-
-def product id: 1, type: 'domain', name: 'domain.ph'
-  {
-    id: id,
-    type: type,
-    name: name
-  }
 end

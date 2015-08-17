@@ -2,22 +2,14 @@ Feature: Register Domain
   As a Partner
   I want to be able to register new domains
 
-  #Background:
-  #  Given I am authenticated as partner
+  Background:
+    Given I am authenticated as partner
 
   Scenario: Successfully create pending register domain order
-    Given I am authenticated as staff
     When  I register a domain
     Then  pending register domain order is created
 
-  Scenario: Successfully create complete register domain order
-    Given I am authenticated as staff
-    When  I have enough balance
-    And   I register a domain
-    Then  complete register domain order is created
-
   Scenario Outline: Invalid parameters
-    Given I am authenticated as staff
     When  I register a domain with <invalid parameter>
     Then  error must be validation failed
     And   validation error on <field> must be "<code>"
