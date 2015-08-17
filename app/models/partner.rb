@@ -64,6 +64,6 @@ class Partner < ActiveRecord::Base
 
   def quick_orders
     self.orders.where(status: [Order::COMPLETE_ORDER, Order::REVERSED_ORDER])
-      .includes(partner: :credits, order_details: [product: [:domain]]).order(:created_at)
+      .includes(partner: :credits, order_details: [product: [:domain]]).order(:ordered_at)
   end
 end
