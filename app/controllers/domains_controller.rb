@@ -82,7 +82,7 @@ class DomainsController < SecureController
     if current_user.admin
       Domain.latest
     else
-      current_user.partner.domains.includes(:registrant, :partner).order(:expires_at, :name, :extension)
+      current_user.partner.domains.order(:expires_at, :name)
     end
   end
 end
