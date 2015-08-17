@@ -3,7 +3,7 @@ def view_partners
 end
 
 def view_partner_info
-  get partner_path(@current_partner.id)
+  get partner_path(@current_partner.name)
 end
 
 def assert_partners_displayed

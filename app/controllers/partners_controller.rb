@@ -9,10 +9,16 @@ class PartnersController < SecureController
 
   def show
     if current_user.admin
-      render  json: Partner.find(params[:id]),
+      render  json: find_partner,
               serializer: PartnerInfoSerializer
     else
       head :not_found
     end
+  end
+
+  private
+
+  def find_partner
+    Partner.find_by(name: params[:id]) || Partner.find(params[:id])
   end
 end
