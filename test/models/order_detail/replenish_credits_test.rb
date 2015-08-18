@@ -9,7 +9,8 @@ describe OrderDetail::ReplenishCredits do
     let(:params) {
       {
         type: OrderDetail::ReplenishCredits.new.action,
-        credits: 150.00
+        credits: 150.00,
+        remarks: 'this is a remark'
       }
     }
 
@@ -56,6 +57,7 @@ describe OrderDetail::ReplenishCredits do
     before do
       OrderDetail::ReplenishCredits.execute partner: partner.name,
                                             credits: credits,
+                                            remarks: 'this is a remark',
                                             at: replenished_at
     end
 

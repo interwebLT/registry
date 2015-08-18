@@ -1,13 +1,16 @@
 class OrderDetail::ReplenishCredits < OrderDetail
+  validates :remarks, presence: true
+
   def self.build params, partner
     order_detail = self.new
     order_detail.price = params[:credits].money
     order_detail.credits = params[:credits].money
+    order_detail.remarks = params[:remarks]
 
     order_detail
   end
 
-  def self.execute partner:, credits:, at: Time.current
+  def self.execute partner:, credits:, remarks:, at: Time.current
     saved_partner = Partner.find_by! name: partner
     price = credits.money
 
@@ -15,7 +18,7 @@ class OrderDetail::ReplenishCredits < OrderDetail
                   total_price:  price,
                   ordered_at: at
 
-    od = self.new price: price, credits: price
+    od = self.new price: price, credits: price, remarks: remarks
 
     o.order_details << od
     o.save!

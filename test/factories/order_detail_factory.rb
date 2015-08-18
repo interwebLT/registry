@@ -14,6 +14,7 @@ FactoryGirl.define do
 
     factory :replenish_credits_order_detail, class: OrderDetail::ReplenishCredits  do
       type OrderDetail::ReplenishCredits.name
+      remarks "this is a remark"
       period 150
     end
 
