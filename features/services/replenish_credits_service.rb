@@ -16,6 +16,11 @@ def replenish_credits partner: nil
   post credits_url, json_request
 end
 
+def assert_balance_is_money_type
+  partner = Partner.find_by name: NON_ADMIN_PARTNER
+  partner.current_balance.must_be_kind_of(Money)
+end
+
 def assert_balance_changed
   partner = Partner.find_by name: NON_ADMIN_PARTNER
   partner.current_balance.to_i.must_equal 100
