@@ -240,7 +240,7 @@ ActiveRecord::Schema.define(version: 20150818033122) do
     t.datetime "expires_at"
     t.string   "authcode",                 limit: 64
     t.integer  "refunded_order_detail_id"
-    t.string   "remarks"
+    t.string   "remarks",                              default: ""
   end
 
   create_table "orders", force: :cascade do |t|
