@@ -7,7 +7,7 @@ class Partner < ActiveRecord::Base
   has_many :hosts
 
   def current_balance
-    credits.map(&:amount).reduce(0.00, :+)
+    credits.map(&:amount).reduce(Money.new(0.00), :+)
   end
 
   def pricing action:, period:

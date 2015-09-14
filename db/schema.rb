@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150723060341) do
+ActiveRecord::Schema.define(version: 20150818033122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -240,6 +240,7 @@ ActiveRecord::Schema.define(version: 20150723060341) do
     t.datetime "expires_at"
     t.string   "authcode",                 limit: 64
     t.integer  "refunded_order_detail_id"
+    t.string   "remarks",                              default: ""
   end
 
   create_table "orders", force: :cascade do |t|

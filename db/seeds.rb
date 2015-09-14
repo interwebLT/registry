@@ -91,7 +91,8 @@ def create_replenish_credits_order partner, credits = 5000.00
     order_details: [
       {
         type: 'credits',
-        credits: 5000.00
+        credits: 5000.00,
+        remarks:  'Replenish Credits'
       }
     ]
   }

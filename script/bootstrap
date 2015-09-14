@@ -26,7 +26,7 @@ else
 fi
 
 echo "  + Installing dependencies..."
-NOKOGIRI_USE_SYSTEM_LIBRARIES=1 bundle install --quiet
+NOKOGIRI_USE_SYSTEM_LIBRARIES=1 bundle install
 
 echo "  + Running migrations..."
 rake db:drop
