@@ -3,6 +3,8 @@ class Order < ActiveRecord::Base
 
   has_many :order_details, dependent: :destroy
 
+  has_one :credit
+
   monetize :total_price_cents
   monetize :fee_cents
 

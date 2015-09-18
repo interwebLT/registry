@@ -54,6 +54,7 @@ describe Order do
 
     specify { subject.partner.wont_be_nil }
     specify { subject.order_details.wont_be_empty }
+    specify { subject.credit.wont_be_nil }
   end
 
   describe :complete? do
