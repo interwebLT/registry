@@ -14,6 +14,8 @@ FactoryGirl.define do
     factory :order, aliases: [:complete_order, :replenish_credits_order] do
       before :create do |order, evaluator|
         order.order_details << (build :replenish_credits_order_detail, order: order)
+
+        create :credit, order: order
       end
 
       factory :pending_replenish_credits_order do

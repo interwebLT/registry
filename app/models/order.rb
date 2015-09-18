@@ -1,7 +1,9 @@
 class Order < ActiveRecord::Base
   belongs_to :partner
 
-  has_many :order_details
+  has_many :order_details, dependent: :destroy
+
+  has_one :credit, dependent: :destroy
 
   monetize :total_price_cents
   monetize :fee_cents
