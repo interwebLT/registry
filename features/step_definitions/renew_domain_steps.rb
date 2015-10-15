@@ -9,7 +9,7 @@ When /^I renew my domain$/ do
 end
 
 When /^I (?:renew|renewed) an existing domain$/ do
-  stub_request(:post, 'http://test.host/orders').to_return(status: 201)
+  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
 
   domain_exists
 
@@ -41,5 +41,5 @@ Then /^renew domain fee must be added back to credits of non-admin partner$/ do
 end
 
 Then /^renew domain must be synced to other systems$/ do 
-  assert_requested :post, 'http://test.host/orders', times: 1
+  assert_requested :post, SyncOrderJob::URL, times: 1
 end
