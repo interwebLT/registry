@@ -77,6 +77,8 @@ class ContactsController < SecureController
     contact.partner = contact_partner
 
     if contact.save
+      SyncCreateContactJob.perform_later(create_params)
+
       render  json: contact,
               status: :created,
               location: contact_url(contact.id)

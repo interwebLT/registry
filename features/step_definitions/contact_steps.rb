@@ -1,4 +1,6 @@
 When /^I create a new contact$/ do
+  stub_request(:post, SyncCreateContactJob::URL).to_return(status: 201)
+
   contact_does_not_exist
 
   create_contact
@@ -118,3 +120,6 @@ Then /^contact must be updated$/ do
   assert_update_contact_history_created
 end
 
+Then /^contact must be synced to other systems$/ do
+  assert_requested :post, SyncCreateContactJob::URL, times: 1
+end

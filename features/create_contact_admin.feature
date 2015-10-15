@@ -8,6 +8,7 @@ Feature: Create Contact as Administrator
   Scenario: Successfully create a new contact
     When  I create a new contact
     Then  contact must be created
+    And   contact must be synced to other systems
 
   Scenario Outline: Bad request
     When  I create a new contact <bad request>
