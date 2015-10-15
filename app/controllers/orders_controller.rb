@@ -38,7 +38,10 @@ class OrdersController < SecureController
 
     if order.save
       if current_user.admin?
-        unless order.complete!
+        if order.complete!
+          # pass order_params to cocca
+          SyncOrderJob.perform_later(order_params)
+        else
           render validation_failed order
           return
         end
