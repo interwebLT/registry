@@ -64,9 +64,11 @@ def assert_register_domain_response domain: nil,
 end
 
 def register_domain_order_must_be_created
-  assert_register_domain_response status: 'pending', object: nil
+  # assert_register_domain_response status: 'pending', object: nil
+  assert_register_domain_response status: 'complete', object: {:id=>1, :type=>"domain", :name=>"domain.ph"}
+  order_must_be_created status: 'complete', type: OrderDetail::RegisterDomain
 
-  order_must_be_created status: 'pending', type: OrderDetail::RegisterDomain
+  # order_must_be_created status: 'pending', type: OrderDetail::RegisterDomain
 end
 
 def product id: 1, type: 'domain', name: 'domain.ph'

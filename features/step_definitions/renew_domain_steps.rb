@@ -5,6 +5,8 @@ Given /^I have registered a domain$/ do
 end
 
 When /^I renew my domain$/ do
+  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+
   renew_domain
 end
 

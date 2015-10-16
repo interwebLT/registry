@@ -74,7 +74,7 @@ When /^I try to view the latest purchases in my zone$/ do
 end
 
 Then /^domain must be registered under non\-admin partner$/ do
-  assert_completed_register_domain_response
+  assert_completed_register_domain_response object: {:id=>1, :type=>"domain", :name=>"domain.ph"}
 
   assert_domain_must_be_registered
   assert_register_domain_activity_must_be_created
