@@ -1,4 +1,6 @@
 Given /^I have registered a domain$/ do
+  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+
   domain_does_not_exist
   contact_exists
   register_domain

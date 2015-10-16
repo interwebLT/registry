@@ -15,6 +15,8 @@ When /^client sends invalid order$/ do
 end
 
 When /^I register a domain$/ do
+  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+
   domain_does_not_exist
   contact_exists
 
@@ -22,6 +24,8 @@ When /^I register a domain$/ do
 end
 
 When /^I register a domain with 2-level TLD$/ do
+  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+
   domain_does_not_exist domain: TWO_LEVEL_DOMAIN
   contact_exists
 
@@ -82,12 +86,16 @@ end
 
 Then /^pending register domain order is created$/ do
   register_domain_order_must_be_created
+
+  assert_requested :post, SyncOrderJob::URL, times: 1
 end
 
 Then /^domain with 2\-level TLD must be registered$/ do
   assert_completed_register_domain_response domain: TWO_LEVEL_DOMAIN, object: product(name: 'test.com.ph')
 
   assert_domain_must_be_registered domain: TWO_LEVEL_DOMAIN
+
+  assert_requested :post, SyncOrderJob::URL, times: 1
 end
 
 Then /^I must see my orders$/ do
