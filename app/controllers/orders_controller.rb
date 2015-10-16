@@ -37,7 +37,7 @@ class OrdersController < SecureController
     order = Order.build order_params, order_partner
 
     if order.save
-      if current_user.admin?
+      # if current_user.admin?
         if order.complete!
           # pass order_params to cocca
           if order.order_details.last.is_a? OrderDetail::RenewDomain
@@ -47,7 +47,7 @@ class OrdersController < SecureController
           render validation_failed order
           return
         end
-      end
+      # end
 
       render  json: order,
               status: :created,
