@@ -57,7 +57,7 @@ end
 def assert_orders_displayed
   assert_response_status_must_be_ok
 
-  json_response.must_equal orders_response
+  json_response.must_match_json_expression orders_response
 end
 
 def assert_pending_orders_not_displayed
@@ -65,7 +65,7 @@ def assert_pending_orders_not_displayed
 end
 
 def assert_latest_orders_displayed
-  json_response.must_equal latest_orders_response
+  json_response.must_match_json_expression latest_orders_response
 end
 
 def assert_refunded_orders_displayed
@@ -78,7 +78,7 @@ def orders_response
   [
     {
       id: 1,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 1,
       total_price: 35.00,
       fee: 0.00,
@@ -99,7 +99,7 @@ def orders_response
     },
     {
       id: 2,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 2,
       total_price: 35.00,
       fee: 0.00,
@@ -118,7 +118,7 @@ def orders_response
     },
     {
       id: 3,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 3,
       total_price: 15.00,
       fee: 0.00,
@@ -136,7 +136,7 @@ def orders_response
     },
     {
       id: 4,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 4,
       total_price: 35.00,
       fee: 0.00,
@@ -155,7 +155,7 @@ def orders_response
     },
     {
       id: 5,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 5,
       total_price: -35.00,
       fee: 0.00,
@@ -183,7 +183,7 @@ def latest_orders_response
   [
     {
       id: 1,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 1,
       total_price: -35.00,
       fee: 0.00,
@@ -206,7 +206,7 @@ def latest_orders_response
     },
     {
       id: 2,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 2,
       total_price: 15.00,
       fee: 0.00,
@@ -224,7 +224,7 @@ def latest_orders_response
     },
     {
       id: 3,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 3,
       total_price: 150.00,
       fee: 0.00,
@@ -241,7 +241,7 @@ def latest_orders_response
     },
     {
       id: 4,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 4,
       total_price: 35.00,
       fee: 0.00,
@@ -260,7 +260,7 @@ def latest_orders_response
     },
     {
       id: 5,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 5,
       total_price: 35.00,
       fee: 0.00,
@@ -281,7 +281,7 @@ def latest_orders_response
     },
     {
       id: 6,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 6,
       total_price: 35.00,
       fee: 0.00,
@@ -302,7 +302,7 @@ def latest_orders_response
     },
     {
       id: 7,
-      partner: 'alpha',
+      partner: /alpha[0-9]*/,
       order_number: 7,
       total_price: 35.00,
       fee: 0.00,

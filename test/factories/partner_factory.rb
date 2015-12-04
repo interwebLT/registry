@@ -1,6 +1,19 @@
 FactoryGirl.define do
-  factory :partner, aliases: [:complete_partner]  do
-    name 'alpha'
+	
+	sequence :name do |n|
+		"alpha#{n}"
+  end
+	
+	sequence :other_partner do |n|
+		"other_partner#{n}"
+	end
+	
+	sequence :other_admin_partner do |n|
+		"other_admin_partner#{n}"
+	end
+
+	factory :partner, aliases: [:complete_partner]  do
+    name
     encrypted_password 'password'
     organization 'Company'
     url 'http://alpha.ph'
@@ -46,11 +59,11 @@ FactoryGirl.define do
     end
 
     factory :other_partner, aliases: [:losing_partner] do
-      name 'other_partner'
+			name { generate :other_partner }
     end
 
     factory :other_admin_partner do
-      name 'other_admin_partner'
+			name { generate :other_admin_partner }
       admin true
     end
   end

@@ -1,4 +1,5 @@
 require 'minitest/spec'
+require 'json_expressions/minitest'
 
 World(MiniTest::Assertions)
 MiniTest::Spec.new(nil)

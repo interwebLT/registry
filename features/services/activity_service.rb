@@ -8,7 +8,7 @@ end
 def assert_activities_displayed
   assert_response_status_must_be_ok
 
-  json_response.must_equal activities_response
+	json_response.must_match_json_expression activities_response
 end
 
 private
@@ -20,7 +20,7 @@ def activities_response
       type: 'update',
       partner:     {
         id: 1,
-        name: 'alpha',
+        name: /alpha[0-9]*/,
         organization: 'Company',
         credits: 0.00,
         site: 'http://alpha.ph',
@@ -53,7 +53,7 @@ def activities_response
       type: 'create',
       partner:     {
         id: 2,
-        name: 'alpha',
+        name: /alpha[0-9]*/,
         organization: 'Company',
         credits: 0.00,
         site: 'http://alpha.ph',

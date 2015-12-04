@@ -74,13 +74,13 @@ def assert_hosts_displayed
   assert_response_status_must_be_ok
 
   json_response.length.must_equal 3
-  json_response.must_equal hosts_response
+  json_response.must_match_json_expression hosts_response
 end
 
 def assert_host_info_displayed
   assert_response_status_must_be_ok
 
-  json_response.must_equal host_info_response
+  json_response.must_match_json_expression host_info_response
 end
 
 def assert_no_hosts_displayed
@@ -96,7 +96,7 @@ def assert_no_host_displayed
 end
 
 def host_info_response
-  {:id=>1, :partner=>"alpha", :name=>"ns5.domains.ph", :host_addresses=>[
+  {:id=>1, :partner=>/alpha[0-9]*/, :name=>"ns5.domains.ph", :host_addresses=>[
     {:address=>"123.456.789.001", :type=>"v4"}, 
     {:address=>"123.456.789.002", :type=>"v4"}
   ], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}
@@ -105,7 +105,7 @@ end
 def hosts_response
 [{:id=>1, :partner=>"admin", :name=>"ns3.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}, 
 {:id=>2, :partner=>"admin", :name=>"ns4.domains.ph", :host_addresses=>[], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}, 
-{:id=>3, :partner=>"alpha", :name=>"ns5.domains.ph", :host_addresses=>[
+{:id=>3, :partner=>/alpha[0-9]*/, :name=>"ns5.domains.ph", :host_addresses=>[
     {:address=>"123.456.789.001", :type=>"v4"}, 
     {:address=>"123.456.789.002", :type=>"v4"}
   ], :created_at=>"2015-01-01T00:00:00Z", :updated_at=>"2015-01-01T00:00:00Z"}]

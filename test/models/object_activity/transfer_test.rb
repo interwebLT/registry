@@ -56,7 +56,7 @@ describe ObjectActivity::Transfer do
         type: 'transfer',
         partner:     {
           id: 1,
-          name: 'alpha',
+          name: /alpha[0-9]*/,
           organization: 'Company',
           credits: 0.00,
           site: 'http://alpha.ph',
@@ -80,10 +80,10 @@ describe ObjectActivity::Transfer do
           type: 'domain',
           name: 'domain.ph'
         },
-        losing_partner: 'other_partner'
+        losing_partner: /other_partner[0-9]*/
       }
     }
 
-    specify { Json.lock_values(subject.as_json).must_equal expected_json }
+		specify { Json.lock_values(subject.as_json).must_match_json_expression expected_json }
   end
 end

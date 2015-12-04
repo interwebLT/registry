@@ -5,6 +5,8 @@ class Partner < ActiveRecord::Base
   has_many :partner_pricings
   has_many :credits
   has_many :hosts
+	
+	validates :name, uniqueness: true
 
   def current_balance
     credits.map(&:amount).reduce(Money.new(0.00), :+)
