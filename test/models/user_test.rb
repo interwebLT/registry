@@ -1,13 +1,6 @@
 require 'test_helper'
 
 describe User do
-  describe :aliases do
-    subject { build :user }
-
-    specify { subject.username.must_equal subject.name }
-    specify { subject.password.must_equal subject.encrypted_password }
-  end
-
   describe :associations do
     subject { create :user_with_authorizations }
 

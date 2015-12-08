@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151204102138) do
+ActiveRecord::Schema.define(version: 20151208025028) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -317,5 +317,16 @@ ActiveRecord::Schema.define(version: 20151204102138) do
   create_table "products", force: :cascade do |t|
     t.string "product_type", limit: 20, null: false
   end
+
+  create_table "users", force: :cascade do |t|
+    t.string  "email",              limit: 255, null: false
+    t.string  "name",               limit: 64,  null: false
+    t.string  "salt",               limit: 255, null: false
+    t.string  "encrypted_password", limit: 255, null: false
+    t.string  "username",           limit: 255
+    t.integer "partner_id"
+  end
+
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
 
 end

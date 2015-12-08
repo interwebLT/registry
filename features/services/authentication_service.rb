@@ -1,9 +1,9 @@
 CREDENTIALS = {
-  'valid credentials' => {  username: 'alpha',    password: 'password'  },
-  'invalid username'  => {  username: 'invalid',  password: 'password'  },
-  'invalid password'  => {  username: 'alpha',    password: 'invalid'   },
+  'valid credentials' => {  username: 'alpha@alpha.org',    password: 'password'  },
+  'invalid username'  => {  username: 'invalid@alpha.org',  password: 'password'  },
+  'invalid password'  => {  username: 'alpha@alpha.org',    password: 'invalid'   },
   'no username'       => {  username: nil,        password: 'password'  },
-  'no password'       => {  username: 'alpha',    password: nil }
+  'no password'       => {  username: 'alpha@alpha.org',    password: nil }
 }
 
 def authenticate_with credentials

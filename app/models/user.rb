@@ -1,14 +1,9 @@
 class User < ActiveRecord::Base
-  self.table_name = 'partners'
-
   TIMEOUT = 15.minutes
 
   belongs_to :partner, foreign_key: :id
 
   has_many :authorizations
-
-  alias_attribute :username, :name
-  alias_attribute :password, :encrypted_password
 
   attr_accessor :token
 
@@ -16,5 +11,25 @@ class User < ActiveRecord::Base
     conditions = { token: token, updated_at: (Time.now - TIMEOUT)..Time.now }
 
     Authorization.where(conditions).last
+  end
+
+  def password_matches input
+    input == encrypted_password
+  end
+
+  def admin
+    return partner.admin
+  end
+
+  def admin?
+    return admin
+  end
+
+  def staff
+    return partner.staff
+  end
+
+  def staff?
+    return staff
   end
 end

@@ -1,8 +1,8 @@
 class AuthorizationsController < ApplicationController
   def create
-    user = User.find_by(username: params[:username], password: params[:password])
+    user = User.find_by(email: params[:username])
 
-    if user
+    if user.present? && user.password_matches(params[:password])
       authorization = user.authorizations.create
 
       render json: authorization, status: :created, location: authorization

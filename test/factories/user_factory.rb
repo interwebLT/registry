@@ -2,33 +2,29 @@ FactoryGirl.define do
   factory :user do
     name 'alpha'
     encrypted_password 'password'
-    representative 'Representative'
-    organization 'Company'
-    nature 'Nature'
-    position 'Position'
-    street 'Street'
-    city 'City'
-    state 'State'
-    postal_code '1234'
-    country_code 'PH'
-    url 'http://alpha.org'
     email 'alpha@alpha.org'
-    voice '+63.21234567'
-    fax '+63.21234567'
+    salt 'salt'
 
     factory :admin do
-      name 'admin'
-      admin true
+      before :create do |user, evaluator|
+        user.partner = create :user_partner, name: 'admin', admin: true
+      end
     end
 
     factory :staff do
-      name 'staff'
-      admin false
-      staff true
+      before :create do |user, evaluator|
+        user.partner = create :user_partner, name: 'staff', admin: false, staff: true
+      end
     end
 
     factory :dummy do
-      name 'beta'
+      before :create do |user, evaluator|
+        user.partner = create :user_partner, name: 'beta'
+      end
+    end
+
+    before :create do |user, evaluator|
+      user.partner = create :user_partner
     end
 
     after :create do |user, evaluator|

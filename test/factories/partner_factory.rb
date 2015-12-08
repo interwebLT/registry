@@ -67,4 +67,22 @@ FactoryGirl.define do
       admin true
     end
   end
+
+  factory :user_partner, class: Partner do
+    name 'alpha'
+    encrypted_password 'password'
+    representative 'Representative'
+    organization 'Company'
+    nature 'Nature'
+    position 'Position'
+    street 'Street'
+    city 'City'
+    state 'State'
+    postal_code '1234'
+    country_code 'PH'
+    url 'http://alpha.org'
+    voice '+63.21234567'
+    fax '+63.21234567'
+    email 'alpha@alpha.org'
+  end
 end

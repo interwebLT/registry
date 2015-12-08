@@ -24,8 +24,8 @@ OrderDetail.delete_all
 Credit.delete_all
 
 def create_user username, admin: false, staff: false
-  User.create username: username,
-              password: 'password',
+  partner = Partner.create name: username,
+              encrypted_password: 'password',
               representative: 'Representative',
               organization: 'Company',
               position: 'Position',
@@ -40,6 +40,12 @@ def create_user username, admin: false, staff: false
               voice: '+63.21234567',
               admin: admin,
               staff: staff
+
+  user = User.create name: username,
+              encrypted_password: 'password',
+              email: username,
+              salt: 'salt',
+              partner: partner
 end
 
 def create_pricing partner, action, period, price
