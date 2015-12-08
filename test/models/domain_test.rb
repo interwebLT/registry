@@ -441,7 +441,7 @@ describe Domain do
     let(:latest_activity) { subject.domain_activities.last }
 
     before do
-      subject.transfer! to: partner
+      subject.transfer! to: partner, handle: nil
     end
 
     specify { subject.partner.must_equal partner }
