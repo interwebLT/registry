@@ -1,3 +1,5 @@
+require 'bcrypt'
+
 class User < ActiveRecord::Base
   TIMEOUT = 15.minutes
 
@@ -14,7 +16,12 @@ class User < ActiveRecord::Base
   end
 
   def password_matches input
-    input == encrypted_password
+    encrypted_password == BCrypt::Engine.hash_secret(input, salt)
+  end
+
+  def password=(pw)
+    self.salt = BCrypt::Engine.generate_salt
+    self.encrypted_password = BCrypt::Engine.hash_secret(pw, salt)
   end
 
   def admin

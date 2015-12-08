@@ -1,6 +1,32 @@
 require 'test_helper'
 
 describe User do
+  describe :password do 
+    it 'is encrypted upon being set' do 
+      user = User.new
+      user.encrypted_password.must_be_nil
+      user.password = 'password'
+      user.encrypted_password.wont_be_nil
+      user.encrypted_password.wont_equal 'password'
+    end
+
+    it 'authenticates properly' do 
+      user = User.new
+
+      user.password = 'password'
+
+      user.password_matches('password').must_equal true
+      user.password_matches('wrong').must_equal false
+    end
+
+    it 'salt changes when it is set' do 
+      user = User.new
+      salt = user.salt
+      user.password = 'password'
+      user.salt.wont_equal salt
+    end
+  end
+
   describe :associations do
     subject { create :user_with_authorizations }
 

@@ -42,10 +42,11 @@ def create_user username, admin: false, staff: false
               staff: staff
 
   user = User.create name: username,
-              encrypted_password: 'password',
               email: username,
-              salt: 'salt',
               partner: partner
+  user.password = 'password'
+
+  user
 end
 
 def create_pricing partner, action, period, price
