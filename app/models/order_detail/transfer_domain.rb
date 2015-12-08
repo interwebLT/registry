@@ -29,7 +29,7 @@ class OrderDetail::TransferDomain < OrderDetail
   def complete!
     domain = Domain.named(self.domain)
 
-    if domain.transfer! to: self.order.partner
+    if domain.transfer! to: self.order.partner, handle: self.registrant_handle
       self.order.partner.credits.create order: self.order,
                                         amount: self.price * -1,
                                         activity_type: 'use'

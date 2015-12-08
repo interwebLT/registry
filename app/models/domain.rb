@@ -74,9 +74,10 @@ class Domain < ActiveRecord::Base
     ((current_date + 30.days) >= expires_at.to_date) and (current_date < expires_at.to_date)
   end
 
-  def transfer! to:
+  def transfer! to:, handle: self.registrant_handle
     old_partner = self.partner
     self.partner = to
+    self.registrant_handle = handle if handle
 
     result = self.save
 
