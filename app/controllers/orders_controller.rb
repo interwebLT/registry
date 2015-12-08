@@ -41,7 +41,8 @@ class OrdersController < SecureController
         if order.complete!
           # pass order_params to cocca
           if (order.order_details.last.is_a? OrderDetail::RenewDomain) ||
-             (order.order_details.last.is_a?  OrderDetail::RegisterDomain)
+             (order.order_details.last.is_a?  OrderDetail::RegisterDomain) ||
+              (order.order_details.last.is_a? OrderDetail::TransferDomain)
             SyncOrderJob.perform_later(order_params)
           end
         else
