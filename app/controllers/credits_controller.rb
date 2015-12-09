@@ -24,12 +24,12 @@ class CreditsController < SecureController
     order = Order.build order_params, order_partner
 
     if order.save
-      if current_user.admin?
+      # if current_user.admin?
         unless order.complete!
           render validation_failed order
           return
         end
-      end
+      #end
 
       render  json: order,
               status: :created,
