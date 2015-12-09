@@ -103,6 +103,10 @@ class Order < ActiveRecord::Base
 
     reversed_order.complete!
   end
+  
+  def contains_checkout_credits?
+    self.order_details.where(type: OrderDetail::CheckoutReplenishCredits).count > 0
+  end
 
   private
 

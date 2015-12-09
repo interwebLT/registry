@@ -1,0 +1,16 @@
+# Checkout.com configuration
+
+development:
+  secret_key: <%= ENV['CHECKOUT_SECRET_KEY'] %>
+  public_key: <%= ENV['CHECKOUT_PUBLIC_KEY'] %>
+  endpoint: "https://sandbox.checkout.com/api2/v2"
+
+test:
+  secret_key: <%= ENV['CHECKOUT_SECRET_KEY'] %>
+  public_key: <%= ENV['CHECKOUT_PUBLIC_KEY'] %>
+  endpoint: "https://sandbox.checkout.com/api2/v2"
+
+production:
+  secret_key: <%= ENV['CHECKOUT_SECRET_KEY'] %>
+  public_key: <%= ENV['CHECKOUT_PUBLIC_KEY'] %>
+  endpoint: "https://api2.checkout.com/v2"
