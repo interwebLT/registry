@@ -1,9 +1,11 @@
 class OrderDetail::TransferDomain < OrderDetail
+  validates :registrant_handle, presence: true
+  
   def self.build params, partner
     new params.merge(period: 0)
   end
 
-  def self.execute domain:, to:, fee: true, at: Time.current
+  def self.execute domain:, to:, fee: true, at: Time.current, handle:
     partner = Partner.find_by! name: to
 
     price = fee ? (partner.pricing action: self.new.action, period: 0) : 0.00.money
@@ -12,7 +14,7 @@ class OrderDetail::TransferDomain < OrderDetail
                   total_price:  price,
                   ordered_at: at
 
-    od = self.new price: price, domain: domain
+    od = self.new price: price, domain: domain, registrant_handle: handle
 
     o.order_details << od
     o.save!
@@ -50,6 +52,7 @@ class OrderDetail::TransferDomain < OrderDetail
       type: self.action,
       price: self.price.to_f,
       domain: self.domain,
+      registrant_handle: self.registrant_handle,
       object: self.product.as_json
     }
   end

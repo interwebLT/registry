@@ -76,14 +76,16 @@ class Domain < ActiveRecord::Base
 
   def transfer! to:, handle:
     old_partner = self.partner
+    old_handle = self.registrant_handle
     self.partner = to
-    self.registrant_handle = handle if handle
+    self.registrant_handle = handle
 
     result = self.save
 
     ObjectActivity::Transfer.create activity_at: Time.now,
                                     partner: self.partner,
                                     product: self.product,
+                                    registrant_handle: old_handle,
                                     losing_partner: old_partner if result
 
     result

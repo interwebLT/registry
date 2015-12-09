@@ -39,6 +39,7 @@ FactoryGirl.define do
       type OrderDetail::TransferDomain
       price 15.00
       domain 'domain.ph'
+      registrant_handle 'contact'
     end
 
     factory :migrate_domain_order_detail, class: OrderDetail::MigrateDomain do

@@ -130,6 +130,7 @@ def orders_response
           type: 'transfer_domain',
           price: 15.00,
           domain: 'domain.ph',
+          registrant_handle: 'contact',
           object: nil,
         }
       ]
@@ -218,6 +219,7 @@ def latest_orders_response
           type: 'transfer_domain',
           price: 15.00,
           domain: 'domain.ph',
+          registrant_handle: 'contact',
           object: nil
         }
       ]
