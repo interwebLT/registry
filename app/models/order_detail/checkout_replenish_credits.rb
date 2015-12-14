@@ -11,21 +11,21 @@ class OrderDetail::CheckoutReplenishCredits < OrderDetail::ReplenishCredits
 
     order_detail
   end
-  
-  def complete!
-    payment_verified? ? super : false
-  end
-    
+
+  # def complete!
+  #   payment_verified? ? super : false
+  # end
+
   private
 
   def payment_verified?
     response = HTTParty.get Rails.configuration.checkout_endpoint + "/charges/#{authcode}",
                             headers: checkout_headers
     hash = JSON.parse response.body
-    
+
     hash["responseMessage"] == "Approved"
   end
-  
+
   def checkout_headers
     {
       "Content-Type" => "application/json",
