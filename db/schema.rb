@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151208025028) do
+ActiveRecord::Schema.define(version: 20151208084427) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -324,6 +324,7 @@ ActiveRecord::Schema.define(version: 20151208025028) do
     t.string  "salt",               limit: 255, null: false
     t.string  "encrypted_password", limit: 255, null: false
     t.string  "username",           limit: 255
+    t.date    "registered_at",                  null: false
     t.integer "partner_id"
   end
 

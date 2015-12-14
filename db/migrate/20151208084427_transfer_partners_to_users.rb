@@ -3,8 +3,10 @@ class TransferPartnersToUsers < ActiveRecord::Migration
     Partner.all.each do |partner|
       user = User.new
       user.email = partner.email
+      user.name = partner.name
       user.password = partner.encrypted_password # it's not actually encrypted in partners
       user.username = partner.name
+      user.registered_at = partner.created_at
 
       user.save
     end
