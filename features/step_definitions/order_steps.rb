@@ -86,16 +86,12 @@ end
 
 Then /^pending register domain order is created$/ do
   register_domain_order_must_be_created
-
-  assert_requested :post, SyncOrderJob::URL, times: 1
 end
 
 Then /^domain with 2\-level TLD must be registered$/ do
   assert_completed_register_domain_response domain: TWO_LEVEL_DOMAIN, object: product(name: 'test.com.ph')
 
   assert_domain_must_be_registered domain: TWO_LEVEL_DOMAIN
-
-  assert_requested :post, SyncOrderJob::URL, times: 1
 end
 
 Then /^I must see my orders$/ do

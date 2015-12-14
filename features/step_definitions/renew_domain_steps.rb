@@ -43,7 +43,3 @@ end
 Then /^renew domain fee must be added back to credits of non-admin partner$/ do
   assert_renew_domain_fee_must_be_added_back
 end
-
-Then /^renew domain must be synced to other systems$/ do 
-  assert_requested :post, SyncOrderJob::URL, times: 1
-end

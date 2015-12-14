@@ -119,7 +119,3 @@ Then /^contact must be updated$/ do
   assert_contact_updated
   assert_update_contact_history_created
 end
-
-Then /^contact must be synced to other systems$/ do
-  assert_requested :post, SyncCreateContactJob::URL, times: 1
-end
