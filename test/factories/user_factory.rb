@@ -1,9 +1,14 @@
+require 'bcrypt'
+
 FactoryGirl.define do
   factory :user do
     name 'alpha'
-    encrypted_password 'password'
     email 'alpha@alpha.org'
-    salt 'salt'
+    registered_at Time.now
+
+    before :create do |user, evaluator|
+      user.password = 'password'
+    end
 
     factory :admin do
       before :create do |user, evaluator|

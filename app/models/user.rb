@@ -3,7 +3,7 @@ require 'bcrypt'
 class User < ActiveRecord::Base
   TIMEOUT = 15.minutes
 
-  belongs_to :partner, foreign_key: :id
+  belongs_to :partner
 
   has_many :authorizations
 
