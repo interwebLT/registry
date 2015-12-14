@@ -17,7 +17,9 @@ Rails.application.routes.draw do
     resources :hosts, controller: :domain_hosts, only: [:create, :show, :destroy]
   end
 
-  resources :partners, only: [:index, :show]
+  resources :partners, only: [:index, :show] do 
+    resources :users, only: [:create] 
+  end
 
   resources :orders, only: [:index, :create, :show]
 
