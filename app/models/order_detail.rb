@@ -22,6 +22,7 @@ class OrderDetail < ActiveRecord::Base
     domain_create: OrderDetail::RegisterDomain,
     domain_renew: OrderDetail::RenewDomain,
     credits: OrderDetail::ReplenishCredits,
+    checkout_credits: OrderDetail::CheckoutReplenishCredits,
     migrate_domain: OrderDetail::MigrateDomain,
     transfer_domain:  OrderDetail::TransferDomain
   }
@@ -63,4 +64,5 @@ class OrderDetail < ActiveRecord::Base
   def action
     ''
   end
+  
 end

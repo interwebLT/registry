@@ -16,6 +16,16 @@ describe DomainInfoSerializer do
 
   context :when_contact_registrant_only do
     let(:domain) { create :domain }
+		
+		subject {
+			d = DomainInfoSerializer.new(domain)
+			d.class.module_eval {
+				attr_accessor :current_user
+			}
+			current_user.name = domain.partner.name
+			d.current_user = current_user
+			d.serializable_hash 
+		}
 
     before do
       create :domain_host, product: domain.product, name: 'ns3.domains.ph'

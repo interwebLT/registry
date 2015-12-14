@@ -23,7 +23,8 @@ def reverse_renew_domain
 end
 
 def assert_renew_domain_order_created
-  order_must_be_created status: 'pending', type: OrderDetail::RenewDomain
+  order_must_be_created status: 'complete', type: OrderDetail::RenewDomain
+  # order_must_be_created status: 'pending', type: OrderDetail::RenewDomain
 end
 
 def assert_renew_domain_fee_must_be_deducted

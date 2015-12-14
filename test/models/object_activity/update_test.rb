@@ -61,7 +61,7 @@ describe ObjectActivity::Update do
         type: 'update',
         partner:     {
           id: 1,
-          name: 'alpha',
+          name: /alpha[0-9]*/,
           organization: 'Company',
           credits: 0.00,
           site: 'http://alpha.ph',
@@ -91,6 +91,6 @@ describe ObjectActivity::Update do
       }
     }
 
-    specify { Json.lock_values(subject.as_json).must_equal expected_json }
+		specify { Json.lock_values(subject.as_json).must_match_json_expression expected_json }
   end
 end

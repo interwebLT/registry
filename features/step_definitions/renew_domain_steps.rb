@@ -1,14 +1,20 @@
 Given /^I have registered a domain$/ do
+  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+
   domain_does_not_exist
   contact_exists
   register_domain
 end
 
 When /^I renew my domain$/ do
+  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+
   renew_domain
 end
 
 When /^I (?:renew|renewed) an existing domain$/ do
+  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+
   domain_exists
 
   renew_domain
@@ -36,4 +42,8 @@ end
 
 Then /^renew domain fee must be added back to credits of non-admin partner$/ do
   assert_renew_domain_fee_must_be_added_back
+end
+
+Then /^renew domain must be synced to other systems$/ do 
+  assert_requested :post, SyncOrderJob::URL, times: 1
 end

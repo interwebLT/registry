@@ -119,7 +119,7 @@ def assert_response_must_be_updated_domain(with:)
 
   assert_response_status_must_be_ok
 
-  json_response.must_equal domain_response.merge(params)
+	json_response.must_match_json_expression domain_response.merge(params)
 end
 
 def assert_domain_must_be_registered domain: DOMAIN
@@ -169,19 +169,19 @@ end
 def assert_domain_info_displayed
   assert_response_status_must_be_ok
 
-  json_response.must_equal domain_info_response
+	json_response.must_match_json_expression domain_info_response
 end
 
 def assert_domain_with_complete_contacts_displayed
   assert_response_status_must_be_ok
 
-  json_response.must_equal domain_with_complete_contacts_response
+	json_response.must_match_json_expression domain_with_complete_contacts_response
 end
 
 def assert_domains_displayed
   assert_response_status_must_be_ok
 
-  json_response.must_equal [domain_response]
+	json_response.must_match_json_expression [domain_response]
 end
 
 def assert_latest_domains_displayed
@@ -195,7 +195,7 @@ def assert_latest_domains_displayed
   ]
 
 
-  json_response.must_equal expected_response
+  json_response.must_match_json_expression expected_response
 end
 
 def assert_domains_count_must_be count
@@ -213,7 +213,7 @@ def domain_response id: 1,
     id: id,
     zone: 'ph',
     name: name,
-    partner: 'alpha',
+    partner: /alpha[0-9]*/,
     registered_at: registered_at,
     expires_at: '2015-01-01T00:00:00Z',
     registrant_handle: registrant,
@@ -235,7 +235,7 @@ def domain_info_response
     id: 1,
     zone: 'ph',
     name: 'domain.ph',
-    partner: 'alpha',
+    partner: /alpha[0-9]*/,
     registered_at: '2014-01-01T00:00:00Z',
     expires_at: '2015-01-01T00:00:00Z',
     registrant_handle: 'contact',
@@ -284,7 +284,7 @@ def domain_info_response
         type: 'create',
         partner:     {
           id: 1,
-          name: 'alpha',
+          name: /alpha[0-9]*/,
           organization: 'Company',
           credits: 0.00,
           site: 'http://alpha.org',
@@ -319,7 +319,7 @@ def domain_with_complete_contacts_response
     id: 1,
     zone: 'ph',
     name: 'domain.ph',
-    partner: 'alpha',
+    partner: /alpha[0-9]*/,
     registered_at: '2014-01-01T00:00:00Z',
     expires_at: '2015-01-01T00:00:00Z',
     registrant_handle: 'contact',
@@ -443,7 +443,7 @@ def domain_with_complete_contacts_response
         type: 'create',
         partner:     {
           id: 1,
-          name: 'alpha',
+          name: /alpha[0-9]*/,
           organization: 'Company',
           credits: 0.00,
           site: 'http://alpha.org',
@@ -473,7 +473,7 @@ def domain_with_complete_contacts_response
         type: 'update',
         partner:     {
           id: 2,
-          name: 'alpha',
+          name: /alpha[0-9]*/,
           organization: 'Company',
           credits: 0.00,
           site: 'http://alpha.org',
@@ -506,7 +506,7 @@ def domain_with_complete_contacts_response
         type: 'update',
         partner:     {
           id: 3,
-          name: 'alpha',
+          name: /alpha[0-9]*/,
           organization: 'Company',
           credits: 0.00,
           site: 'http://alpha.org',
@@ -539,7 +539,7 @@ def domain_with_complete_contacts_response
         type: 'update',
         partner:     {
           id: 4,
-          name: 'alpha',
+          name: /alpha[0-9]*/,
           organization: 'Company',
           credits: 0.00,
           site: 'http://alpha.org',

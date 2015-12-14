@@ -439,14 +439,19 @@ describe Domain do
     let(:old_partner) { create :partner }
     let(:partner) { create :partner }
     let(:latest_activity) { subject.domain_activities.last }
+    let(:old_handle) { subject.registrant_handle }
+    let(:new_registrant) { create :other_contact }
 
     before do
-      subject.transfer! to: partner
+      old_handle
+      subject.transfer! to: partner, handle: new_registrant.handle
     end
 
     specify { subject.partner.must_equal partner }
     specify { latest_activity.must_be_kind_of ObjectActivity::Transfer }
     specify { latest_activity.losing_partner.must_equal old_partner }
+    specify { latest_activity.registrant_handle.must_equal old_handle }
+    specify { subject.registrant_handle.must_equal new_registrant.handle }
   end
 
   describe :destroy do

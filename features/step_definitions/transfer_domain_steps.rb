@@ -1,4 +1,6 @@
 When /^I transfer a domain from another partner$/ do
+  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+  
   other_partner_exists
   domain_exists partner: OTHER_PARTNER
 

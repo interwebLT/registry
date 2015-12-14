@@ -11,6 +11,7 @@ describe OrderDetail::TransferDomain do
         type: 'transfer_domain',
         price: 15.00,
         domain: 'domain.ph',
+        registrant_handle: 'contact',
         object: nil
       }
     }
@@ -31,6 +32,7 @@ describe OrderDetail::TransferDomain do
       subject.complete!
     end
 
+    specify { subject.registrant_handle.wont_be_empty }
     specify { subject.complete?.must_equal true }
     specify { subject.product.must_equal saved_domain.product }
 
@@ -46,11 +48,13 @@ describe OrderDetail::TransferDomain do
     before do
       OrderDetail::TransferDomain.execute domain: domain.name,
                                           to: partner.name,
-                                          at: transferred_at
+                                          at: transferred_at,
+                                          handle: registrant.handle
     end
 
     let(:domain) { create :domain }
     let(:partner) { create :other_partner }
+    let(:registrant) { create :other_contact }
     let(:transferred_at) { '2015-08-10 3:00 PM'.in_time_zone }
 
     specify { subject.must_be_kind_of OrderDetail::TransferDomain }
@@ -73,8 +77,11 @@ describe OrderDetail::TransferDomain do
         OrderDetail::TransferDomain.execute domain: domain.name,
                                             to: partner.name,
                                             at: transferred_at,
-                                            fee: false
+                                            fee: false,
+                                            handle: registrant.handle
       end
+      
+      let(:registrant) { create :other_contact }
 
       specify { subject.price.must_equal 0.00.money }
       specify { subject.order.total_price.must_equal 0.00.money }

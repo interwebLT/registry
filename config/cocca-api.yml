@@ -1,0 +1,8 @@
+development:
+  host: http://localhost:9001
+
+test: 
+  host: http://test.host
+
+production:  
+  host: http://localhost:9001

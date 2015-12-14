@@ -29,6 +29,7 @@ group :test do
   gem 'database_cleaner'
   gem 'factory_girl_rails'
   gem 'timecop'
+	gem 'json_expressions'
 end
 
 group :development do
@@ -46,3 +47,4 @@ gem 'rest-client'
 gem 'exception_notification'
 gem 'money-rails'
 gem 'whenever'
+gem 'httparty'

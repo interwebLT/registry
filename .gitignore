@@ -20,3 +20,5 @@ tags
 
 # Test Reports
 /test/reports
+
+dump.rdb

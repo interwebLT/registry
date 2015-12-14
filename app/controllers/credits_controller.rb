@@ -17,14 +17,14 @@ class CreditsController < SecureController
   private
 
   def order_params
-    params.permit(:partner, :currency_code, :ordered_at, order_details: [:type, :credits, :remarks])
+    params.permit(:partner, :currency_code, :ordered_at, order_details: [:type, :credits, :remarks, :authcode])
   end
 
   def create_order
     order = Order.build order_params, order_partner
 
     if order.save
-      if current_user.admin?
+      if current_user.admin? or order.contains_checkout_credits?
         unless order.complete!
           render validation_failed order
           return

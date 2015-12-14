@@ -6,7 +6,7 @@ describe CreditSerializer do
   let(:credit) { create :replenish_credits_order }
 
   specify { subject[:id].wont_be_nil }
-  specify { subject[:partner].must_equal 'alpha' }
+  specify { subject[:partner].must_match /alpha[0-9]*/ }
   specify { subject[:order_number].wont_be_nil }
   specify { subject[:credits].must_equal 150.00 }
   specify { subject[:credited_at].must_equal '2015-02-27T14:30:00Z' }
