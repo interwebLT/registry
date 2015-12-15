@@ -10,7 +10,7 @@ class DomainSerializer < ActiveModel::Serializer
   end
 
   def partner
-    object.partner.name if object.partner
+    object.partner.name
   end
 
   def registered_at
