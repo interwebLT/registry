@@ -2,7 +2,7 @@ class OrderSerializer < ActiveModel::Serializer
   attributes :id, :partner, :order_number, :total_price, :fee, :ordered_at, :status, :currency_code, :order_details
 
   def partner
-    object.partner.name if object.partner
+    object.partner.name
   end
 
   def total_price
