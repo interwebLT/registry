@@ -9,6 +9,10 @@ Feature: Create User
     When  I create a new user
     Then  user must be created
 
+  Scenario: Create a new user with no username
+    When  I create a new user
+    Then  user must be created
+
   Scenario Outline: Bad request
     When  I create a new user <bad request>
     Then  error must be bad request
@@ -16,7 +20,9 @@ Feature: Create User
     Examples:
       | bad request           |
       | with empty request    |
-      | under another partner |
+      | with empty name       |
+      | with empty email      |
+      | with empty password   |
 
   Scenario Outline: Invalid parameter
     When  I create a new user <invalid parameter>
@@ -25,4 +31,4 @@ Feature: Create User
 
     Examples:
       | invalid parameter     | field   | code            |
-      | with existing handle  | handle  | already_exists  |
+      | with existing email   | email   | already_exists  |

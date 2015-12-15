@@ -5,6 +5,11 @@ class User < ActiveRecord::Base
 
   belongs_to :partner
 
+  validates :email, presence: true, uniqueness: true
+  validates :encrypted_password, presence: true
+  validates :registered_at, presence: true
+  validates :name, presence: true
+
   has_many :authorizations
 
   attr_accessor :token
@@ -20,6 +25,9 @@ class User < ActiveRecord::Base
   end
 
   def password=(pw)
+    if pw.nil? || pw.blank?
+      return
+    end
     self.salt = BCrypt::Engine.generate_salt
     self.encrypted_password = BCrypt::Engine.hash_secret(pw, salt)
   end
