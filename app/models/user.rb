@@ -1,13 +1,14 @@
 require 'bcrypt'
 
 class User < ActiveRecord::Base
+  before_create :set_registered_at 
+
   TIMEOUT = 15.minutes
 
   belongs_to :partner
 
   validates :email, presence: true, uniqueness: true
   validates :encrypted_password, presence: true
-  validates :registered_at, presence: true
   validates :name, presence: true
 
   has_many :authorizations
@@ -46,5 +47,12 @@ class User < ActiveRecord::Base
 
   def staff?
     return staff
+  end
+
+  private
+  def set_registered_at
+    if self.registered_at.nil?
+      self.registered_at = Time.now
+    end
   end
 end

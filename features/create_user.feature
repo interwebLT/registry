@@ -13,6 +13,10 @@ Feature: Create User
     When  I create a new user
     Then  user must be created
 
+  Scenario: Create a new user with no registration date
+    When  I create a new user with no registration date
+    Then  user must be created with the current time as the registration date
+
   Scenario Outline: Bad request
     When  I create a new user <bad request>
     Then  error must be bad request
