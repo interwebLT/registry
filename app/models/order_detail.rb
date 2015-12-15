@@ -21,8 +21,6 @@ class OrderDetail < ActiveRecord::Base
   ORDER_DETAIL_TYPES = {
     domain_create: OrderDetail::RegisterDomain,
     domain_renew: OrderDetail::RenewDomain,
-    credits: OrderDetail::ReplenishCredits,
-    checkout_credits: OrderDetail::CheckoutReplenishCredits,
     migrate_domain: OrderDetail::MigrateDomain,
     transfer_domain:  OrderDetail::TransferDomain
   }

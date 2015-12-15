@@ -1,10 +1,9 @@
 require 'test_helper'
 
-describe Credit do
+describe Ledger do
   describe :associations do
-    subject { create :credit }
+    subject { create :ledger }
 
     specify { subject.partner.wont_be_nil }
-    specify { subject.order.wont_be_nil }
   end
 end

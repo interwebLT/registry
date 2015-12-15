@@ -11,7 +11,7 @@ describe OrderDetail::RenewDomain do
     end
 
     let(:saved_domain) { Domain.named(subject.domain) }
-    let(:latest_ledger_entry) { subject.order.partner.credits.last }
+    let(:latest_ledger_entry) { subject.order.partner.ledgers.last }
 
     specify { subject.complete?.must_equal true }
     specify { saved_domain.expires_at.must_equal '2016-01-01 00:00'.in_time_zone }
@@ -45,8 +45,8 @@ describe OrderDetail::RenewDomain do
     specify { subject.order.partner.must_equal domain.partner }
     specify { subject.order.ordered_at.must_equal renewed_at }
 
-    specify { domain.partner.credits.last.amount.must_equal -64.00.money }
-    specify { domain.partner.credits.last.activity_type.must_equal 'use' }
+    specify { domain.partner.ledgers.last.amount.must_equal -64.00.money }
+    specify { domain.partner.ledgers.last.activity_type.must_equal 'use' }
     specify { Domain.named(domain.name).expires_at.must_equal '2017-01-01'.in_time_zone }
     specify { domain.domain_activities.last.activity_at.must_equal renewed_at }
   end
@@ -70,7 +70,7 @@ describe OrderDetail::RenewDomain do
     specify { ObjectActivity.last.old_value.must_equal '2016-01-01 00:00:00 UTC' }
     specify { ObjectActivity.last.value.must_equal '2015-01-01 00:00:00 UTC' }
 
-    specify { Order.last.partner.credits.last.amount.must_equal 35.00.money }
+    specify { Order.last.partner.ledgers.last.amount.must_equal 35.00.money }
   end
 
   describe :as_json do

@@ -54,7 +54,7 @@ describe Order do
 
     specify { subject.partner.wont_be_nil }
     specify { subject.order_details.wont_be_empty }
-    specify { subject.credit.wont_be_nil }
+    specify { subject.ledger.wont_be_nil }
   end
 
   describe :complete? do
@@ -80,7 +80,8 @@ describe Order do
 
   describe :complete! do
     before do
-      @order = create :order
+      domain = create :domain
+      @order = create :order, partner: domain.partner
       @order.complete!
     end
 
@@ -98,17 +99,15 @@ describe Order do
       create :pending_register_domain_order, ordered_at: Time.now
       create :register_domain_order, ordered_at: Time.now
       create :renew_domain_order, ordered_at: Time.now
-      create :replenish_credits_order, ordered_at: Time.now
       create :transfer_domain_order, ordered_at: Time.now
     end
 
-    specify { subject.count.must_equal 5 }
+    specify { subject.count.must_equal 4 }
     specify { subject[0].order_details.first.must_be_kind_of OrderDetail::TransferDomain }
-    specify { subject[1].order_details.first.must_be_kind_of OrderDetail::ReplenishCredits }
-    specify { subject[2].order_details.first.must_be_kind_of OrderDetail::RenewDomain }
+    specify { subject[1].order_details.first.must_be_kind_of OrderDetail::RenewDomain }
+    specify { subject[2].order_details.first.must_be_kind_of OrderDetail::RegisterDomain }
     specify { subject[3].order_details.first.must_be_kind_of OrderDetail::RegisterDomain }
-    specify { subject[4].order_details.first.must_be_kind_of OrderDetail::RegisterDomain }
-    specify { subject[4].pending?.must_equal true }
+    specify { subject[3].pending?.must_equal true }
   end
 
   describe :build do

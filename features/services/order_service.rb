@@ -27,8 +27,8 @@ def view_orders
   create :renew_domain_order,             partner: @current_partner,
                                           ordered_at: (current_time + 3.minute)
 
-  create :replenish_credits_order,        partner: @current_partner,
-                                          ordered_at: (current_time + 4.minute)
+#  create :replenish_credits_order,        partner: @current_partner,
+#                                          ordered_at: (current_time + 4.minute)
 
   create :transfer_domain_order,          partner: @current_partner,
                                           ordered_at: (current_time + 5.minute)
@@ -47,7 +47,7 @@ def view_latest_orders
   create :pending_register_domain_order,  ordered_at: Time.now
   create :register_domain_order,          ordered_at: Time.now
   create :renew_domain_order,             ordered_at: Time.now
-  create :replenish_credits_order,        ordered_at: Time.now
+#  create :replenish_credits_order,        ordered_at: Time.now
   create :transfer_domain_order,          ordered_at: Time.now
   create :refund_order,                   ordered_at: Time.now
 
@@ -224,27 +224,27 @@ def latest_orders_response
         }
       ]
     },
+#    {
+#      id: 3,
+#      partner: /alpha[0-9]*/,
+#      order_number: 3,
+#      total_price: 150.00,
+#      fee: 0.00,
+#      ordered_at: '2015-01-01T00:00:00Z',
+#      status: 'complete',
+#      currency_code: 'USD',
+#      order_details: [
+#        {
+#          type: 'credits',
+#          price: 150.00,
+#          object: nil
+#        }
+#      ]
+#    },
     {
       id: 3,
       partner: /alpha[0-9]*/,
       order_number: 3,
-      total_price: 150.00,
-      fee: 0.00,
-      ordered_at: '2015-01-01T00:00:00Z',
-      status: 'complete',
-      currency_code: 'USD',
-      order_details: [
-        {
-          type: 'credits',
-          price: 150.00,
-          object: nil
-        }
-      ]
-    },
-    {
-      id: 4,
-      partner: /alpha[0-9]*/,
-      order_number: 4,
       total_price: 35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -261,9 +261,9 @@ def latest_orders_response
       ]
     },
     {
-      id: 5,
+      id: 4,
       partner: /alpha[0-9]*/,
-      order_number: 5,
+      order_number: 4,
       total_price: 35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -282,9 +282,9 @@ def latest_orders_response
       ]
     },
     {
-      id: 6,
+      id: 5,
       partner: /alpha[0-9]*/,
-      order_number: 6,
+      order_number: 5,
       total_price: 35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',
@@ -303,9 +303,9 @@ def latest_orders_response
       ]
     },
     {
-      id: 7,
+      id: 6,
       partner: /alpha[0-9]*/,
-      order_number: 7,
+      order_number: 6,
       total_price: 35.00,
       fee: 0.00,
       ordered_at: '2015-01-01T00:00:00Z',

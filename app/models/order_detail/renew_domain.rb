@@ -42,7 +42,7 @@ class OrderDetail::RenewDomain < OrderDetail
       self.product = domain.product
       self.status = COMPLETE_ORDER_DETAIL
 
-      self.order.partner.credits.create order: self.order,
+      self.order.partner.ledgers.create order: self.order,
                                         amount: self.price * -1,
                                         activity_type: 'use'
     else
@@ -60,7 +60,7 @@ class OrderDetail::RenewDomain < OrderDetail
     domain.expires_at = (domain.expires_at - self.period.years)
     domain.save!
 
-    self.order.partner.credits.create order: self.order,
+    self.order.partner.ledgers.create order: self.order,
                                       amount: self.price,
                                       activity_type: 'use'
 

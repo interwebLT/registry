@@ -4,12 +4,13 @@ class Partner < ActiveRecord::Base
   has_many :partner_configurations
   has_many :partner_pricings
   has_many :credits
+  has_many :ledgers
   has_many :hosts
 	
 	validates :name, uniqueness: true
 
   def current_balance
-    credits.map(&:amount).reduce(Money.new(0.00), :+)
+    ledgers.map(&:amount).reduce(Money.new(0.00), :+)
   end
 
   def pricing action:, period:
@@ -51,9 +52,11 @@ class Partner < ActiveRecord::Base
   end
 
   def credit_history
-    quick_orders.select do |order|
-      order.order_details.first.is_a? OrderDetail::ReplenishCredits
-    end
+    self.credits.where(status: Credit::COMPLETE_CREDIT).order(:created_at)
+    
+#    quick_orders.select do |order|
+#      order.order_details.first.is_a? OrderDetail::ReplenishCredits
+#    end
   end
 
   def order_history

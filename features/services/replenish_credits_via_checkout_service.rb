@@ -4,15 +4,13 @@ def replenish_credits_via_checkout
                         .to_return(status: 200, body: checkout_response.to_json)
 
   json_request = {
+    type: 'card_credit',
     partner: NON_ADMIN_PARTNER,
-    currency_code: 'USD',
-    ordered_at: Time.now,
-    order_details: [
-      type: 'checkout_credits',
-      credits: 100,
-      authcode: authcode,
-      remarks: 'Replenish Credit'
-    ]
+    amount_currency: 'USD',
+    amount: 100,
+    credited_at: Time.now,
+    verification_code: authcode,
+    remarks: 'Replenish Credit'
   }
 
   post credits_url, json_request

@@ -84,20 +84,16 @@ def create_register_domain_order partner, period, domain_name, registrant, regis
   order.complete!
 end
 
-def create_replenish_credits_order partner, credits = 5000.00
+def create_replenish_credits partner, credits = 5000.00
   params = {
-    currency_code: 'USD',
-    ordered_at: Time.current.iso8601,
-    order_details: [
-      {
-        type: 'credits',
-        credits: 5000.00,
-        remarks:  'Replenish Credits'
-      }
-    ]
+    type: 'card_credit',
+    amount_currency: 'USD',
+    amount: 5000.00,
+    credited_at: Time.current.iso8601,
+    remarks:  'Replenish Credits',
   }
 
-  create_order params, partner
+  create_credit params, partner
 end
 
 def create_renew_domain_order partner, period, domain_name, renewed_at = Time.now
@@ -121,6 +117,12 @@ def create_order params, partner
   order = Order.build(params, partner)
   order.save!
   order.complete!
+end
+
+def create_credit params, partner
+  credit = Credit.build(params, partner)
+  credit.save!
+  credit.complete!
 end
 
 def create_host partner:, name:
@@ -189,7 +191,7 @@ def create_partner name:, domain_count: 0, admin: false, staff: false
     create_pricing partner, 'domain_create', period, (35 * period).money
   end
 
-  create_replenish_credits_order partner
+  create_replenish_credits partner
 
   contact = create_contact partner: partner, handle: name
 

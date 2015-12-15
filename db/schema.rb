@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151204102138) do
+ActiveRecord::Schema.define(version: 20151215052535) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,20 @@ ActiveRecord::Schema.define(version: 20151204102138) do
     t.string   "local_state",        limit: 255
     t.string   "local_postal_code",  limit: 255
     t.string   "local_country_code", limit: 255
+  end
+
+  create_table "credits", force: :cascade do |t|
+    t.integer  "partner_id"
+    t.string   "type"
+    t.string   "status"
+    t.integer  "amount_cents"
+    t.string   "amount_currency"
+    t.string   "verification_code"
+    t.string   "remarks"
+    t.string   "credit_number"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.datetime "credited_at"
   end
 
   create_table "deleted_domains", force: :cascade do |t|
@@ -170,13 +184,14 @@ ActiveRecord::Schema.define(version: 20151204102138) do
 
   create_table "ledger", force: :cascade do |t|
     t.integer  "partner_id",                                 null: false
-    t.integer  "order_id",                                   null: false
+    t.integer  "order_id"
     t.decimal  "credits"
     t.string   "activity_type",   limit: 10,                 null: false
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
     t.integer  "amount_cents",               default: 0,     null: false
     t.string   "amount_currency",            default: "USD", null: false
+    t.integer  "credit_id"
   end
 
   create_table "object_activities", force: :cascade do |t|

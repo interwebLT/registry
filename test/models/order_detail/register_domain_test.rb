@@ -34,7 +34,7 @@ describe OrderDetail::RegisterDomain do
     end
 
     let(:saved_domain) { Domain.named(subject.domain) }
-    let(:latest_ledger_entry) { subject.order.partner.credits.last }
+    let(:latest_ledger_entry) { subject.order.partner.ledgers.last }
 
     context :when_successful do
       before do

@@ -3,8 +3,8 @@ class Order < ActiveRecord::Base
 
   has_many :order_details, dependent: :destroy
 
-  has_one :credit, dependent: :destroy
-
+  has_one :ledger, dependent: :destroy
+  
   monetize :total_price_cents
   monetize :fee_cents
 
@@ -17,7 +17,7 @@ class Order < ActiveRecord::Base
 
   COMPLETE_ORDER  = 'complete'
   PENDING_ORDER   = 'pending'
-  ERROR_ORDER     = 'error'
+  ERROR_ORDER     = 'error why'
   REVERSED_ORDER  = 'reversed'
 
   after_initialize do
