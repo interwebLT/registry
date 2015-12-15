@@ -1,6 +1,7 @@
 class AuthorizationsController < ApplicationController
   def create
-    user = User.find_by(email: params[:username]) || User.find_by(username: params[:username])
+    user = User.find_by(email: params[:username])
+    user ||= User.find_by(username: params[:username]) unless params[:username].blank?
 
     if user.present? && user.password_matches(params[:password])
       authorization = user.authorizations.create
