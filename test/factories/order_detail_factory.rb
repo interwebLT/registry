@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :order_detail do
     order
     product
-    type OrderDetail::ReplenishCredits.name
+    type OrderDetail::RegisterDomain
     price 150.00
     status OrderDetail::COMPLETE_ORDER_DETAIL
 
@@ -10,12 +10,6 @@ FactoryGirl.define do
       after :create do |order_detail, evaluator|
         create :domain, product: order_detail.product
       end
-    end
-
-    factory :replenish_credits_order_detail, class: OrderDetail::ReplenishCredits  do
-      type OrderDetail::ReplenishCredits.name
-      remarks "this is a remark"
-      period 150
     end
 
     factory :register_domain_order_detail, class: OrderDetail::RegisterDomain do

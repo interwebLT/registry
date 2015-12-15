@@ -23,7 +23,7 @@ class OrderDetail::RegisterDomain < OrderDetail
       self.product = new_domain.product
       self.status = COMPLETE_ORDER_DETAIL
 
-      self.order.partner.credits.create order: self.order,
+      self.order.partner.ledgers.create  order: self.order,
                                         amount: self.price * -1,
                                         activity_type: 'use'
     else

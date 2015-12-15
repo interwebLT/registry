@@ -5,41 +5,52 @@ class CreditsController < SecureController
   end
 
   def create 
-    if current_user.admin? and not order_params.include? :partner
+    if current_user.admin? and not credit_params.include? :partner
       render missing_fields [:partner]
-    elsif order_params.empty?
+    elsif credit_params.empty?
       render bad_request
     else
-      create_order
+      create_credit
     end
   end
+  
+  def show
+    credit = Credit.find(params[:id])
+
+    if credit.partner == current_user.partner or current_user.admin
+      render json: credit
+    else
+      render not_found
+    end
+  end
+
 
   private
 
-  def order_params
-    params.permit(:partner, :currency_code, :ordered_at, order_details: [:type, :credits, :remarks, :authcode])
+  def credit_params
+    params.permit(:partner, :type, :amount, :amount_currency, :verification_code, :credited_at, :remarks)
   end
 
-  def create_order
-    order = Order.build order_params, order_partner
+  def create_credit
+    credit = Credit.build credit_params, credit_partner
 
-    if order.save
-      if current_user.admin? or order.contains_checkout_credits?
-        unless order.complete!
-          render validation_failed order
+    if credit.save
+#      if current_user.admin?
+        unless credit.complete!
+          render validation_failed credits
           return
         end
-      end
+#      end
 
-      render  json: order,
+      render  json: credit,
               status: :created,
-              location: order_url(order.id)
+              location: credit_url(credit.id)
     else
-      render validation_failed order
+      render validation_failed credit
     end
   end
 
-  def order_partner
-    current_user.admin? ?  Partner.find_by(name: order_params[:partner]) : current_user.partner
+  def credit_partner
+    current_user.admin? ?  Partner.find_by(name: credit_params[:partner]) : current_user.partner
   end
 end

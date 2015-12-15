@@ -1,12 +1,9 @@
 def replenish_credits partner: nil
   json_request = {
-    currency_code: 'USD',
-    ordered_at: Time.now,
-    order_details: [
-      type: 'credits',
-      credits: 100,
-      remarks: 'test remark'
-    ]
+    amount_currency: 'USD',
+    type: 'card_credit',
+    amount: 100,
+    remarks: 'test remark'
   }
 
   json_request[:partner] = NON_ADMIN_PARTNER if @current_user.admin?

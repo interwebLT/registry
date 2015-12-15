@@ -2,7 +2,7 @@ class AddAmountToLedger < ActiveRecord::Migration
   def change
     add_monetize :ledger, :amount
 
-    Credit.all.each do |entry|
+    Ledger.all.each do |entry|
       entry.amount = (entry.credits).money
       entry.save!
     end

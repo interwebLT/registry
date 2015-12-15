@@ -24,7 +24,7 @@ describe OrderDetail::TransferDomain do
 
     let(:domain) { create :domain }
     let(:saved_domain) { Domain.named(domain.full_name) }
-    let(:latest_ledger_entry) { subject.order.partner.credits.last }
+    let(:latest_ledger_entry) { subject.order.partner.ledgers.last }
 
     before do
       domain
@@ -67,8 +67,8 @@ describe OrderDetail::TransferDomain do
     specify { subject.order.partner.must_equal partner }
     specify { subject.order.ordered_at.must_equal transferred_at }
 
-    specify { partner.credits.last.amount.must_equal -15.00.money }
-    specify { partner.credits.last.activity_type.must_equal 'use' }
+    specify { partner.ledgers.last.amount.must_equal -15.00.money }
+    specify { partner.ledgers.last.activity_type.must_equal 'use' }
 
     specify { domain.domain_activities.last.activity_at.must_equal transferred_at }
 
@@ -85,7 +85,7 @@ describe OrderDetail::TransferDomain do
 
       specify { subject.price.must_equal 0.00.money }
       specify { subject.order.total_price.must_equal 0.00.money }
-      specify { partner.credits.last.amount.must_equal 0.00.money }
+      specify { partner.ledgers.last.amount.must_equal 0.00.money }
     end
   end
 

@@ -162,9 +162,9 @@ CREDITS_FEE_SCENARIOS = {
 }
 
 def assert_credits_must_be_deducted scenario:
-  credits = @current_partner.credits.last
+  ledgers = @current_partner.ledgers.last
 
-  credits.wont_be_nil
-  credits.activity_type.must_equal 'use'
-  credits.amount.must_equal CREDITS_FEE_SCENARIOS[scenario]
+  ledgers.wont_be_nil
+  ledgers.activity_type.must_equal 'use'
+  ledgers.amount.must_equal CREDITS_FEE_SCENARIOS[scenario]
 end

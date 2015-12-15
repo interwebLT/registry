@@ -11,11 +11,11 @@ FactoryGirl.define do
     updated_at '2015-02-27 14:30'.in_time_zone
     completed_at '2015-02-27 14:30'.in_time_zone
 
-    factory :order, aliases: [:complete_order, :replenish_credits_order] do
+    factory :order, aliases: [:complete_order] do
       before :create do |order, evaluator|
-        order.order_details << (build :replenish_credits_order_detail, order: order)
+        order.order_details << (build :renew_domain_order_detail, order: order)
 
-        create :credit, order: order
+        create :ledger, order: order
       end
 
       factory :pending_replenish_credits_order do
@@ -40,6 +40,10 @@ FactoryGirl.define do
 
       before :create do |order, evaluator|
         order.order_details << (build :renew_domain_order_detail, order: order)
+      end
+      
+      factory :pending_renew_domain_order do
+        status Order::PENDING_ORDER
       end
     end
 
@@ -71,7 +75,8 @@ FactoryGirl.define do
         refunded_order.total_price = refunded_order_detail.price
         refunded_order.save!
 
-        OrderDetail::ReplenishCredits.find_by(order: refunded_order).destroy!
+        OrderDetail::RenewDomain.find_by(order: refunded_order).destroy!
+#        OrderDetail::ReplenishCredits.find_by(order: refunded_order).destroy!
       end
     end
   end

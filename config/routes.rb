@@ -23,7 +23,7 @@ Rails.application.routes.draw do
 
   resources :orders, only: [:index, :create, :show]
 
-  resources :credits, only: [:index, :create]
+  resources :credits, only: [:index, :create, :show]
 
   resources :contacts, only: [:index, :create, :show, :update]
 

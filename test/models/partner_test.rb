@@ -9,12 +9,12 @@ describe Partner do
 
       create :domain, partner: subject, registrant: contact
       create :partner_pricing, partner: subject
-      create :credit, partner: subject
+      create :ledger, partner: subject
       create :host, partner: subject
     end
 
     specify { subject.domains.wont_be_empty }
-    specify { subject.credits.wont_be_empty }
+    specify { subject.ledgers.wont_be_empty }
     specify { subject.partner_configurations.wont_be_empty }
     specify { subject.partner_pricings.wont_be_empty }
     specify { subject.hosts.wont_be_empty }
@@ -25,8 +25,8 @@ describe Partner do
 
     context :when_partner_has_credits do
       before do
-        create :credit, partner: subject
-        create :credit, partner: subject
+        create :ledger, partner: subject
+        create :ledger, partner: subject
       end
 
       specify { subject.current_balance.must_equal 2000.00.money }
@@ -133,13 +133,11 @@ describe Partner do
     subject { create :partner }
 
     before do
-      create :replenish_credits_order,  partner: subject
-      create :replenish_credits_order,  partner: subject
       create :register_domain_order,    partner: subject
       create :refund_order,             partner: subject
     end
 
-    specify { subject.credit_history.count.must_equal 2 }
+    specify { subject.credit_history.count.must_equal 0 }
   end
 
   describe :order_history do
@@ -147,7 +145,6 @@ describe Partner do
 
     before do
       create :pending_register_domain_order,  partner: subject
-      create :replenish_credits_order,        partner: subject
       create :register_domain_order,          partner: subject
       create :renew_domain_order,             partner: subject
       create :transfer_domain_order,          partner: subject
