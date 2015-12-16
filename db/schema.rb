@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151215052535) do
+ActiveRecord::Schema.define(version: 20151216074419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,12 +88,12 @@ ActiveRecord::Schema.define(version: 20151215052535) do
     t.string   "type"
     t.string   "status"
     t.integer  "amount_cents"
-    t.string   "amount_currency"
+    t.string   "amount_currency",   limit: 3, default: "USD"
     t.string   "verification_code"
     t.string   "remarks"
     t.string   "credit_number"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
     t.datetime "credited_at"
   end
 
