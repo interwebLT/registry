@@ -29,6 +29,7 @@ class Credit < ActiveRecord::Base
     credit = (type ? type.build(params, partner) : new(params))
     credit.partner = partner
     credit.status = PENDING_CREDIT
+    credit.credited_at = params[:credited_at] || Time.current
     
     credit
   end
