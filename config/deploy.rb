@@ -1,3 +1,4 @@
+set :rbenv_path, '$HOME/.rbenv'
 set :application, 'registry'
 set :repo_url, 'https://github.com/dotph/registry.git'
 set :branch, ENV['REVISION'] || ENV['BRANCH'] || proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
