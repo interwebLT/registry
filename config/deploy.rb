@@ -1,4 +1,3 @@
-set :rbenv_path, '$HOME/.rbenv'
 set :application, 'registry'
 set :repo_url, 'https://github.com/dotph/registry.git'
 set :branch, ENV['REVISION'] || ENV['BRANCH'] || proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
@@ -11,6 +10,7 @@ set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/sys
 
 set :default_env, { path: "$PATH:/usr/pgsql-9.3/bin" }
 
+set :rbenv_path, '$HOME/.rbenv'
 set :rbenv_type, :user
 set :rbenv_ruby, proc { `cat .ruby-version`.chomp }.call
 set :rbenv_map_bins, %w{rake gem bundle ruby rails unicorn}
