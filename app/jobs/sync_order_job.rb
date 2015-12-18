@@ -1,5 +1,5 @@
 class SyncOrderJob < ActiveJob::Base
-  queue_as :sync_changes
+  queue_as :sync_registry_changes
 
   URL = "#{Rails.configuration.x.cocca_api_host}/orders"
 
