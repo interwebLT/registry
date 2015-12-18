@@ -51,7 +51,7 @@ Feature: Register Domain
 
     Examples: Administrator-specific
       | invalid parameter       | field             | code    |
-      # | no partner              | partner           | missing |
-      # | non-existing partner    | partner           | invalid |
-      # | non-existing registrant | registrant_handle | invalid |
+      | no partner              | partner           | missing |
+      | non-existing partner    | partner           | invalid |
+      | non-existing registrant | registrant_handle | invalid |
       # | existing name           | domain            | invalid |

@@ -12,6 +12,12 @@ When /^I register a domain(?: with |)(?: |)(.*)$/ do |scenario|
       'order/admin_register_domain_with_no_period_request'
     when 'for another partner with no registrant handle'
       'order/admin_register_domain_with_no_registrant_handle_request'
+    when 'for another partner with no partner'
+      'order/admin_register_domain_with_no_partner_request'
+    when 'for another partner with non-existing partner'
+      'order/admin_register_domain_with_non_existing_partner_request'
+    when 'for another partner with non-existing registrant'
+      'order/admin_register_domain_with_non_existing_registrant_request'
     else 'order/register_domain_request'
     end
 
