@@ -33,3 +33,12 @@ Feature: Register Domain
       # | non-existing partner    | partner           | invalid |
       # | non-existing registrant | registrant_handle | invalid |
       # | existing name           | domain            | invalid |
+
+  Scenario: Register domain as administrator successfully
+    Given I am authenticated as administrator
+    When  I register a domain for another partner
+    Then  domain must be registered
+    And   domain must not have domain hosts by default
+    And   domain status must be inactive
+    And   register domain fee must be deducted
+    And   order must be synced to other systems
