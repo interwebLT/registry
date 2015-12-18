@@ -27,13 +27,6 @@ Feature: Register Domain
       | no period               | order_details     | invalid |
       | no registrant handle    | order_details     | invalid |
 
-    Examples: Administrator-specific
-      | invalid parameter       | field             | code    |
-      # | no partner              | partner           | missing |
-      # | non-existing partner    | partner           | invalid |
-      # | non-existing registrant | registrant_handle | invalid |
-      # | existing name           | domain            | invalid |
-
   Scenario: Register domain as administrator successfully
     Given I am authenticated as administrator
     When  I register a domain for another partner
@@ -42,3 +35,23 @@ Feature: Register Domain
     And   domain status must be inactive
     And   register domain fee must be deducted
     And   order must be synced to other systems
+
+  Scenario Outline: Invalid administrator parameters
+    Given I am authenticated as administrator
+    When  I register a domain for another partner with <invalid parameter>
+    Then  error must be validation failed
+    And   validation error on <field> must be "<code>"
+
+    Examples:
+      | invalid parameter       | field             | code    |
+      # | period with no pricing  | order_details     | invalid |
+      | no domain name          | order_details     | invalid |
+      | no period               | order_details     | invalid |
+      | no registrant handle    | order_details     | invalid |
+
+    Examples: Administrator-specific
+      | invalid parameter       | field             | code    |
+      # | no partner              | partner           | missing |
+      # | non-existing partner    | partner           | invalid |
+      # | non-existing registrant | registrant_handle | invalid |
+      # | existing name           | domain            | invalid |

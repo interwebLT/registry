@@ -1,0 +1,13 @@
+{
+  "partner":  "alpha",
+  "currency_code":  "USD",
+  "ordered_at": "2015-12-18T11:00:00Z",
+  "order_details": [
+    {
+      "type": "domain_create",
+      "authcode": "ABC123",
+      "period": "2",
+      "registrant_handle":  "contact"
+    }
+  ]
+}

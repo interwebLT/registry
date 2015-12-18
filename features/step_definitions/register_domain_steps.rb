@@ -6,7 +6,13 @@ When /^I register a domain(?: with |)(?: |)(.*)$/ do |scenario|
     when 'no period'            then 'order/register_domain_with_no_period_request'
     when 'no registrant handle' then 'order/register_domain_with_no_registrant_handle_request'
     when 'for another partner'  then 'order/admin_register_domain_request'
-    else  'order/register_domain_request'
+    when 'for another partner with no domain name'
+      'order/admin_register_domain_with_no_domain_name_request'
+    when 'for another partner with no period'
+      'order/admin_register_domain_with_no_period_request'
+    when 'for another partner with no registrant handle'
+      'order/admin_register_domain_with_no_registrant_handle_request'
+    else 'order/register_domain_request'
     end
 
   create :contact
