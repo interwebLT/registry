@@ -3,14 +3,8 @@ When /^I register a domain(?: |)(.*)$/ do |scenario|
 
   create :contact
 
-  headers = {
-    'Authorization' => 'Token token=alpha',
-    'Content-Type'  => 'application/json',
-    'Accept'        => 'application/json'
-  }
-
   stub_request(:post, SyncOrderJob::URL)
-    .with(body: request.json.to_json)
+    .with(headers: headers, body: request.json.to_json)
     .to_return status: 201
 
   post orders_path, request.json

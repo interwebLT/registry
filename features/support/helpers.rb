@@ -21,3 +21,11 @@ def build_request scenario:, resource:, action:
 
   request
 end
+
+def headers
+  {
+    'Accept'        => 'application/json',
+    'Authorization' => 'Token token=alpha',
+    'Content-Type'  => 'application/json'
+  }
+end
