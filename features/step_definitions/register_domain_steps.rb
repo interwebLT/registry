@@ -1,15 +1,16 @@
 When /^I register a domain(?: with |)(.*)$/ do |scenario|
-  scenarios = {
-    ''  => 'order/register_domain_request',
-    '2-level TLD'           => 'order/register_domain_with_two_level_tld_request',
-    'no domain name'        => 'order/register_domain_with_no_domain_name_request',
-    'no period'             => 'order/register_domain_with_no_period_request',
-    'no registrant handle'  => 'order/register_domain_with_no_registrant_handle_request'
-  }
+  request =
+    case scenario
+    when '2-level TLD'          then 'order/register_domain_with_two_level_tld_request'
+    when 'no domain name'       then 'order/register_domain_with_no_domain_name_request'
+    when 'no period'            then 'order/register_domain_with_no_period_request'
+    when 'no registrant handle' then 'order/register_domain_with_no_registrant_handle_request'
+    else  'order/register_domain_request'
+    end
 
   create :contact
 
-  post orders_url, scenarios[scenario].json
+  post orders_url, request.json
 end
 
 Then /^domain must be registered$/ do
