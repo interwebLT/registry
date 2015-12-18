@@ -13,10 +13,14 @@ When /^I register a domain(?: with |)(.*)$/ do |scenario|
 end
 
 Then /^domain must be registered$/ do
+  json_response.must_equal 'order/register_domain_response'.json
+
   Domain.exists? name: DOMAIN
 end
 
 Then /^domain with 2-level TLD must be registered$/ do
+  json_response.must_equal 'order/register_domain_with_two_level_tld_response'.json
+
   Domain.exists? name: TWO_LEVEL_DOMAIN
 end
 

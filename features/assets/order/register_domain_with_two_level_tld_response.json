@@ -1,0 +1,25 @@
+{
+  "id": 1,
+  "partner":  "alpha",
+  "order_number": 1,
+  "total_price":  70.00,
+  "fee":  0.00,
+  "ordered_at": "2015-01-01T00:00:00Z",
+  "status": "complete",
+  "currency_code":  "USD",
+  "order_details":  [
+    {
+      "type": "domain_create",
+      "price":  70.00,
+      "domain": "domain.com.ph",
+      "object": {
+        "id": 1,
+        "type": "domain",
+        "name": "domain.com.ph"
+      },
+      "authcode": "ABC123",
+      "period": 2,
+      "registrant_handle":  "contact"
+    }
+  ]
+}

@@ -9,6 +9,7 @@ Feature: Register Domain
     And   register domain fee must be deducted
 
   Scenario: Register domain with 2-level TLD successfully
+    Given I am authenticated as partner
     When  I register a domain with 2-level TLD
     Then  domain with 2-level TLD must be registered
 
