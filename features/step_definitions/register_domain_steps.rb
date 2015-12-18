@@ -4,7 +4,7 @@ When /^I register a domain(?: |)(.*)$/ do |scenario|
   create :contact
 
   stub_request(:post, SyncOrderJob::URL)
-    .with(headers: headers, body: request.json.to_json)
+    .with(headers: headers, body: request.body)
     .to_return status: 201
 
   post orders_path, request.json
