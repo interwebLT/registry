@@ -7,6 +7,7 @@ Feature: Register Domain
     And   domain must not have domain hosts by default
     And   domain status must be inactive
     And   register domain fee must be deducted
+    And   order must be synced to other systems
 
   Scenario: Register domain with 2-level TLD successfully
     Given I am authenticated as partner

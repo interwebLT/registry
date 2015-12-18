@@ -36,13 +36,8 @@ class OrdersController < SecureController
   def create_order
     order = Order.build order_params, order_partner
 
-    if order.save
-      # if current_user.admin?
-        unless order.complete!
-          render validation_failed order
-          return
-        end
-      # end
+    if order.save and order.complete!
+      SyncOrderJob.perform_later order_params
 
       render  json: order,
               status: :created,

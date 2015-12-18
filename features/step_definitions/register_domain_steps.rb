@@ -10,7 +10,11 @@ When /^I register a domain(?: with |)(.*)$/ do |scenario|
 
   create :contact
 
-  post orders_url, request.json
+  stub_request(:post, SyncOrderJob::URL)
+    .with(body: request.json.to_json)
+    .to_return status: 201
+
+  post orders_path, request.json
 end
 
 Then /^domain must be registered$/ do
@@ -25,6 +29,10 @@ Then /^domain with 2-level TLD must be registered$/ do
   Domain.exists? name: TWO_LEVEL_DOMAIN
 end
 
-Then /^register domain fee must be deducted/ do
+Then /^register domain fee must be deducted$/ do
   assert_fee_deducted 70.00.money
+end
+
+Then /^order must be synced to other systems$/ do
+  assert_requested :post, SyncOrderJob::URL, times: 1
 end

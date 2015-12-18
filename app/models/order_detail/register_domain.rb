@@ -46,7 +46,7 @@ class OrderDetail::RegisterDomain < OrderDetail
       domain:             self.domain,
       object:             self.product.as_json,
       authcode:           self.authcode,
-      period:             (self.period.to_i unless self.period.nil?),
+      period:             self.period,
       registrant_handle:  self.registrant_handle
     }
   end
