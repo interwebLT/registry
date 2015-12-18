@@ -1,3 +1,5 @@
+REGISTERED_AT = '2015-01-01 00:00:00'.in_time_zone
+
 def renew_domain partner: nil
   json_request = {
     currency_code: 'USD',

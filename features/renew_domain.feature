@@ -4,8 +4,8 @@ Feature: Renew Domain
 
   Background:
     Given I am authenticated as partner
-    And   I have registered a domain
 
+  @wip
   Scenario: Successful renewal
     When  I renew my domain
     Then  pending domain renewal order is created
