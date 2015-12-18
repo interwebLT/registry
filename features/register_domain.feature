@@ -9,10 +9,10 @@ Feature: Register Domain
     And   register domain fee must be deducted
     And   order must be synced to other systems
 
-  Scenario: Register domain with 2-level TLD successfully
+  Scenario: Register domain with two-level TLD successfully
     Given I am authenticated as partner
-    When  I register a domain with 2-level TLD
-    Then  domain with 2-level TLD must be registered
+    When  I register a domain with two-level TLD
+    Then  domain with two-level TLD must be registered
 
   Scenario Outline: Invalid parameters
     Given I am authenticated as partner
