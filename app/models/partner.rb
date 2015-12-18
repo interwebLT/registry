@@ -6,8 +6,8 @@ class Partner < ActiveRecord::Base
   has_many :credits
   has_many :ledgers
   has_many :hosts
-	
-	validates :name, uniqueness: true
+
+  validates :name, uniqueness: true
 
   def current_balance
     ledgers.map(&:amount).reduce(Money.new(0.00), :+)
@@ -53,7 +53,7 @@ class Partner < ActiveRecord::Base
 
   def credit_history
     self.credits.where(status: Credit::COMPLETE_CREDIT).order(:created_at)
-    
+
 #    quick_orders.select do |order|
 #      order.order_details.first.is_a? OrderDetail::ReplenishCredits
 #    end
