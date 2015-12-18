@@ -10,6 +10,12 @@ When /^I register a domain(?: with |)(.*)$/ do |scenario|
 
   create :contact
 
+  headers = {
+    'Authorization' => 'Token token=alpha',
+    'Content-Type'  => 'application/json',
+    'Accept'        => 'application/json'
+  }
+
   stub_request(:post, SyncOrderJob::URL)
     .with(body: request.json.to_json)
     .to_return status: 201
