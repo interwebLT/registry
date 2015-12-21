@@ -1,7 +1,4 @@
-Feature: Migrate Domain as Administrator
-  In order to move my domains into registry
-  As an Administrator
-  I want to be able to migrate my domains
+Feature: Migrate Domain
 
   Background:
     Given I am authenticated as administrator
