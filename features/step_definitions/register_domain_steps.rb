@@ -1,6 +1,8 @@
-When /^I register a domain(?: |)(.*)$/ do |scenario|
-  request = build_request scenario: scenario, resource: :order, action: :register_domain
+REGISTER_DOMAIN = Transform /^register a domain(?: |)(.*?)$/ do |scenario|
+  build_request scenario: scenario, resource: :order, action: :register_domain
+end
 
+When /^I (#{REGISTER_DOMAIN})$/ do |request|
   create :contact
 
   stub_request(:post, SyncOrderJob::URL)
