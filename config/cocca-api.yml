@@ -1,8 +1,11 @@
 development:
   host: http://localhost:9001
+  enable_sync: true
 
-test: 
+test:
   host: http://test.host
+  enable_sync: true
 
-production:  
+production:
   host: http://localhost:9001
+  enable_sync: true
