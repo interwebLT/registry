@@ -57,6 +57,9 @@ class DomainsController < SecureController
     result = []
 
     params[:available_tlds].split(',').each do |domain_name|
+      domain = DomainSearchLog.new name: domain_name
+      domain.save
+
       available_tlds = Domain.available_tlds(domain_name)
 
       result << {
@@ -76,6 +79,8 @@ class DomainsController < SecureController
 
   def fetch_domain
     Domain.where("name = '#{params[:name]}'")
+
+
   end
 
   def get_domains
