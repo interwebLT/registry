@@ -37,7 +37,7 @@ class OrdersController < SecureController
     order = Order.build order_params, order_partner
 
     if order.save and order.complete!
-      SyncOrderJob.perform_later order.partner.name, order_params
+      SyncOrderJob.perform_later order.partner.name, order_params if Rails.configuration.x.cocca_api_sync
 
       render  json: order,
               status: :created,
