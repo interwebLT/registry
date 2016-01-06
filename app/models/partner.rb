@@ -9,6 +9,15 @@ class Partner < ActiveRecord::Base
 
   validates :name, uniqueness: true
 
+  def self.build params
+    name      = params[:name]
+    password  = params.delete(:epp_password)
+
+    self.create params
+
+    SyncCreatePartnerJob.perform_later name, password
+  end
+
   def current_balance
     ledgers.map(&:amount).reduce(Money.new(0.00), :+)
   end
