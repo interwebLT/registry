@@ -6,10 +6,15 @@ def assert_fee_deducted amount
   ledger.amount.must_equal (amount * -1)
 end
 
-def headers
+def default_headers
   {
     'Accept'        => 'application/json',
-    'Authorization' => 'Token token=alpha',
     'Content-Type'  => 'application/json'
   }
+end
+
+def headers
+  default_headers.tap do |headers|
+    headers['Authorization'] = 'Token token=alpha'
+  end
 end
