@@ -13,7 +13,7 @@ class Partner < ActiveRecord::Base
     name      = params[:name]
     password  = params.delete(:epp_password)
 
-    self.create params
+    self.create! params
 
     SyncCreatePartnerJob.perform_later name, password
   end
