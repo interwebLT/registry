@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160105075718) do
+ActiveRecord::Schema.define(version: 20160106033518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -301,7 +301,7 @@ ActiveRecord::Schema.define(version: 20160105075718) do
   create_table "partners", force: :cascade do |t|
     t.integer  "old_id"
     t.string   "name",                limit: 64,                   null: false
-    t.string   "encrypted_password",  limit: 255,                  null: false
+    t.string   "encrypted_password",  limit: 255
     t.string   "representative",      limit: 255,                  null: false
     t.string   "position",            limit: 255,                  null: false
     t.string   "organization",        limit: 255,                  null: false

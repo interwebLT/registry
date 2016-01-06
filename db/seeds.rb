@@ -24,26 +24,25 @@ OrderDetail.delete_all
 Credit.delete_all
 
 def create_user username, admin: false, staff: false
-  partner = Partner.create name: username,
-              encrypted_password: 'password',
-              representative: 'Representative',
-              organization: 'Company',
-              position: 'Position',
-              street: 'Street',
-              city: 'City',
-              state: 'State',
-              postal_code: '1234',
-              country_code: 'PH',
-              nature: 'Nature',
-              url: "#{username}.ph",
-              email: "info@#{username}.ph",
-              voice: '+63.21234567',
-              admin: admin,
-              staff: staff
+  partner = Partner.create  name: username,
+                            representative: 'Representative',
+                            organization: 'Company',
+                            position: 'Position',
+                            street: 'Street',
+                            city: 'City',
+                            state: 'State',
+                            postal_code: '1234',
+                            country_code: 'PH',
+                            nature: 'Nature',
+                            url: "#{username}.ph",
+                            email: "info@#{username}.ph",
+                            voice: '+63.21234567',
+                            admin: admin,
+                            staff: staff
 
   user = User.new name: username,
-              email: username,
-              partner: partner
+                  email: username,
+                  partner: partner
   user.password = 'password'
   user.registered_at = Time.now
   user.save
