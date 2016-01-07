@@ -7,7 +7,6 @@ Feature: Renew Domain
     And   renew domain fee must be deducted
     And   order must be synced to other systems
 
-  @wip
   Scenario: Renew existing domain with two-level TLD successfully
     Given I am authenticated as partner
     When  I renew an existing domain with two-level TLD
