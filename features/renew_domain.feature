@@ -31,3 +31,9 @@ Feature: Renew Domain
       | no domain name          | order_details | invalid |
       | no period               | order_details | invalid |
 
+  Scenario: Renew existing domain as administrator successfully
+    Given I am authenticated as administrator
+    When  I renew an existing domain for another partner
+    Then  domain must be renewed
+    And   renew domain fee must be deducted
+    And   order must be synced to other systems
