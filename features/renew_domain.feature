@@ -19,7 +19,6 @@ Feature: Renew Domain
     Then  error must be validation failed
     And   validation error on order_details must be "invalid"
 
-  @wip
   Scenario Outline: Invalid parameters
     Given I am authenticated as partner
     When  I renew an existing domain with <invalid parameter>
@@ -28,7 +27,7 @@ Feature: Renew Domain
 
     Examples:
       | invalid parameter       | field         | code    |
-      | period with no pricing  | order_details | invalid |
+      #| period with no pricing  | order_details | invalid |
       | no domain name          | order_details | invalid |
       | no period               | order_details | invalid |
 
