@@ -5,7 +5,7 @@ Feature: Renew Domain
     When  I renew an existing domain
     Then  domain must be renewed
     And   renew domain fee must be deducted
-    And   order must be synced to other systems
+    And   renew domain must be synced to other systems
 
   Scenario: Renew existing domain with two-level TLD successfully
     Given I am authenticated as partner
@@ -43,7 +43,7 @@ Feature: Renew Domain
     When  I renew an existing domain for another partner
     Then  domain must be renewed
     And   renew domain fee must be deducted
-    And   order must be synced to other systems
+    And   renew domain must be synced to other systems
 
   @wip
   Scenario: Renew non-existing domain as administrator
