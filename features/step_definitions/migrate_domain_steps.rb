@@ -1,5 +1,5 @@
 MIGRATE_DOMAIN = Transform /^migrate a domain into registry(?: |)(.*?)$/ do |scenario|
-  build_request scenario: scenario, resource: :order, action: :migrate_domain
+  build_request scenario: scenario, resource: :order, action: :create_migrate_domain
 end
 
 When /^I (#{MIGRATE_DOMAIN})$/ do |request|
