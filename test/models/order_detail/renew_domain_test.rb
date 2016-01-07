@@ -97,4 +97,25 @@ describe OrderDetail::RenewDomain do
 
     specify { subject.as_json.must_equal expected_json }
   end
+
+  describe :as_json_request do
+    subject { create :renew_domain_order_detail }
+
+    let(:expected_json) {
+      {
+        currency_code:  'USD',
+        ordered_at: '2015-02-27 14:30'.in_time_zone,
+        order_details: [
+          {
+            type: 'domain_renew',
+            domain: 'domain.ph',
+            period: 1,
+            current_expires_at: nil
+          }
+        ]
+      }
+    }
+
+    specify { subject.as_json_request.must_equal expected_json }
+  end
 end
