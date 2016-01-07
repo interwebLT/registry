@@ -1,0 +1,12 @@
+{
+  "partner":  "doesnotexist",
+  "currency_code":  "USD",
+  "ordered_at": "2016-01-07T16:30:00Z",
+  "order_details":  [
+    {
+      "type": "domain_renew",
+      "domain": "domain.ph",
+      "period": "2"
+    }
+  ]
+}
