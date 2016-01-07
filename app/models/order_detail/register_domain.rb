@@ -8,6 +8,29 @@ class OrderDetail::RegisterDomain < OrderDetail
     new params
   end
 
+  def self.execute partner:, domain:, authcode:, period:, registrant_handle:, at: Time.current
+    owning_partner = Partner.find_by! name: partner
+
+    price = owning_partner.pricing action: self.new.action, period: period
+
+    order = Order.new partner: owning_partner,
+                      total_price:  price,
+                      ordered_at: at
+
+    order_detail = self.new price: price,
+                            domain: domain,
+                            authcode: authcode,
+                            period: period,
+                            registrant_handle:  registrant_handle
+
+    order.order_details << order_detail
+    order.save!
+
+    order.complete!
+
+    Domain.named(domain).domain_activities.last.update! activity_at: at
+  end
+
   def action
     'domain_create'
   end
