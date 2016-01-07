@@ -1,0 +1,23 @@
+{
+  "id": 1,
+  "partner":  "alpha",
+  "order_number": 1,
+  "total_price":  64.00,
+  "fee":  0.00,
+  "ordered_at": "2015-01-01T00:00:00Z",
+  "status": "complete",
+  "currency_code":  "USD",
+  "order_details":  [
+    {
+      "type": "domain_renew",
+      "price":  64.00,
+      "domain": "domain.ph",
+      "object": {
+        "id": 1,
+        "type": "domain",
+        "name": "domain.ph"
+      },
+      "period": 2
+    }
+  ]
+}

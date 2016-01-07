@@ -5,11 +5,7 @@ class OrderDetail::RenewDomain < OrderDetail
   validates :period, presence: true
 
   def self.build params, partner
-    order_detail = self.new
-    order_detail.domain = params[:domain]
-    order_detail.period = params[:period].to_i
-
-    order_detail
+    self.new params
   end
 
   def self.execute domain:, period:, at: Time.current

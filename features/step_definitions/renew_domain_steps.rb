@@ -1,45 +1,21 @@
-Given /^I have registered a domain$/ do
-  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+When /^I renew an existing domain$/ do
+  create :domain, partner: @current_partner
 
-  domain_does_not_exist
-  contact_exists
-  register_domain
-end
+  request = 'order/create_renew_domain_request'
 
-When /^I renew my domain$/ do
-  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
+  stub_request(:post, SyncOrderJob::URL)
+    .with(headers: headers, body: request.body)
+    .to_return status: 201
 
-  renew_domain
-end
-
-When /^I (?:renew|renewed) an existing domain$/ do
-  stub_request(:post, SyncOrderJob::URL).to_return(status: 201)
-
-  domain_exists
-
-  renew_domain
-end
-
-When /^I reverse the renewal order$/ do
-  reverse_renew_domain
+  post orders_path, request.json
 end
 
 Then /^domain must be renewed$/ do
-  assert_domain_must_be_renewed
+  json_response.must_equal 'order/create_renew_domain_response'.json
+
+  saved_domain.expires_at.must_equal '2017-01-01'.in_time_zone
 end
 
-Then /^pending domain renewal order is created$/ do
-  assert_renew_domain_order_created
-end
-
-Then /^transaction is successful$/ do
-  assert_response_status_must_be_created
-end
-
-Then /^domain must no longer be renewed$/ do
-  assert_domain_must_no_longer_be_renewed
-end
-
-Then /^renew domain fee must be added back to credits of non-admin partner$/ do
-  assert_renew_domain_fee_must_be_added_back
+Then /^renew domain fee must be deducted$/ do
+  assert_fee_deducted 64.00.money
 end
