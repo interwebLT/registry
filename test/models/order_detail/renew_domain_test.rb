@@ -11,16 +11,19 @@ describe OrderDetail::RenewDomain do
     subject { create :renew_domain_order_detail }
 
     before do
-      create :domain, partner: subject.order.partner
+      domain
 
       subject.complete!
     end
 
+    let(:domain) { create :domain, partner: subject.order.partner }
     let(:saved_domain) { Domain.named(subject.domain) }
     let(:latest_ledger_entry) { subject.order.partner.ledgers.last }
 
-    specify { subject.complete?.must_equal true }
     specify { saved_domain.expires_at.must_equal '2016-01-01 00:00'.in_time_zone }
+
+    specify { subject.complete?.must_equal true }
+    specify { subject.current_expires_at.must_equal domain.expires_at }
     specify { subject.product.must_equal saved_domain.product }
 
     specify { latest_ledger_entry.activity_type.must_equal 'use' }

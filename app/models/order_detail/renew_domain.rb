@@ -38,6 +38,9 @@ class OrderDetail::RenewDomain < OrderDetail
   end
 
   def complete!
+    saved_domain = Domain.find_by! name: self.domain
+    self.update! current_expires_at: saved_domain.expires_at
+
     domain = self.order.partner.renew_domain domain_name: self.domain, period: self.period
 
     if domain.errors.empty?
