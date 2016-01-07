@@ -1,4 +1,6 @@
 class OrderDetail::RenewDomain < OrderDetail
+  alias_attribute :current_expires_at, :expires_at
+
   validates :domain, presence: true
   validates :period, presence: true
 

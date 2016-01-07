@@ -1,6 +1,12 @@
 require 'test_helper'
 
 describe OrderDetail::RenewDomain do
+  describe :aliases do
+    subject { create :renew_domain_order_detail }
+
+    specify { subject.current_expires_at.must_equal subject.expires_at }
+  end
+
   describe :complete! do
     subject { create :renew_domain_order_detail }
 
