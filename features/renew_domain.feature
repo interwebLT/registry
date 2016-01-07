@@ -19,6 +19,13 @@ Feature: Renew Domain
     Then  error must be validation failed
     And   validation error on order_details must be "invalid"
 
+  @wip
+  Scenario: Renew existing domain that another partner owns
+    Given I am authenticated as partner
+    When  I renew an existing domain under another partner
+    Then  error must be validation failed
+    And   validation error on order_details must be "invalid"
+
   Scenario Outline: Invalid parameters
     Given I am authenticated as partner
     When  I renew an existing domain with <invalid parameter>
@@ -37,6 +44,20 @@ Feature: Renew Domain
     Then  domain must be renewed
     And   renew domain fee must be deducted
     And   order must be synced to other systems
+
+  @wip
+  Scenario: Renew non-existing domain as administrator
+    Given I am authenticated as partner
+    When  I renew a non-existing domain for another partner
+    Then  error must be validation failed
+    And   validation error on order_details must be "invalid"
+
+  @wip
+  Scenario: Renew existing domain under another partner as administrator
+    Given I am authenticated as partner
+    When  I renew an existing domain for another partner under another partner
+    Then  error must be validation failed
+    And   validation error on order_details must be "invalid"
 
   Scenario Outline: Invalid administrator parameters
     Given I am authenticated as administrator
