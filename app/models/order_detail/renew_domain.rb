@@ -69,6 +69,10 @@ class OrderDetail::RenewDomain < OrderDetail
     self.save!
   end
 
+  def sync!
+    SyncOrderJob.perform_later self.order.partner, self.as_json_request
+  end
+
   def as_json options = nil
     {
       type: 'domain_renew',
@@ -82,13 +86,13 @@ class OrderDetail::RenewDomain < OrderDetail
   def as_json_request
     {
       currency_code:  'USD',
-      ordered_at: self.order.ordered_at,
+      ordered_at: self.order.ordered_at.iso8601,
       order_details: [
         {
           type: self.action,
           domain: self.domain,
           period: self.period,
-          current_expires_at: self.current_expires_at
+          current_expires_at: self.current_expires_at.iso8601
         }
       ]
     }

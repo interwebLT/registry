@@ -37,3 +37,11 @@ end
 Then /^(.*?) fee must be deducted from credits of non-admin partner$/ do |scenario|
   assert_credits_must_be_deducted scenario: scenario
 end
+
+Then /^order must be synced to other systems$/ do
+  assert_requested :post, SyncOrderJob::URL, times: 1
+end
+
+Then /^order must not be synced to other systems$/ do
+  assert_not_requested :post, SyncOrderJob::URL, times: 1
+end

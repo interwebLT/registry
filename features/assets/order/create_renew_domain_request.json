@@ -5,7 +5,8 @@
     {
       "type": "domain_renew",
       "domain": "domain.ph",
-      "period": "2"
+      "period": 2,
+      "current_expires_at": "2015-01-01T00:00:00Z"
     }
   ]
 }

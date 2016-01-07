@@ -30,7 +30,3 @@ end
 Then /^renew domain fee must be deducted$/ do
   assert_fee_deducted 64.00.money
 end
-
-Then /^renew domain must be synced to other systems$/ do
-  assert_requested :post, SyncOrderJob::URL, times: 1
-end

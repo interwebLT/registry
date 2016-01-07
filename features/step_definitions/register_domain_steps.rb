@@ -27,7 +27,3 @@ end
 Then /^register domain fee must be deducted$/ do
   assert_fee_deducted 70.00.money
 end
-
-Then /^register domain must be synced to other systems$/ do
-  assert_requested :post, SyncOrderJob::URL, times: 1
-end

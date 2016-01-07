@@ -4,7 +4,7 @@ class Order < ActiveRecord::Base
   has_many :order_details, dependent: :destroy
 
   has_one :ledger, dependent: :destroy
-  
+
   monetize :total_price_cents
   monetize :fee_cents
 
@@ -103,9 +103,15 @@ class Order < ActiveRecord::Base
 
     reversed_order.complete!
   end
-  
+
   def contains_checkout_credits?
     self.order_details.where(type: OrderDetail::CheckoutReplenishCredits).count > 0
+  end
+
+  def sync!
+    self.order_details.each do |order_detail|
+      order_detail.sync! if order_detail.respond_to? :sync!
+    end
   end
 
   private

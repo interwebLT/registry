@@ -7,12 +7,13 @@ Feature: Register Domain
     And   domain must not have domain hosts by default
     And   domain status must be inactive
     And   register domain fee must be deducted
-    And   register domain must be synced to other systems
+    And   order must not be synced to other systems
 
   Scenario: Register domain with two-level TLD successfully
     Given I am authenticated as partner
     When  I register a domain with two-level TLD
     Then  domain with two-level TLD must be registered
+    And   order must not be synced to other systems
 
   Scenario Outline: Invalid parameters
     Given I am authenticated as partner
@@ -34,7 +35,7 @@ Feature: Register Domain
     And   domain must not have domain hosts by default
     And   domain status must be inactive
     And   register domain fee must be deducted
-    And   register domain must be synced to other systems
+    And   order must not be synced to other systems
 
   Scenario Outline: Invalid administrator parameters
     Given I am authenticated as administrator

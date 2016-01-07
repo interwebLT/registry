@@ -99,18 +99,20 @@ describe OrderDetail::RenewDomain do
   end
 
   describe :as_json_request do
-    subject { create :renew_domain_order_detail }
+    subject do
+      create :renew_domain_order_detail, current_expires_at: '2016-01-7 6:30 PM'.in_time_zone
+    end
 
     let(:expected_json) {
       {
         currency_code:  'USD',
-        ordered_at: '2015-02-27 14:30'.in_time_zone,
+        ordered_at: '2015-02-27T14:30:00Z',
         order_details: [
           {
             type: 'domain_renew',
             domain: 'domain.ph',
             period: 1,
-            current_expires_at: nil
+            current_expires_at: '2016-01-07T18:30:00Z'
           }
         ]
       }
