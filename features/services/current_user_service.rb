@@ -92,6 +92,18 @@ def assert_current_partner_info_displayed
         action: 'domain_create',
         period: 10,
         price: 350.00
+      },
+      {
+        id: 11,
+        action: 'domain_renew',
+        period: 1,
+        price: 32.00
+      },
+      {
+        id: 12,
+        action: 'domain_renew',
+        period: 2,
+        price: 64.00
       }
     ]
   }
