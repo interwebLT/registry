@@ -15,6 +15,22 @@ When /^I (#{RENEW_DOMAIN})$/ do |request|
   post orders_path, request.json
 end
 
+When /^I renew an existing domain which other systems reject$/ do
+  request = 'order/create_renew_domain_request'
+
+  stub_request(:post, SyncOrderJob::URL)
+    .with(headers: headers, body: request.body)
+    .to_return status: 422
+
+  create :domain, partner: @current_partner
+
+  begin
+    post orders_path, request.json
+  rescue RuntimeError
+    @exception_thrown = true
+  end
+end
+
 Then /^domain must be renewed$/ do
   json_response.must_equal 'order/create_renew_domain_response'.json
 

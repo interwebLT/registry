@@ -13,6 +13,22 @@ Feature: Renew Domain
     Then  domain with two-level TLD must be renewed
     And   order must be synced to other systems
 
+  # Syncs to other systems are done with jobs, so that we can capture errors and manage them.
+  # The actual request is processed by Registry and is successful to the client.
+
+  # This acceptance test does not enable async job processing: when an error occurs, it is
+  # returned to the client in place of a response.  This means that we can't validate that a
+  # request is successful, as there is no response to inspect.  Instead, we validate that an
+  # error was actually thrown.
+
+  Scenario: Other systems unavailable
+    Given I am authenticated as partner
+    When  I renew an existing domain which other systems reject
+    #Then  domain must be renewed
+    And   renew domain fee must be deducted
+    And   order must be synced to other systems
+    And   exception must be thrown
+
   @wip
   Scenario: Renew non-existing domain
     Given I am authenticated as partner

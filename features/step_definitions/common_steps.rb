@@ -45,3 +45,7 @@ end
 Then /^order must not be synced to other systems$/ do
   assert_not_requested :post, SyncOrderJob::URL, times: 1
 end
+
+Then /^exception must be thrown$/ do
+  @exception_thrown.must_equal true
+end

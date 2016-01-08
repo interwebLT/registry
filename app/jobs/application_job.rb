@@ -5,7 +5,9 @@ class ApplicationJob < ActiveJob::Base
   }
 
   def post url:, params:, token: nil
-    HTTParty.post url, body: params.to_json, headers: headers(token: token)
+    response = HTTParty.post url, body: params.to_json, headers: headers(token: token)
+
+    raise "Code: #{response.code}, Message: #{response.parsed_response}" if error_code response.code
   end
 
   private
@@ -14,5 +16,9 @@ class ApplicationJob < ActiveJob::Base
     DEFAULT_HEADERS.tap do |headers|
       headers['Authorization'] = "Token token=#{token}" if token
     end
+  end
+
+  def error_code code
+    (400..599).include? code
   end
 end
