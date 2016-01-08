@@ -38,7 +38,7 @@ group :development do
   gem 'capistrano-bundler'
   gem 'capistrano-rails'
   gem 'capistrano3-unicorn'
-  gem 'capistrano-resque', require: false
+  gem 'capistrano-sidekiq'
 end
 
 gem 'active_model_serializers', '~> 0.8.2'
