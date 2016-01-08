@@ -2,6 +2,8 @@ config = Rails.application.config_for(:exception_notification).with_indifferent_
 
 require 'exception_notification/rails'
 
+require 'exception_notification/sidekiq'
+
 ExceptionNotification.configure do |c|
   c.add_notifier :email, {
     sender_address: config[:sender_address],
