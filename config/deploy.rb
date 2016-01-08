@@ -18,11 +18,9 @@ set :rbenv_map_bins, %w{rake gem bundle ruby rails unicorn}
 set :bundle_jobs, 4
 set :bundle_env_variables, { nokogiri_use_system_libraries: 1 }
 
-set :resque_log_file, 'log/resque.log'
-set :resque_environment_task, true
+set :sidekiq_queue, 'sync_registry_changes'
 
 after 'deploy:publishing', 'deploy:restart'
-after 'deploy:restart', 'resque:restart'
 
 namespace :deploy do
   task :restart do
