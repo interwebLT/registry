@@ -65,4 +65,7 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Use Sidekiq as ActiveJob backend
+  config.active_job.queue_adapter = :sidekiq
 end
