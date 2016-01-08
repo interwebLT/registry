@@ -258,7 +258,6 @@ DEPENDENCIES
   pg
   rails (= 4.2.3)
   rails-api
-  resque
   rest-client
   spring
   timecop
@@ -267,4 +266,4 @@ DEPENDENCIES
   whenever
 
 BUNDLED WITH
-   1.10.6
+   1.11.2

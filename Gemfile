@@ -42,7 +42,6 @@ group :development do
 end
 
 gem 'active_model_serializers', '~> 0.8.2'
-gem 'resque'
 gem 'rest-client'
 gem 'exception_notification'
 gem 'money-rails'
