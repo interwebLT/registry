@@ -1,8 +1,8 @@
 require 'test_helper'
 
 describe User do
-  describe :password do 
-    it 'is encrypted upon being set' do 
+  describe :password do
+    it 'is encrypted upon being set' do
       user = User.new
       user.encrypted_password.must_be_nil
       user.password = 'password'
@@ -10,7 +10,7 @@ describe User do
       user.encrypted_password.wont_equal 'password'
     end
 
-    it 'authenticates properly' do 
+    it 'authenticates properly' do
       user = User.new
 
       user.password = 'password'
@@ -19,7 +19,7 @@ describe User do
       user.password_matches('wrong').must_equal false
     end
 
-    it 'salt changes when it is set' do 
+    it 'salt changes when it is set' do
       user = User.new
       salt = user.salt
       user.password = 'password'
@@ -38,17 +38,16 @@ describe User do
     subject { User.authorize! authorization.token }
 
     let(:current_user) { create :user }
+    let(:authorization) { current_user.authorizations.create }
 
     context :when_authorized do
-      let(:authorization) { current_user.authorizations.create }
-
       specify { subject.must_equal authorization }
     end
 
     context :when_timed_out do
-      let(:authorization) {
-        current_user.authorizations.create(updated_at: Time.now + User::TIMEOUT)
-      }
+      before do
+        authorization.update! last_authorized_at: Time.current + User::TIMEOUT
+      end
 
       specify { subject.must_be_nil }
     end

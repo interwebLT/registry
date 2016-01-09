@@ -1,7 +1,7 @@
 require 'bcrypt'
 
 class User < ActiveRecord::Base
-  before_create :set_registered_at 
+  before_create :set_registered_at
 
   TIMEOUT = 15.minutes
 
@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   attr_accessor :token
 
   def self.authorize! token
-    conditions = { token: token, updated_at: (Time.now - TIMEOUT)..Time.now }
+    conditions = { token: token, last_authorized_at: (Time.now - TIMEOUT)..Time.now }
 
     Authorization.where(conditions).last
   end
