@@ -68,13 +68,12 @@ FactoryGirl.define do
       end
 
       after :create do |user, evaluator|
-        create_list :authorization, evaluator.authorization_count, user: user
+        create_list :user_authorization, evaluator.authorization_count, user: user
       end
     end
 
     factory :other_user do
       name 'beta'
-      # partner Partner.find_by(name: 'other_partner')
     end
   end
 end

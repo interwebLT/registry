@@ -1,5 +1,7 @@
 FactoryGirl.define do
   factory :authorization do
-    user
+    factory :user_authorization, class: UserAuthorization do
+      user
+    end
   end
 end

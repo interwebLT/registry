@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   validates :encrypted_password, presence: true
   validates :name, presence: true
 
-  has_many :authorizations
+  has_many :authorizations, class_name: UserAuthorization
 
   attr_accessor :token
 

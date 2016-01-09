@@ -6,7 +6,7 @@ class AuthorizationsController < ApplicationController
     if user.present? && user.password_matches(params[:password])
       authorization = user.authorizations.create
 
-      render json: authorization, status: :created, location: authorization
+      render json: authorization, status: :created, location: authorization_url(authorization.id)
     else
       render json: { message: 'Bad Credentials' }, status: :unprocessable_entity
     end
