@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   def self.authorize! token
     conditions = { token: token, last_authorized_at: (Time.now - TIMEOUT)..Time.now }
 
-    UserAuthorization.where(conditions).last
+    Authorization.where(conditions).last
   end
 
   def password_matches input
