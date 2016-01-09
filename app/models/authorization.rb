@@ -2,6 +2,8 @@ class Authorization < ActiveRecord::Base
   before_create :generate_token
   after_find :update_last_authorized_at
 
+  belongs_to :user
+
   private
 
   def generate_token
