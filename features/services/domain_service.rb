@@ -104,7 +104,7 @@ def search_domains search_term
 end
 
 def search_second_level_domains search_term
-  get domains_path(available_tlds: search_term)
+  get "/availability?domain=#{search_term}"
 end
 
 def view_latest_domains

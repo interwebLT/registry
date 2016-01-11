@@ -1,8 +1,6 @@
 class DomainsController < SecureController
   def index
-    if params[:available_tlds]
-      render json: available_tlds
-    elsif params[:name]
+    if params[:name]
       render json: fetch_domain
     elsif params[:search]
       render json: search_domains
@@ -51,24 +49,6 @@ class DomainsController < SecureController
 
   def domain_params
     params.permit(:registrant_handle, :authcode, :admin_handle, :billing_handle, :tech_handle, :client_hold, :client_delete_prohibited, :client_renew_prohibited, :client_transfer_prohibited, :client_update_prohibited)
-  end
-
-  def available_tlds
-    result = []
-
-    params[:available_tlds].split(',').each do |domain_name|
-      domain = DomainSearchLog.new name: domain_name
-      domain.save
-
-      available_tlds = Domain.available_tlds(domain_name)
-
-      result << {
-        domain: domain_name,
-        available_tlds: available_tlds
-      }
-    end
-
-    result
   end
 
   def search_domains
