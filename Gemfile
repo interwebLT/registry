@@ -38,7 +38,7 @@ group :development do
   gem 'capistrano-bundler'
   gem 'capistrano-rails'
   gem 'capistrano3-unicorn'
-  gem 'capistrano-sidekiq', github: 'seuros/capistrano-sidekiq'
+  gem 'capistrano-sidekiq'
 end
 
 gem 'active_model_serializers', '~> 0.8.2'
