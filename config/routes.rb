@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     resources :hosts, controller: :domain_hosts, only: [:create, :show, :destroy]
   end
 
+  get 'availability', to: 'availabilities#index'
+
   resources :partners, only: [:index, :show] do 
     resources :users, only: [:create] 
   end
