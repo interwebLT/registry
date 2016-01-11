@@ -3,7 +3,7 @@ class AddLastAuthorizedAtToAuthorization < ActiveRecord::Migration
     add_column :authorizations, :last_authorized_at, :timestamp
 
     Authorization.all.each do |authorization|
-      authorization.update! authorized_at: authorization.updated_at
+      authorization.update! last_authorized_at: authorization.updated_at
     end
 
     change_column :authorizations, :last_authorized_at, :timestamp, null: false
