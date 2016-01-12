@@ -37,17 +37,17 @@ describe Credit::CardReplenish do
     subject { Credit.last }
 
     before do
-      Credit.execute  partner: partner.name,
-                      credit: credits,
-                      remarks: 'this is a remark',                                      
-                      at: credited_at
+      Credit::CardReplenish.execute partner: partner.name,
+                                    credit: credits,
+                                    remarks: 'this is a remark',
+                                    at: credited_at
     end
 
     let(:partner) { create :partner }
     let(:credits) { 123.45 }
     let(:credited_at) { '2015-08-10 4:30 PM'.in_time_zone }
 
-    specify { subject.must_be_kind_of Credit }
+    specify { subject.must_be_kind_of Credit::CardReplenish }
     specify { subject.complete?.must_equal true }
     specify { subject.amount.must_equal credits.money }
 
