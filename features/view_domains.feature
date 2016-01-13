@@ -10,10 +10,12 @@ Feature: View Domains
     When  I try to view my domains
     Then  I must see my domains
 
+  @wip
   Scenario: View domain info
     When  I try to view the info of one of my domains
     Then  I must see the info of my domain
 
+  @wip
   Scenario: View domain with complete contacts
     When  I try to view the info of a domain with complete contacts
     Then  I must see the info of my domain with all contacts

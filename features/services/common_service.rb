@@ -106,7 +106,7 @@ end
 def other_partner_exists
   partner_does_not_exist name
 
-  create :complete_partner, name: OTHER_PARTNER
+  create :other_partner
 end
 
 def other_partner_does_not_exist

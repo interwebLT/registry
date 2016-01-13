@@ -2,34 +2,23 @@ require 'bcrypt'
 
 FactoryGirl.define do
   factory :user do
+    partner
     name 'alpha'
     email 'alpha@alpha.org'
     registered_at Time.now
 
-    before :create do |user, evaluator|
+    before :create do |user|
       user.password = 'password'
     end
 
     factory :admin do
-      before :create do |user, evaluator|
-        user.partner = create :user_partner, name: 'admin', admin: true
-      end
+      partner factory: :admin_partner
     end
 
     factory :staff do
-      before :create do |user, evaluator|
-        user.partner = create :user_partner, name: 'staff', admin: false, staff: true
-      end
     end
 
     factory :dummy do
-      before :create do |user, evaluator|
-        user.partner = create :user_partner, name: 'beta'
-      end
-    end
-
-    before :create do |user, evaluator|
-      user.partner = create :user_partner
     end
 
     after :create do |user, evaluator|
