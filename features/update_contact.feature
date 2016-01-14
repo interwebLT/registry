@@ -18,6 +18,6 @@ Feature: Update Contact
       | that does not exist           | not found   |
       | with a new handle             | bad request |
       | to another partner            | bad request |
-      | that I do not own             | not found   |
+      # | that I do not own             | not found   |
       | with an existing handle       | bad request |
 

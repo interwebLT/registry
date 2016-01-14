@@ -98,9 +98,8 @@ def partner_does_not_exist name
 end
 
 def partner_exists name, admin: false
-  partner_does_not_exist name
-
-  @current_partner = create :complete_partner, name: name, admin: admin
+  @current_partner = Partner.find_by name: name
+  @current_partner ||= create :partner
 end
 
 def other_partner_exists
