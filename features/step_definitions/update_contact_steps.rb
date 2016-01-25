@@ -1,8 +1,7 @@
-
 When /^I update a contact$/ do
-  contact_exists
+  contact = create :contact
 
-  update_contact
+  patch contact_path(contact.handle), 'contact/patch_request'.json
 end
 
 When /^I update a contact to another partner$/ do
@@ -38,6 +37,10 @@ When /^I update a contact that I do not own$/ do
 end
 
 Then /^contact must be updated$/ do
-  assert_contact_updated
-  assert_update_contact_history_created
+  last_response.status.must_equal 200
+
+  json_response.must_equal 'contact/patch_response'.json
+
+  Contact.count.must_equal 1
+  Contact.last.contact_histories.count.must_equal 2
 end
