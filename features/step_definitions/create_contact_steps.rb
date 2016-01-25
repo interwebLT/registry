@@ -10,6 +10,14 @@ When /^I create a new contact for another partner$/ do
   post contacts_path, 'contact/admin_post_request'.json
 end
 
+When /^I create a new contact with empty request$/ do
+  post contacts_path, 'contact/post_with_empty_request_request'.json
+end
+
+When /^I create a new contact under another partner$/ do
+  post contacts_path, 'contact/post_under_another_partner_request'.json
+end
+
 Then /^contact must be created$/ do
   last_response.status.must_equal 201
 

@@ -1,12 +1,3 @@
-When /^I create a new contact with empty request$/ do
-  create_contact with: { json_request: EMPTY_REQUEST }
-end
-
-When /^I create a new contact under another partner$/ do
-  other_partner_exists
-
-  create_contact with: { partner: OTHER_PARTNER }
-end
 
 When /^I create a new contact with existing handle$/ do
   contact_exists
