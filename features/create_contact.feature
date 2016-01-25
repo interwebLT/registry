@@ -4,6 +4,7 @@ Feature: Create Contact
     Given I am authenticated as partner
     When  I create a new contact
     Then  contact must be created
+    And   create contact must be synced to other systems
 
   Scenario Outline: Bad request
     Given I am authenticated as partner
@@ -29,6 +30,7 @@ Feature: Create Contact
     Given I am authenticated as administrator
     When  I create a new contact for another partner
     Then  contact must be created
+    And   create contact must not be synced to other systems
 
   Scenario Outline: Bad administrator request
     Given I am authenticated as administrator

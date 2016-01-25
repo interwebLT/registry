@@ -3,7 +3,9 @@ CREATE_CONTACT = Transform /^create a new contact(?: |)(.*?)$/ do |scenario|
 end
 
 When /^I (#{CREATE_CONTACT})$/ do |request|
-  stub_request(:post, SyncCreateContactJob::URL).to_return(status: 201)
+  stub_request(:post, SyncCreateContactJob::URL)
+    .with(headers: headers, body: request.body)
+    .to_return status: 201
 
   post contacts_path, request.json
 end
@@ -27,4 +29,12 @@ Then /^contact must be created$/ do
 
   Contact.count.must_equal 1
   Contact.last.contact_histories.count.must_equal 1
+end
+
+Then /^create contact must be synced to other systems$/ do
+  assert_requested :post, SyncCreateContactJob::URL, times: 1
+end
+
+Then /^create contact must not be synced to other systems$/ do
+  assert_not_requested :post, SyncCreateContactJob::URL
 end

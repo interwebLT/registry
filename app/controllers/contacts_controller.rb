@@ -77,6 +77,10 @@ class ContactsController < SecureController
     contact.partner = contact_partner
 
     if contact.save
+      if Rails.configuration.x.cocca_api_sync and not current_user.admin
+        SyncCreateContactJob.perform_later contact.partner, create_params
+      end
+
       render  json: contact,
               status: :created,
               location: contact_url(contact.id)
