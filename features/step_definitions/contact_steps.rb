@@ -1,8 +1,6 @@
 When /^I create a new contact$/ do
   stub_request(:post, SyncCreateContactJob::URL).to_return(status: 201)
 
-  contact_does_not_exist
-
   create_contact
 end
 
@@ -11,7 +9,6 @@ When /^I create a new contact with empty request$/ do
 end
 
 When /^I create a new contact under another partner$/ do
-  contact_does_not_exist
   other_partner_exists
 
   create_contact with: { partner: OTHER_PARTNER }
@@ -24,20 +21,16 @@ When /^I create a new contact with existing handle$/ do
 end
 
 When /^I create a new contact under another admin partner$/ do
-  contact_does_not_exist
   other_admin_partner_exists
 
   create_contact with: { partner: OTHER_ADMIN_PARTNER }
 end
 
 When /^I create a new contact with empty partner$/ do
-  contact_does_not_exist
-
   create_contact with: { partner: EMPTY_PARTNER }
 end
 
 When /^I create a new contact with non\-existing partner$/ do
-  contact_does_not_exist
   other_partner_does_not_exist
 
   create_contact with: { partner: OTHER_PARTNER }
