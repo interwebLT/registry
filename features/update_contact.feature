@@ -1,15 +1,12 @@
 Feature: Update Contact
-  As a Partner
-  I want to update the details of my contacts
 
-  Background:
+  Scenario: Update contact successfully
     Given I am authenticated as partner
-
-  Scenario: Successfully update a contact
     When  I update a contact
     Then  contact must be updated
 
-  Scenario Outline: Bad request
+  Scenario Outline: Invalid parameters
+    Given I am authenticated as partner
     When  I update a contact <invalid update>
     Then  error must be <error>
 
@@ -21,3 +18,19 @@ Feature: Update Contact
       # | that I do not own             | not found   |
       | with an existing handle       | bad request |
 
+  Scenario: Update a contact as administrator successfully
+    Given I am authenticated as administrator
+    When  I update a contact
+    Then  contact must be updated
+
+  Scenario Outline: Invalid administrator parameters
+    Given I am authenticated as administrator
+    When  I update a contact <invalid update>
+    Then  error must be <error>
+
+    Examples:
+      | invalid update                | error       |
+      | that does not exist           | not found   |
+      | with a new handle             | bad request |
+      | to another partner            | bad request |
+      | with an existing handle       | bad request |
