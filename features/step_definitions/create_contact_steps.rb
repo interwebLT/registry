@@ -8,6 +8,18 @@ When /^I (#{CREATE_CONTACT})$/ do |request|
   post contacts_path, request.json
 end
 
+When /^I create a new contact with existing handle$/ do
+  create :contact
+
+  post contacts_path, 'contact/post_request'.json
+end
+
+When /^I create a new contact for another partner with existing handle$/ do
+  create :contact
+
+  post contacts_path, 'contact/admin_post_request'.json
+end
+
 Then /^contact must be created$/ do
   last_response.status.must_equal 201
 

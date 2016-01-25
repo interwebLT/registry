@@ -41,7 +41,7 @@ Feature: Create Contact
 
   Scenario Outline: Invalid administrator parameters
     Given I am authenticated as administrator
-    When  I create a new contact <invalid parameter>
+    When  I create a new contact for another partner <invalid parameter>
     Then  error must be validation failed
     And   validation error on <field> must be "<code>"
 

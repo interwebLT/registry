@@ -1,26 +1,3 @@
-
-When /^I create a new contact with existing handle$/ do
-  contact_exists
-
-  create_contact
-end
-
-When /^I create a new contact under another admin partner$/ do
-  other_admin_partner_exists
-
-  create_contact with: { partner: OTHER_ADMIN_PARTNER }
-end
-
-When /^I create a new contact with empty partner$/ do
-  create_contact with: { partner: EMPTY_PARTNER }
-end
-
-When /^I create a new contact with non\-existing partner$/ do
-  other_partner_does_not_exist
-
-  create_contact with: { partner: OTHER_PARTNER }
-end
-
 When /^I try to view contacts$/ do
   contact_exists
   other_contact_exists
