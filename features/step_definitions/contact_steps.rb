@@ -1,9 +1,3 @@
-When /^I create a new contact$/ do
-  stub_request(:post, SyncCreateContactJob::URL).to_return(status: 201)
-
-  create_contact
-end
-
 When /^I create a new contact with empty request$/ do
   create_contact with: { json_request: EMPTY_REQUEST }
 end
@@ -63,9 +57,4 @@ end
 
 Then /^I must see no contact info$/ do
   assert_no_contact_displayed
-end
-
-Then /^contact must be created$/ do
-  assert_contact_created
-  assert_create_contact_history_created
 end

@@ -27,7 +27,7 @@ Feature: Create Contact
 
   Scenario: Create new contact as administrator successfully
     Given I am authenticated as administrator
-    When  I create a new contact
+    When  I create a new contact for another partner
     Then  contact must be created
 
   Scenario Outline: Bad administrator request
