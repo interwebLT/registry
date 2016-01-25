@@ -4,6 +4,7 @@ Feature: Update Contact
     Given I am authenticated as partner
     When  I update a contact
     Then  contact must be updated
+    And   update contact must be synced to other systems
 
   Scenario Outline: Invalid parameters
     Given I am authenticated as partner
@@ -21,6 +22,8 @@ Feature: Update Contact
     Given I am authenticated as administrator
     When  I update a contact
     Then  contact must be updated
+    And   update contact must not be synced to other systems
+
 
   Scenario Outline: Invalid administrator parameters
     Given I am authenticated as administrator

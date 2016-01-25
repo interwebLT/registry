@@ -5,6 +5,10 @@ end
 When /^I (#{UPDATE_CONTACT})$/ do |request|
   contact = create :contact
 
+  stub_request(:patch, SyncUpdateContactJob.url(contact.handle))
+    .with(headers: headers, body: request.body)
+    .to_return status: 200
+
   patch contact_path(contact.handle), request.json
 end
 
@@ -21,4 +25,12 @@ Then /^contact must be updated$/ do
 
   Contact.count.must_equal 1
   Contact.last.contact_histories.count.must_equal 2
+end
+
+Then /^update contact must be synced to other systems$/ do
+  assert_requested :patch, SyncUpdateContactJob.url(build(:contact).handle), times: 1
+end
+
+Then /^update contact must not be synced to other systems$/ do
+  assert_not_requested :patch, SyncUpdateContactJob.url(build(:contact).handle)
 end

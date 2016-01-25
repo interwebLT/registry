@@ -68,6 +68,7 @@ class ContactsController < SecureController
     update_params = contact_params
     update_params.delete :partner
     update_params.delete :handle
+    update_params.delete :id
 
     update_params
   end
@@ -113,6 +114,10 @@ class ContactsController < SecureController
 
   def update_existing_contact contact
     if contact.update(update_params)
+      if Rails.configuration.x.cocca_api_sync and not current_user.admin
+        SyncUpdateContactJob.perform_later contact.partner, contact.handle, update_params
+      end
+
       render json: contact
     else
       validation_failed contact
