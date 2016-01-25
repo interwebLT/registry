@@ -1,21 +1,11 @@
-When /^I create a new contact$/ do
+CREATE_CONTACT = Transform /^create a new contact(?: |)(.*?)$/ do |scenario|
+  build_request scenario: scenario, resource: :contact, action: :post
+end
+
+When /^I (#{CREATE_CONTACT})$/ do |request|
   stub_request(:post, SyncCreateContactJob::URL).to_return(status: 201)
 
-  post contacts_path, 'contact/post_request'.json
-end
-
-When /^I create a new contact for another partner$/ do
-  stub_request(:post, SyncCreateContactJob::URL).to_return(status: 201)
-
-  post contacts_path, 'contact/admin_post_request'.json
-end
-
-When /^I create a new contact with empty request$/ do
-  post contacts_path, 'contact/post_with_empty_request_request'.json
-end
-
-When /^I create a new contact under another partner$/ do
-  post contacts_path, 'contact/post_under_another_partner_request'.json
+  post contacts_path, request.json
 end
 
 Then /^contact must be created$/ do
