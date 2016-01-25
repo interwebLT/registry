@@ -16,7 +16,6 @@ Feature: Update Contact
       | with a new handle             | bad request |
       | to another partner            | bad request |
       # | that I do not own             | not found   |
-      | with an existing handle       | bad request |
 
   Scenario: Update a contact as administrator successfully
     Given I am authenticated as administrator
@@ -33,4 +32,3 @@ Feature: Update Contact
       | that does not exist           | not found   |
       | with a new handle             | bad request |
       | to another partner            | bad request |
-      | with an existing handle       | bad request |
