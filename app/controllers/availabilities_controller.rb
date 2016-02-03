@@ -9,7 +9,7 @@ class AvailabilitiesController < ApplicationController
     domain = DomainSearchLog.new name: params[:domain]
     domain.save
 
-    available_tlds = Domain.available_tlds(params[:domain])
+    available_tlds = Domain.available_tlds(params[:domain].split('.')[0])
 
     result << {
       domain: params[:domain],

@@ -1,7 +1,6 @@
 FactoryGirl.define do
   factory :deleted_domain do
     product
-    partner
     name  'deleted.ph'
     authcode  'ABC123'
     registrant

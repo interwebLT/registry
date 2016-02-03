@@ -1,6 +1,5 @@
 FactoryGirl.define do
   factory :partner_configuration do
-    partner
     config_name 'nameserver'
     value 'ns3.domains.ph'
 

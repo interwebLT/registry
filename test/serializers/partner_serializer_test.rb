@@ -10,7 +10,7 @@ describe PartnerSerializer do
       id:             partner.id,
       name:           partner.name,
       organization:   partner.organization,
-      credits:        partner.current_balance,
+      credits:        partner.current_balance.to_f,
       site:           partner.url,
       nature:         partner.nature,
       representative: partner.representative,

@@ -1,6 +1,6 @@
 When /^I create a new partner$/ do
   stub_request(:post, SyncCreatePartnerJob::URL)
-    .with(headers: default_headers, body: 'partner/create_request'.body)
+    .with(headers: default_headers, body: 'partner/post_request'.body)
     .to_return status: 201
 
   Partner.build name:           'alpha',
