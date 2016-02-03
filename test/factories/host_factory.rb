@@ -1,5 +1,6 @@
 FactoryGirl.define do
   factory :host do
+    partner
     name 'ns5.domains.ph'
     created_at Time.now
     updated_at Time.now

@@ -1,5 +1,6 @@
 FactoryGirl.define do
   factory :object_activity do
+    partner
     product
     activity_at '2015-04-15 11:30 AM'.in_time_zone
 

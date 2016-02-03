@@ -33,7 +33,7 @@ class Order < ActiveRecord::Base
     order.status = 'pending'
     order.ordered_at = params[:ordered_at] || Time.current
     order.order_details << params[:order_details].collect { |o| OrderDetail.build(o, partner) }
-    order.total_price = order.order_details.map(&:price).reduce(Money::ZERO, :+)
+    order.total_price = order.order_details.map(&:price).reduce(0.00, :+)
 
     order
   end

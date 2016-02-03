@@ -5,20 +5,11 @@ describe UserSerializer do
 
   let(:user) { create :user, token: 'abcd123456' }
 
-  let(:expected_json) {
-    {
-      id:                   user.id,
-      username:             user.username,
-      token:                user.token,
-      partner_id:           user.partner.id,
-      partner_name:         user.partner.name,
-      credits:              user.partner.current_balance.to_f,
-      transactions_allowed: true,
-      admin:                false,
-      staff:                false,
-      email:                user.email
-    }
-  }
-
-  specify { subject.must_equal expected_json }
+  specify { subject[:id].must_equal user.id }
+  specify { subject[:username].must_equal user.username }
+  specify { subject[:token].must_equal user.token }
+  specify { subject[:partner_name].must_equal user.partner.name }
+  specify { subject[:credits].must_equal user.partner.current_balance }
+  specify { subject[:transactions_allowed].must_equal true }
+  specify { subject[:admin].must_equal false }
 end

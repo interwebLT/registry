@@ -3,7 +3,6 @@ Feature: View hosts
   As an admin
   I want to be able to view all hosts
 
-  @wip
   Scenario: View hosts
     Given I am authenticated as administrator
     When  I try to view hosts

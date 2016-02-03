@@ -98,14 +98,15 @@ def partner_does_not_exist name
 end
 
 def partner_exists name, admin: false
-  @current_partner = Partner.find_by name: name
-  @current_partner ||= create :partner
+  partner_does_not_exist name
+
+  @current_partner = create :complete_partner, name: name, admin: admin
 end
 
 def other_partner_exists
   partner_does_not_exist name
 
-  create :other_partner
+  create :complete_partner, name: OTHER_PARTNER
 end
 
 def other_partner_does_not_exist

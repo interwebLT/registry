@@ -1,5 +1,6 @@
 FactoryGirl.define do
   factory :domain do
+    partner
     product
     name 'domain.ph'
     authcode 'ABCD123'

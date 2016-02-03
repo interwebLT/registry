@@ -80,7 +80,3 @@ class String
     Money.new(Money.new(self).cents * 100)
   end
 end
-
-class Money
-  ZERO = Money.new(0.00)
-end

@@ -1,5 +1,5 @@
 REGISTER_DOMAIN = Transform /^register a domain(?: |)(.*?)$/ do |scenario|
-  build_request scenario: scenario, resource: :order, action: :post_register_domain
+  build_request scenario: scenario, resource: :order, action: :create_register_domain
 end
 
 When /^I (#{REGISTER_DOMAIN})$/ do |request|
@@ -13,13 +13,13 @@ When /^I (#{REGISTER_DOMAIN})$/ do |request|
 end
 
 Then /^domain must be registered$/ do
-  json_response.must_equal 'order/post_register_domain_response'.json
+  json_response.must_equal 'order/create_register_domain_response'.json
 
   Domain.exists? name: DOMAIN
 end
 
 Then /^domain with two-level TLD must be registered$/ do
-  json_response.must_equal 'order/post_register_domain_with_two_level_tld_response'.json
+  json_response.must_equal 'order/create_register_domain_with_two_level_tld_response'.json
 
   Domain.exists? name: TWO_LEVEL_DOMAIN
 end

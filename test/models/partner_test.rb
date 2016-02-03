@@ -29,7 +29,7 @@ describe Partner do
         create :ledger, partner: subject
       end
 
-      # specify { subject.current_balance.must_equal 2000.00.money }
+      specify { subject.current_balance.must_equal 2000.00.money }
     end
 
     context :when_partner_has_no_credits do
@@ -137,7 +137,7 @@ describe Partner do
       create :refund_order,             partner: subject
     end
 
-    # specify { subject.credit_history.count.must_equal 0 }
+    specify { subject.credit_history.count.must_equal 0 }
   end
 
   describe :order_history do

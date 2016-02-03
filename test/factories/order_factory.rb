@@ -1,5 +1,6 @@
 FactoryGirl.define do
   factory :base_order, class: Order do
+    partner
     total_price 150.00
     sequence(:order_number) do |n|
       n.to_s(16).rjust(10, '0').upcase
@@ -40,7 +41,7 @@ FactoryGirl.define do
       before :create do |order, evaluator|
         order.order_details << (build :renew_domain_order_detail, order: order)
       end
-
+      
       factory :pending_renew_domain_order do
         status Order::PENDING_ORDER
       end

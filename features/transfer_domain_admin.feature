@@ -5,7 +5,6 @@ Feature: Transfer Domain as Administrator
   Background:
     Given I am authenticated as administrator
 
-  @wip
   Scenario: Transfer domain
     When  I transfer a domain from another partner
     Then  domain must now be under my partner
