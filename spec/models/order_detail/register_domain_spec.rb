@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe OrderDetail::RegisterDomain do
   describe '.execute' do
     before do
