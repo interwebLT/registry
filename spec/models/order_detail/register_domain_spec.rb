@@ -8,15 +8,17 @@ RSpec.describe OrderDetail::RegisterDomain do
                                           authcode: domain.authcode,
                                           period: period,
                                           registrant_handle:  domain.registrant_handle,
-                                          at: registered_at
+                                          at: registered_at,
+                                          skip_create: skip_create
     end
 
     let(:partner)       { FactoryGirl.create :partner }
     let(:domain)        { FactoryGirl.build :domain }
     let(:period)        { 2 }
     let(:registered_at) { domain.registered_at }
+    let(:skip_create)   { false }
 
-    it 'creates an order' do
+    it 'creates a completed order' do
       expect(Order.last).not_to be nil
       expect(Order.last.total_price).to eql 70.00.money
       expect(Order.last.ordered_at).to eql registered_at
@@ -47,6 +49,19 @@ RSpec.describe OrderDetail::RegisterDomain do
       expect(ObjectActivity.last).not_to be nil
       expect(ObjectActivity.last).to be_an_instance_of ObjectActivity::Create
       expect(ObjectActivity.last.activity_at).to eql registered_at
+    end
+
+    context 'when skip_create is enabled' do
+      let(:skip_create) { true }
+
+      it 'domain must not be created' do
+        expect(Domain.exists?(name: domain.name)).to be false
+      end
+
+      specify 'order must be marked complete' do
+        expect(Order.last).to be_complete
+        expect(OrderDetail.last).to be_complete
+      end
     end
   end
 end
