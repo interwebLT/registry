@@ -137,44 +137,4 @@ describe OrderDetail::RegisterDomain do
 
     specify { subject.as_json.must_equal expected_json }
   end
-
-  describe :execute do
-    subject { OrderDetail.last }
-
-    before do
-      OrderDetail::RegisterDomain.execute partner:  partner.name,
-                                          domain:   domain,
-                                          authcode: authcode,
-                                          period:   period,
-                                          registrant_handle:  registrant.handle,
-                                          at: registered_at
-    end
-
-    let(:partner) { create :partner }
-    let(:domain)  { 'domain.ph' }
-    let(:authcode)  { 'ABC123' }
-    let(:period)  { 2 }
-    let(:registrant)  { create :contact }
-    let(:registered_at) { '2016-01-07 11:00 AM'.in_time_zone }
-
-    let(:saved_domain) { Domain.named(domain) }
-
-    specify { subject.must_be_kind_of OrderDetail::RegisterDomain }
-    specify { subject.complete?.must_equal true }
-    specify { subject.price.must_equal 70.00.money }
-    specify { subject.domain.must_equal domain }
-    specify { subject.period.must_equal period }
-
-    specify { subject.order.total_price.must_equal 70.00.money }
-    specify { subject.order.complete?.must_equal true }
-    specify { subject.order.partner.must_equal partner }
-    specify { subject.order.ordered_at.must_equal registered_at }
-
-    specify { saved_domain.partner.ledgers.last.amount.must_equal -70.00.money }
-    specify { saved_domain.partner.ledgers.last.activity_type.must_equal 'use' }
-    specify { saved_domain.authcode.must_equal authcode }
-    specify { saved_domain.registrant.must_equal registrant }
-    specify { saved_domain.expires_at.must_equal '2018-01-07 11:00 AM'.in_time_zone }
-    specify { saved_domain.domain_activities.last.activity_at.must_equal registered_at }
-  end
 end
