@@ -22,3 +22,4 @@ tags
 /test/reports
 
 dump.rdb
+spec/examples.txt
