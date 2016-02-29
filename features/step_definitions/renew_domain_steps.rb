@@ -16,7 +16,7 @@ When /^I (#{RENEW_DOMAIN})$/ do |request|
 end
 
 When /^I renew an existing domain which other systems reject$/ do
-  request = 'order/post_renew_domain_request'
+  request = 'orders/post_renew_domain_request'
 
   stub_request(:post, SyncOrderJob::URL)
     .with(headers: headers, body: request.body)
@@ -32,13 +32,13 @@ When /^I renew an existing domain which other systems reject$/ do
 end
 
 Then /^domain must be renewed$/ do
-  json_response.must_equal 'order/post_renew_domain_response'.json
+  json_response.must_equal 'orders/post_renew_domain_response'.json
 
   Domain.named('domain.ph').expires_at.must_equal '2017-01-01'.in_time_zone
 end
 
 Then /^domain with two\-level TLD must be renewed$/ do
-  json_response.must_equal 'order/post_renew_domain_with_two_level_tld_response'.json
+  json_response.must_equal 'orders/post_renew_domain_with_two_level_tld_response'.json
 
   Domain.named('domain.com.ph').expires_at.must_equal '2017-01-01'.in_time_zone
 end
