@@ -6,7 +6,7 @@
       "type": "domain_create",
       "domain": "domain.ph",
       "authcode": "ABC123",
-      "period": "2",
+      "period": 2,
       "registrant_handle":  "contact"
     }
   ]
