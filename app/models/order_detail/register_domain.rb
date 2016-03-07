@@ -78,4 +78,20 @@ class OrderDetail::RegisterDomain < OrderDetail
       registrant_handle:  self.registrant_handle
     }
   end
+
+  def as_json_request
+    {
+      currency_code:  'USD',
+      ordered_at: self.order.ordered_at.iso8601,
+      order_details: [
+        {
+          type: self.action,
+          domain: self.domain,
+          authcode: self.authcode,
+          period: self.period,
+          registrant_handle:  self.registrant_handle
+        }
+      ]
+    }
+  end
 end
