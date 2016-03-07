@@ -38,6 +38,10 @@ class OrderDetail::RegisterDomain < OrderDetail
     self.complete?
   end
 
+  def sync!
+    SyncOrderJob.perform_later self.order.partner, self.as_json_request
+  end
+
   def as_json options = nil
     {
       type:               'domain_create',
