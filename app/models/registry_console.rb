@@ -34,4 +34,27 @@ class RegistryConsole
 
     order
   end
+
+  def self.renew_domain domain:, period:, at: Time.current
+    saved_domain = Domain.named(domain)
+
+    price = saved_domain.partner.pricing action: 'domain_renew', period: period
+
+    order = Order.new partner: saved_domain.partner,
+                      total_price:  price,
+                      ordered_at: at
+
+    order_detail = OrderDetail::RenewDomain.new price:  price,
+                                                domain: saved_domain.name,
+                                                period: period
+
+    order.order_details << order_detail
+    order.save!
+
+    order.complete!
+
+    saved_domain.domain_activities.last.update! activity_at: at
+
+    order
+  end
 end

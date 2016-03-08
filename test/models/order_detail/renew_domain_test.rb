@@ -30,36 +30,6 @@ describe OrderDetail::RenewDomain do
     specify { latest_ledger_entry.amount.must_equal -35.00.money }
   end
 
-  describe :execute do
-    subject { OrderDetail.last }
-
-    before do
-      OrderDetail::RenewDomain.execute  domain: domain.name,
-                                        period: period,
-                                        at: renewed_at
-    end
-
-    let(:domain) { create :domain }
-    let(:period) { 2 }
-    let(:renewed_at) { '2015-05-08 8:00 PM'.in_time_zone }
-
-    specify { subject.must_be_kind_of OrderDetail::RenewDomain }
-    specify { subject.complete?.must_equal true }
-    specify { subject.price.must_equal 64.00.money }
-    specify { subject.domain.must_equal domain.full_name }
-    specify { subject.period.must_equal period }
-
-    specify { subject.order.total_price.must_equal 64.00.money }
-    specify { subject.order.complete?.must_equal true }
-    specify { subject.order.partner.must_equal domain.partner }
-    specify { subject.order.ordered_at.must_equal renewed_at }
-
-    specify { domain.partner.ledgers.last.amount.must_equal -64.00.money }
-    specify { domain.partner.ledgers.last.activity_type.must_equal 'use' }
-    specify { Domain.named(domain.name).expires_at.must_equal '2017-01-01'.in_time_zone }
-    specify { domain.domain_activities.last.activity_at.must_equal renewed_at }
-  end
-
   describe :reverse! do
     subject { create :renew_domain_order_detail }
 

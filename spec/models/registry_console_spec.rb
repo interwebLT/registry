@@ -62,4 +62,46 @@ RSpec.describe RegistryConsole do
       end
     end
   end
+
+  describe '.renew_domain' do
+    before do
+      RegistryConsole.renew_domain  domain: domain.name,
+                                    period: period,
+                                    at: renewed_at
+    end
+
+    let(:domain)      { FactoryGirl.create :domain }
+    let(:period)      { 2 }
+    let(:renewed_at)  { '2015-05-08 8:00 PM'.in_time_zone }
+
+    it 'creates a completed order' do
+      expect(Order.last).not_to be nil
+      expect(Order.last.total_price).to eql 64.00.money
+      expect(Order.last.ordered_at).to eql renewed_at
+      expect(Order.last).to be_complete
+
+      expect(OrderDetail.last).not_to be nil
+      expect(OrderDetail.last).to be_an_instance_of OrderDetail::RenewDomain
+      expect(OrderDetail.last.order).to eql Order.last
+      expect(OrderDetail.last.price).to eql 64.00.money
+      expect(OrderDetail.last.period).to eql period
+      expect(OrderDetail.last.domain).to eql domain.name
+      expect(OrderDetail.last).to be_complete
+    end
+
+    it 'renews domain' do
+      expect(Domain.named(domain.name).expires_at).to eql '2017-01-01'.in_time_zone
+    end
+
+    it 'logs activity on domain registration' do
+      expect(ObjectActivity.last).not_to be nil
+      expect(ObjectActivity.last).to be_an_instance_of ObjectActivity::Update
+      expect(ObjectActivity.last.activity_at).to eql renewed_at
+    end
+
+    it 'deducts fee from partner' do
+      expect(domain.partner.ledgers.last.amount).to eql -64.00.money
+      expect(domain.partner.ledgers.last.activity_type).to eql 'use'
+    end
+  end
 end
