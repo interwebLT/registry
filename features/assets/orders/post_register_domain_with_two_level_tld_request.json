@@ -4,9 +4,9 @@
   "order_details": [
     {
       "type": "domain_create",
-      "domain": "domain.ph",
+      "domain": "domain.com.ph",
       "authcode": "ABC123",
-      "period": "2",
+      "period": 2,
       "registrant_handle":  "contact"
     }
   ]

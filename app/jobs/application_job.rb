@@ -5,12 +5,20 @@ class ApplicationJob < ActiveJob::Base
   }
 
   def post url:, params:, token: nil
-    response = HTTParty.post url, body: params.to_json, headers: headers(token: token)
+    execute action: :post, url: url, params: params, token: token
+  end
 
-    raise "Code: #{response.code}, Message: #{response.parsed_response}" if error_code response.code
+  def patch url:, params:, token: nil
+    execute action: :patch, url: url, params: params, token: token
   end
 
   private
+
+  def execute action:, url:, params:, token: nil
+    response = HTTParty.send action, url, body: params.to_json, headers: headers(token: token)
+
+    raise "Code: #{response.code}, Message: #{response.parsed_response}" if error_code response.code
+  end
 
   def headers token: nil
     DEFAULT_HEADERS.tap do |headers|

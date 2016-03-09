@@ -7,35 +7,6 @@ class OrderDetail::RegisterDomain < OrderDetail
   def self.build params, partner
     new params
   end
-
-  def self.execute partner:, domain:, authcode:, period:, registrant_handle:, at: Time.current, skip_create: false
-    owning_partner = Partner.find_by! name: partner
-
-    price = owning_partner.pricing action: self.new.action, period: period
-
-    order = Order.new partner: owning_partner,
-                      total_price:  price,
-                      ordered_at: at
-
-    order_detail = self.new price: price,
-                            domain: domain,
-                            authcode: authcode,
-                            period: period,
-                            registrant_handle:  registrant_handle
-
-    order.order_details << order_detail
-    order.save!
-
-    unless skip_create
-      order.complete!
-
-      Domain.named(domain).domain_activities.last.update! activity_at: at
-    else
-      order.update! status: Order::COMPLETE_ORDER, completed_at: Time.current
-      order_detail.update! status: OrderDetail::COMPLETE_ORDER_DETAIL
-    end
-  end
-
   def action
     'domain_create'
   end
@@ -67,6 +38,10 @@ class OrderDetail::RegisterDomain < OrderDetail
     self.complete?
   end
 
+  def sync!
+    SyncOrderJob.perform_later self.order.partner, self.as_json_request
+  end
+
   def as_json options = nil
     {
       type:               'domain_create',
@@ -76,6 +51,22 @@ class OrderDetail::RegisterDomain < OrderDetail
       authcode:           self.authcode,
       period:             self.period,
       registrant_handle:  self.registrant_handle
+    }
+  end
+
+  def as_json_request
+    {
+      currency_code:  'USD',
+      ordered_at: self.order.ordered_at.iso8601,
+      order_details: [
+        {
+          type: self.action,
+          domain: self.domain,
+          authcode: self.authcode,
+          period: self.period,
+          registrant_handle:  self.registrant_handle
+        }
+      ]
     }
   end
 end

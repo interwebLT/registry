@@ -1,27 +1,8 @@
 class OrderDetail::TransferDomain < OrderDetail
   validates :registrant_handle, presence: true
-  
+
   def self.build params, partner
     new params.merge(period: 0)
-  end
-
-  def self.execute domain:, to:, fee: true, at: Time.current, handle:
-    partner = Partner.find_by! name: to
-
-    price = fee ? (partner.pricing action: self.new.action, period: 0) : 0.00.money
-
-    o = Order.new partner:  partner,
-                  total_price:  price,
-                  ordered_at: at
-
-    od = self.new price: price, domain: domain, registrant_handle: handle
-
-    o.order_details << od
-    o.save!
-
-    o.complete!
-
-    Domain.named(domain).domain_activities.last.update! activity_at: at
   end
 
   def action

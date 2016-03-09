@@ -42,53 +42,6 @@ describe OrderDetail::TransferDomain do
     specify { latest_ledger_entry.amount.must_equal -15.00.money }
   end
 
-  describe :execute do
-    subject { OrderDetail.last }
-
-    before do
-      OrderDetail::TransferDomain.execute domain: domain.name,
-                                          to: partner.name,
-                                          at: transferred_at,
-                                          handle: registrant.handle
-    end
-
-    let(:domain) { create :domain }
-    let(:partner) { create :other_partner }
-    let(:registrant) { create :other_contact }
-    let(:transferred_at) { '2015-08-10 3:00 PM'.in_time_zone }
-
-    specify { subject.must_be_kind_of OrderDetail::TransferDomain }
-    specify { subject.complete?.must_equal true }
-    specify { subject.price.must_equal 15.00.money }
-    specify { subject.domain.must_equal domain.full_name }
-
-    specify { subject.order.total_price.must_equal 15.00.money }
-    specify { subject.order.complete?.must_equal true }
-    specify { subject.order.partner.must_equal partner }
-    specify { subject.order.ordered_at.must_equal transferred_at }
-
-    specify { partner.ledgers.last.amount.must_equal -15.00.money }
-    specify { partner.ledgers.last.activity_type.must_equal 'use' }
-
-    specify { domain.domain_activities.last.activity_at.must_equal transferred_at }
-
-    context :when_no_transfer_fee do
-      before do
-        OrderDetail::TransferDomain.execute domain: domain.name,
-                                            to: partner.name,
-                                            at: transferred_at,
-                                            fee: false,
-                                            handle: registrant.handle
-      end
-      
-      let(:registrant) { create :other_contact }
-
-      specify { subject.price.must_equal 0.00.money }
-      specify { subject.order.total_price.must_equal 0.00.money }
-      specify { partner.ledgers.last.amount.must_equal 0.00.money }
-    end
-  end
-
   describe :build do
     subject { OrderDetail::TransferDomain.build params, nil }
 

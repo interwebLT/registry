@@ -10,18 +10,18 @@ def assert_current_partner_info_displayed
     name: 'alpha',
     organization: 'Company',
     credits: 0.00,
-    site: 'http://alpha.org',
-    nature: 'Nature',
-    representative: 'Representative',
+    site: 'http://alpha.ph',
+    nature: 'Alpha Business',
+    representative: 'Alpha Guy',
     position: 'Position',
-    street: 'Street',
-    city: 'City',
-    state: 'State',
+    street: 'Alpha Street',
+    city: 'Alpha City',
+    state: 'Alpha State',
     postal_code: '1234',
     country_code: 'PH',
-    phone: '+63.21234567',
-    fax: '+63.21234567',
-    email: 'alpha@alpha.org',
+    phone: '+63.1234567',
+    fax: '+63.1234567',
+    email: 'alpha@alpha.ph',
     local: true,
     admin: false,
     default_nameservers: [
@@ -104,6 +104,12 @@ def assert_current_partner_info_displayed
         action: 'domain_renew',
         period: 2,
         price: 64.00
+      },
+      {
+        id: 13,
+        action: 'transfer_domain',
+        period: 0,
+        price: 15.00
       }
     ]
   }

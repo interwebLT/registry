@@ -8,7 +8,7 @@ BLANK = ''
 DOUBLE_SPACE  = '  '
 
 def build_request scenario:, resource:, action:
-  request = "#{resource.to_s}/"
+  request = "#{resource.to_s.pluralize}/"
   request << ADMIN_PREFIX if scenario.include? ADMIN_MARKER
   request << "#{action.to_s} #{scenario.sub(ADMIN_MARKER, BLANK).downcase} request"
 
