@@ -57,4 +57,33 @@ class RegistryConsole
 
     order
   end
+
+  def self.migrate_domain partner:,
+                          domain:,
+                          registrant_handle:,
+                          registered_at:,
+                          expires_at:,
+                          at: Time.current
+    saved_partner = Partner.find_by!(name: partner)
+
+    order = Order.new partner:  saved_partner,
+                      total_price:  0.00.money,
+                      ordered_at: at
+
+    order_detail = OrderDetail::MigrateDomain.new price:              0.00.money,
+                                                  domain:             domain,
+                                                  authcode:           '1',
+                                                  registrant_handle:  registrant_handle,
+                                                  registered_at:      registered_at,
+                                                  expires_at:         expires_at
+
+    order.order_details << order_detail
+    order.save!
+
+    order.complete!
+
+    Domain.named(domain).domain_activities.last.update! activity_at: at
+
+    order
+  end
 end
