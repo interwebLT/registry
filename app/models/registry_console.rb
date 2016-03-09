@@ -86,4 +86,27 @@ class RegistryConsole
 
     order
   end
+
+  def self.transfer_domain domain:, to:, fee: true, at: Time.current, handle:
+    partner = Partner.find_by! name: to
+
+    price = fee ? (partner.pricing action: 'transfer_domain', period: 0) : 0.00.money
+
+    order = Order.new partner:      partner,
+                      total_price:  price,
+                      ordered_at:   at
+
+    order_detail = OrderDetail::TransferDomain.new  price:              price,
+                                                    domain:             domain,
+                                                    registrant_handle:  handle
+
+    order.order_details << order_detail
+    order.save!
+
+    order.complete!
+
+    Domain.named(domain).domain_activities.last.update! activity_at: at
+
+    order
+  end
 end

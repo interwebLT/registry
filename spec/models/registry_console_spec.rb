@@ -155,4 +155,78 @@ RSpec.describe RegistryConsole do
       expect(ObjectActivity.last.activity_at).to eql migrated_at
     end
   end
+
+  describe '.transfer_domain' do
+    before do
+      RegistryConsole.transfer_domain domain: domain.name,
+                                      to: partner.name,
+                                      at: transferred_at,
+                                      handle: registrant.handle,
+                                      fee: fee
+    end
+
+    let(:domain)          { FactoryGirl.create :domain }
+    let(:partner)         { FactoryGirl.create :other_partner }
+    let(:registrant)      { FactoryGirl.create :other_contact }
+    let(:transferred_at)  { '2015-08-10 3:00 PM'.in_time_zone }
+    let(:fee)             { true }
+
+    it 'creates a completed order' do
+      expect(Order.last).not_to be nil
+      expect(Order.last.partner).to eql partner
+      expect(Order.last.total_price).to eql 15.00.money
+      expect(Order.last.ordered_at).to eql transferred_at
+      expect(Order.last).to be_complete
+
+      expect(OrderDetail.last).not_to be nil
+      expect(OrderDetail.last).to be_an_instance_of OrderDetail::TransferDomain
+      expect(OrderDetail.last.order).to eql Order.last
+      expect(OrderDetail.last.price).to eql 15.00.money
+      expect(OrderDetail.last.domain).to eql domain.name
+      expect(OrderDetail.last.registrant_handle).to eql registrant.handle
+      expect(OrderDetail.last).to be_complete
+    end
+
+    it 'transfers domain' do
+      expect(Domain.last.partner).to eql partner
+    end
+
+    it 'logs activity on transfer domain' do
+      expect(ObjectActivity.last).not_to be nil
+      expect(ObjectActivity.last).to be_an_instance_of ObjectActivity::Transfer
+      expect(ObjectActivity.last.activity_at).to eql transferred_at
+      expect(ObjectActivity.last.registrant_handle).to eql domain.registrant_handle
+      expect(ObjectActivity.last.losing_partner).to eql domain.partner
+    end
+
+    it 'deducts fee from gaining partner' do
+      expect(partner.ledgers.last.amount).to eql -15.00.money
+      expect(partner.ledgers.last.activity_type).to eql 'use'
+    end
+
+    context 'when no transfer fee' do
+      let(:fee) { false }
+
+      it 'creates a completed order with zero price' do
+        expect(Order.last).not_to be nil
+        expect(Order.last.partner).to eql partner
+        expect(Order.last.total_price).to eql 0.00.money
+        expect(Order.last.ordered_at).to eql transferred_at
+        expect(Order.last).to be_complete
+
+        expect(OrderDetail.last).not_to be nil
+        expect(OrderDetail.last).to be_an_instance_of OrderDetail::TransferDomain
+        expect(OrderDetail.last.order).to eql Order.last
+        expect(OrderDetail.last.price).to eql 0.00.money
+        expect(OrderDetail.last.domain).to eql domain.name
+        expect(OrderDetail.last.registrant_handle).to eql registrant.handle
+        expect(OrderDetail.last).to be_complete
+      end
+
+      it 'does not deduct fee from gaining partner' do
+        expect(partner.ledgers.last.amount).to eql 0.00.money
+        expect(partner.ledgers.last.activity_type).to eql 'use'
+      end
+    end
+  end
 end
