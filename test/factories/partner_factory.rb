@@ -71,29 +71,24 @@ FactoryGirl.define do
     fax '+63.1234567'
     email 'alpha@alpha.ph'
 
-    after :create do |partner, evaluator|
-      (1..10).each do |period|
-
-        create :partner_pricing,  partner:  partner,
-                                  period: period,
-                                  price:  (35.money * period),
-                                  action: 'domain_create'
+    after :create do |partner|
+      [
+        { partner: partner, action: 'domain_create',  period: 1,  price: 35.money },
+        { partner: partner, action: 'domain_create',  period: 2,  price: 70.money },
+        { partner: partner, action: 'domain_create',  period: 3,  price: 105.money },
+        { partner: partner, action: 'domain_create',  period: 4,  price: 140.money },
+        { partner: partner, action: 'domain_create',  period: 5,  price: 175.money },
+        { partner: partner, action: 'domain_create',  period: 6,  price: 210.money },
+        { partner: partner, action: 'domain_create',  period: 7,  price: 245.money },
+        { partner: partner, action: 'domain_create',  period: 8,  price: 280.money },
+        { partner: partner, action: 'domain_create',  period: 9,  price: 315.money },
+        { partner: partner, action: 'domain_create',  period: 10, price: 350.money },
+        { partner: partner, action: 'domain_renew',   period: 1,  price: 32.money },
+        { partner: partner, action: 'domain_renew',   period: 2,  price: 64.money },
+        { partner: partner, action: 'transfer_domain',  period: 0,  price: 15.money },
+      ].each do |params|
+        partner.partner_pricings << (create :partner_pricing, params)
       end
-
-      create :partner_pricing,  partner:  partner,
-                                period: 1,
-                                price:  32.money,
-                                action: 'domain_renew'
-
-      create :partner_pricing,  partner:  partner,
-                                period: 2,
-                                price:  64.money,
-                                action: 'domain_renew'
-
-      create :partner_pricing,  partner:  partner,
-                                period: 0,
-                                price:  15.money,
-                                action: 'transfer_domain'
     end
   end
 
