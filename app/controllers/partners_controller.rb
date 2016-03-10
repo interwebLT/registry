@@ -10,7 +10,7 @@ class PartnersController < SecureController
   def show
     partner = Partner.named params[:id]
 
-    if current_user.admin and partner
+    if (current_user.admin and partner) or (current_user.partner == partner)
       render  json: partner,
               serializer: PartnerInfoSerializer
     else
