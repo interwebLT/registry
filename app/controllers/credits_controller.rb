@@ -18,7 +18,7 @@ class CreditsController < SecureController
     credit = Credit.find(params[:id])
 
     if credit.partner == current_user.partner or current_user.admin
-      render json: credit
+      render json: credit, serializer: CreditSerializer
     else
       render not_found
     end

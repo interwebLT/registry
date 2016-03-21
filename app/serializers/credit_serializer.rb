@@ -1,6 +1,10 @@
 class CreditSerializer < ActiveModel::Serializer
-  attributes :id, :partner, :credit_number, :amount, :credited_at, :created_at, :updated_at
+  attributes :id, :partner_id, :partner, :credit_number, :amount, :credited_at, :created_at, :updated_at
 
+  def partner_id
+    object.partner.id
+  end
+  
   def partner
     object.partner.name
   end
