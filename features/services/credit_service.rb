@@ -16,6 +16,7 @@ def assert_credits_displayed
     partner: 'alpha',
     credit_number: /[a-zA-Z0-9]{10}/,
     amount: 150.0,
+    fee: 7.5,
     credited_at: '2015-02-27T14:30:00Z',
     created_at: '2015-01-01T00:00:00Z',
     updated_at: '2015-01-01T00:00:00Z',
