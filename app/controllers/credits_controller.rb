@@ -15,7 +15,12 @@ class CreditsController < SecureController
   end
   
   def show
-    credit = Credit.find(params[:id])
+    id = params[:id]
+    if potential_primary_key? id
+      credit = Credit.find(id)
+    else
+      credit = Credit.find_by_credit_number(id)
+    end
 
     if credit.partner == current_user.partner or current_user.admin
       render json: credit, serializer: CreditSerializer
@@ -28,7 +33,7 @@ class CreditsController < SecureController
   private
 
   def credit_params
-    params.permit(:partner, :type, :amount, :amount_currency, :verification_code, :credited_at, :remarks)
+    params.permit(:partner, :type, :amount, :amount_currency, :fee, :fee_currency, :verification_code, :credited_at, :remarks)
   end
 
   def create_credit
@@ -52,5 +57,10 @@ class CreditsController < SecureController
 
   def credit_partner
     current_user.admin? ?  Partner.find_by(name: credit_params[:partner]) : current_user.partner
+  end
+  
+  def potential_primary_key?(id)
+    Integer(id, 10) rescue return false
+    return true
   end
 end

@@ -3,6 +3,8 @@ def replenish_credits partner: nil
     amount_currency: 'USD',
     type: 'card_credit',
     amount: 100,
+    fee: 5,
+    fee_currency: 'USD',
     remarks: 'test remark'
   }
 

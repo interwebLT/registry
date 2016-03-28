@@ -10,6 +10,7 @@ describe Credit::CardReplenish do
       {
         type: 'card_credit',
         amount: 150.00,
+        fee: 7.50,
         remarks: 'this is a remark'
       }
     }
@@ -39,12 +40,14 @@ describe Credit::CardReplenish do
     before do
       Credit::CardReplenish.execute partner: partner.name,
                                     credit: credits,
+                                    fee: fees,
                                     remarks: 'this is a remark',
                                     at: credited_at
     end
 
     let(:partner) { create :partner }
     let(:credits) { 123.45 }
+    let(:fees) { 6.18 }
     let(:credited_at) { '2015-08-10 4:30 PM'.in_time_zone }
 
     specify { subject.must_be_kind_of Credit::CardReplenish }

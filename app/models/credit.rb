@@ -6,6 +6,7 @@ class Credit < ActiveRecord::Base
   has_one :ledger, dependent: :destroy
   
   monetize :amount_cents
+  monetize :fee_cents
   
   before_create :generate_credit_number
   
