@@ -1,6 +1,5 @@
 Feature: Whois
 
-  @wip
   Scenario: Whois info of an existing domain
     When  I try to view the whois info of an existing domain
     Then  I must see the whois info of the domain
