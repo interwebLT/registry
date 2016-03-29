@@ -8,6 +8,10 @@ When /^I try to view the whois info of a non\-existing domain$/ do
   get whois_path('doesnotexist.ph')
 end
 
+When /^I try to view the whois info of an invalid domain$/ do
+  get whois_path('invalid')
+end
+
 Then /^I must see the whois info of the domain$/ do
   expect(last_response.status).to eq 200
 
