@@ -17,6 +17,10 @@ When /^I try to view the info of an existing domain that I own via domain name$/
   get domain_url(domain.name)
 end
 
+When /^I try to view the info of a domain that does not exist$/ do
+  get domain_url('doesnotexist.ph')
+end
+
 Then /^I must see the info of my domain$/ do
   expect(last_response.status).to eq 200
 
