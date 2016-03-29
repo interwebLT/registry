@@ -17,7 +17,7 @@ When /^I try to view the info of an existing domain that I own via domain name$/
   get domain_url(domain.name)
 end
 
-When /^I try to view the info of a domain that does not exist$/ do
+When /^I try to view the info of a non-existing domain$/ do
   get domain_url('doesnotexist.ph')
 end
 

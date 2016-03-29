@@ -15,6 +15,6 @@ Feature: View Domain Info
     When  I try to view the info of an existing domain that I own via domain name
     Then  I must see the info of my domain
 
-  Scenario: View domain that does not exist
-    When  I try to view the info of a domain that does not exist
+  Scenario: View non-existing domain
+    When  I try to view the info of a non-existing domain
     Then  I must not be able to see the domain
