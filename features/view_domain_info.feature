@@ -10,3 +10,7 @@ Feature: View Domain Info
   Scenario: View domain owned by another partner
     When  I try to view the info a domain owned by another partner
     Then  I must not be able to see the domain
+
+  Scenario: View domain by domain name
+    When  I try to view the info of a domain that I own via domain name
+    Then  I must see the info of my domain
