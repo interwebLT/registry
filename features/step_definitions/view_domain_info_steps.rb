@@ -1,17 +1,17 @@
-When /^I try to view the info of a domain that I own$/ do
+When /^I try to view the info of an existing domain that I own$/ do
   domain = FactoryGirl.create :domain, partner: @current_user.partner
 
   get domain_url(domain.id)
 end
 
-When /^I try to view the info a domain owned by another partner$/ do
+When /^I try to view the info an existing domain owned by another partner$/ do
   domain  = FactoryGirl.create :domain
   domain.update partner: FactoryGirl.create(:other_partner)
 
   get domain_url(domain.id)
 end
 
-When /^I try to view the info of a domain that I own via domain name$/ do
+When /^I try to view the info of an existing domain that I own via domain name$/ do
   domain = FactoryGirl.create :domain, partner: @current_user.partner
 
   get domain_url(domain.name)
