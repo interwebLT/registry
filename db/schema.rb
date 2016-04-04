@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160112032007) do
+ActiveRecord::Schema.define(version: 20160322103640) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -96,6 +96,8 @@ ActiveRecord::Schema.define(version: 20160112032007) do
     t.datetime "created_at",                                   null: false
     t.datetime "updated_at",                                   null: false
     t.datetime "credited_at"
+    t.integer  "fee_cents"
+    t.string   "fee_currency",      limit: 3,  default: "USD"
   end
 
   create_table "deleted_domains", force: :cascade do |t|

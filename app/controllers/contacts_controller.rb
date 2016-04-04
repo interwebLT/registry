@@ -16,12 +16,11 @@ class ContactsController < SecureController
   end
 
   def show
-    unless current_user.admin?
-      render json: nil
-      return
+    if Contact.exists? params[:id]
+      render json: Contact.find(params[:id])
+    else
+      head :not_found
     end
-
-    render json: Contact.find(params[:id])
   end
 
   def update

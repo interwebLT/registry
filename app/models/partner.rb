@@ -18,6 +18,14 @@ class Partner < ActiveRecord::Base
     SyncCreatePartnerJob.perform_later name, password
   end
 
+  def self.named partner
+    if self.exists? name: partner
+      self.find_by name: partner
+    else
+      self.find partner
+    end
+  end
+
   def current_balance
     ledgers.map(&:amount).reduce(Money.new(0.00), :+)
   end

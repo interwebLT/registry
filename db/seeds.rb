@@ -97,6 +97,7 @@ def create_replenish_credits partner, credits = 5000.00
     type: 'card_credit',
     amount_currency: 'USD',
     amount: 5000.00,
+    fee: 250.00,
     credited_at: Time.current.iso8601,
     remarks:  'Replenish Credits',
   }

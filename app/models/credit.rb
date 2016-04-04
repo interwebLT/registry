@@ -1,14 +1,15 @@
 class Credit < ActiveRecord::Base
   belongs_to :partner
-  
+
   validates :remarks, presence: true
 
   has_one :ledger, dependent: :destroy
-  
+
   monetize :amount_cents
-  
+  monetize :fee_cents
+
   before_create :generate_credit_number
-  
+
   after_initialize do
     self.status ||= PENDING_CREDIT
   end
@@ -21,25 +22,26 @@ class Credit < ActiveRecord::Base
     bank_credit: Credit::BankReplenish,
     card_credit: Credit::CardReplenish
   }
-  
+
   def self.build params, partner
     type_action = params.delete(:type)
     type = CREDIT_TYPES[type_action.to_sym]
-    
+
     credit = (type ? type.build(params, partner) : new(params))
     credit.partner = partner
     credit.status = PENDING_CREDIT
     credit.credited_at = params[:credited_at] || Time.current
-    
+
     credit
   end
-  
+
   def self.execute partner:, credit:, remarks:, at: Time.current
     saved_partner = Partner.find_by! name: partner
     amount = credit.money
 
     credit = self.new partner: saved_partner,
                       amount: amount,
+                      fee: 0.00.money,
                       credited_at: at,
                       remarks: remarks
 
@@ -56,7 +58,7 @@ class Credit < ActiveRecord::Base
 
     self.save
   end
-  
+
   def pending?
     self.status == PENDING_CREDIT
   end
@@ -70,7 +72,7 @@ class Credit < ActiveRecord::Base
   end
 
   private
-  
+
   def generate_credit_number
     self.credit_number = loop do
       credit_number = SecureRandom.hex(5).upcase

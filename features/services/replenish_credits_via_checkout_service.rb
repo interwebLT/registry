@@ -8,6 +8,8 @@ def replenish_credits_via_checkout
     partner: NON_ADMIN_PARTNER,
     amount_currency: 'USD',
     amount: 100,
+    fee: 5,
+    fee_currency: 'USD',
     credited_at: Time.now,
     verification_code: authcode,
     remarks: 'Replenish Credit'
