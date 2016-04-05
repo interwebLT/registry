@@ -1,8 +1,12 @@
-When  /^I delete a domain that currently exists$/ do
+When /^I delete a domain that currently exists$/ do
   domain = FactoryGirl.create :domain
   FactoryGirl.create :domain_host, product: domain.product
 
   delete domain_path(domain.name)
+end
+
+When /^I delete a domain that does not exist$/ do
+  delete domain_path('doesnotexist.ph')
 end
 
 Then /^domain must no longer exist$/ do
