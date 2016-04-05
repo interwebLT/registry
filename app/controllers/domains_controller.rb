@@ -27,6 +27,16 @@ class DomainsController < SecureController
     end
   end
 
+  def destroy
+    domain = Domain.named(params[:id])
+
+    if domain
+      domain.destroy
+    else
+      render not_found
+    end
+  end
+
   private
 
   def update_domain
