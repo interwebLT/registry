@@ -18,3 +18,7 @@ def headers
     headers['Authorization'] = 'Token token=alpha'
   end
 end
+
+def url path
+  "#{Rails.configuration.x.cocca_api_host}#{path}"
+end
