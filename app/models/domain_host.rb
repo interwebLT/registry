@@ -10,6 +10,12 @@ class DomainHost < ActiveRecord::Base
   before_destroy :create_remove_domain_host_domain_activity
   after_destroy :update_domain_status
 
+  def sync!
+    SyncDeleteDomainHostJob.perform_later self.product.domain.partner,
+                                          self.product.domain.name,
+                                          self.name
+  end
+
   private
 
   def name_must_match_existing_host
