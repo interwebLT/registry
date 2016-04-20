@@ -12,6 +12,10 @@ class ApplicationJob < ActiveJob::Base
     execute action: :patch, url: url, params: params, token: token
   end
 
+  def delete url:, token:
+    execute action: :delete, url: url, params: {}, token: token
+  end
+
   private
 
   def execute action:, url:, params:, token: nil
