@@ -156,6 +156,11 @@ class Domain < ActiveRecord::Base
     create_update_activity :client_renew_prohibited     if client_renew_prohibited_changed?
     create_update_activity :client_transfer_prohibited  if client_transfer_prohibited_changed?
     create_update_activity :client_update_prohibited    if client_update_prohibited_changed?
+    create_update_activity :server_hold                 if server_hold_changed?
+    create_update_activity :server_delete_prohibited    if server_delete_prohibited_changed?
+    create_update_activity :server_renew_prohibited     if server_renew_prohibited_changed?
+    create_update_activity :server_transfer_prohibited  if server_transfer_prohibited_changed?
+    create_update_activity :server_update_prohibited    if server_update_prohibited_changed?
   end
 
   def create_update_activity field
@@ -176,20 +181,30 @@ class Domain < ActiveRecord::Base
   end
 
   def enforce_status
-    self.client_delete_prohibited = false if client_delete_prohibited.nil?
-    self.client_renew_prohibited = false if client_renew_prohibited.nil?
-    self.client_update_prohibited = false if client_update_prohibited.nil?
+    self.client_hold                = false if client_hold.nil?
+    self.client_delete_prohibited   = false if client_delete_prohibited.nil?
+    self.client_renew_prohibited    = false if client_renew_prohibited.nil?
+    self.client_update_prohibited   = false if client_update_prohibited.nil?
     self.client_transfer_prohibited = false if client_transfer_prohibited.nil?
-    self.client_hold = false if client_hold.nil?
+
+    self.server_hold                = false if server_hold.nil?
+    self.server_delete_prohibited   = false if server_delete_prohibited.nil?
+    self.server_renew_prohibited    = false if server_renew_prohibited.nil?
+    self.server_update_prohibited   = false if server_update_prohibited.nil?
+    self.server_transfer_prohibited = false if server_transfer_prohibited.nil?
 
     prohibited = client_delete_prohibited
     prohibited = (prohibited or client_renew_prohibited)
     prohibited = (prohibited or client_transfer_prohibited)
     prohibited = (prohibited or client_update_prohibited)
+    prohibited = (prohibited or server_delete_prohibited)
+    prohibited = (prohibited or server_renew_prohibited)
+    prohibited = (prohibited or server_transfer_prohibited)
+    prohibited = (prohibited or server_update_prohibited)
 
     self.inactive = self.product.nil? || self.product.domain_hosts.empty?
 
-    self.ok = (not (inactive or client_hold or prohibited))
+    self.ok = (not (inactive or client_hold or server_hold or prohibited))
 
     true
   end
@@ -202,5 +217,11 @@ class Domain < ActiveRecord::Base
     errors.add :client_renew_prohibited,    message if client_renew_prohibited_changed?    and not valid_status self.client_renew_prohibited
     errors.add :client_transfer_prohibited, message if client_transfer_prohibited_changed? and not valid_status self.client_transfer_prohibited
     errors.add :client_update_prohibited,   message if client_update_prohibited_changed?   and not valid_status self.client_update_prohibited
+
+    errors.add :server_hold,                message if server_hold_changed?                and not valid_status self.server_hold
+    errors.add :server_delete_prohibited,   message if server_delete_prohibited_changed?   and not valid_status self.server_delete_prohibited
+    errors.add :server_renew_prohibited,    message if server_renew_prohibited_changed?    and not valid_status self.server_renew_prohibited
+    errors.add :server_transfer_prohibited, message if server_transfer_prohibited_changed? and not valid_status self.server_transfer_prohibited
+    errors.add :server_update_prohibited,   message if server_update_prohibited_changed?   and not valid_status self.server_update_prohibited
   end
 end

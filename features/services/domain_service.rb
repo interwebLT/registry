@@ -70,6 +70,31 @@ UPDATE_DOMAIN_PARAMS = {
   'blank client renew prohibited'       =>  { client_renew_prohibited: '' },
   'blank client transfer prohibited'    =>  { client_transfer_prohibited: '' },
   'blank client update prohibited'      =>  { client_update_prohibited: '' },
+  'set server hold'                     =>  { server_hold: true },
+  'set server delete prohibited'        =>  { server_delete_prohibited: true },
+  'set server renew prohibited'         =>  { server_renew_prohibited: true },
+  'set server transfer prohibited'      =>  { server_transfer_prohibited: true },
+  'set server update prohibited'        =>  { server_update_prohibited: true },
+  'unset server hold'                   =>  { server_hold: false },
+  'unset server delete prohibited'      =>  { server_delete_prohibited: false },
+  'unset server renew prohibited'       =>  { server_renew_prohibited: false },
+  'unset server transfer prohibited'    =>  { server_transfer_prohibited: false },
+  'unset server update prohibited'      =>  { server_update_prohibited: false },
+  'invalid server hold'                 =>  { server_hold: 'invalid' },
+  'invalid server delete prohibited'    =>  { server_delete_prohibited: 'invalid' },
+  'invalid server renew prohibited'     =>  { server_renew_prohibited: 'invalid' },
+  'invalid server transfer prohibited'  =>  { server_transfer_prohibited: 'invalid' },
+  'invalid server update prohibited'    =>  { server_update_prohibited: 'invalid' },
+  'nil server hold'                     =>  { server_hold: nil },
+  'nil server delete prohibited'        =>  { server_delete_prohibited: nil },
+  'nil server renew prohibited'         =>  { server_renew_prohibited: nil },
+  'nil server transfer prohibited'      =>  { server_transfer_prohibited: nil },
+  'nil server update prohibited'        =>  { server_update_prohibited: nil },
+  'blank server hold'                   =>  { server_hold: '' },
+  'blank server delete prohibited'      =>  { server_delete_prohibited: '' },
+  'blank server renew prohibited'       =>  { server_renew_prohibited: '' },
+  'blank server transfer prohibited'    =>  { server_transfer_prohibited: '' },
+  'blank server update prohibited'      =>  { server_update_prohibited: '' },
   'enable client hold but with invalid admin_handle'  => { admin_handle: 'dne', client_hold: true },
   'blank registrant handle'             =>  { registrant_handle: BLANK_CONTACT_HANDLE },
   'non-existing registrant handle'      =>  { registrant_handle: NON_EXISTING_CONTACT_HANDLE },
@@ -119,7 +144,7 @@ def assert_response_must_be_updated_domain(with:)
 
   assert_response_status_must_be_ok
 
-	json_response.must_match_json_expression domain_response.merge(params)
+  json_response.must_match_json_expression domain_response.merge(params)
 end
 
 def assert_domain_must_be_registered domain: DOMAIN
@@ -213,6 +238,11 @@ def domain_response id: 1,
     client_renew_prohibited: false,
     client_transfer_prohibited: false,
     client_update_prohibited: false,
+    server_hold: false,
+    server_delete_prohibited: false,
+    server_renew_prohibited: false,
+    server_transfer_prohibited: false,
+    server_update_prohibited: false,
     expired: true,
     expiring: false
   }
