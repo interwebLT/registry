@@ -22,6 +22,11 @@ describe DomainSerializer do
       client_renew_prohibited:  false,
       client_transfer_prohibited: false,
       client_update_prohibited: false,
+      server_hold:  false,
+      server_delete_prohibited: false,
+      server_renew_prohibited:  false,
+      server_transfer_prohibited: false,
+      server_update_prohibited: false,
       expired:  true,
       expiring: false
     }

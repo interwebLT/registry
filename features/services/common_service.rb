@@ -136,6 +136,16 @@ OBJECT_ACTIVITY_SCENARIOS = {
   'unset client renew prohibited'     => { type: :update, property: :client_renew_prohibited, old_value: true, value: false },
   'unset client transfer prohibited'  => { type: :update, property: :client_transfer_prohibited, old_value: true, value: false },
   'unset client update prohibited'    => { type: :update, property: :client_update_prohibited, old_value: true, value: false },
+  'set server hold'                   => { type: :update, property: :server_hold, old_value: false, value: true },
+  'set server delete prohibited'      => { type: :update, property: :server_delete_prohibited, old_value: false, value: true },
+  'set server renew prohibited'       => { type: :update, property: :server_renew_prohibited, old_value: false, value: true },
+  'set server transfer prohibited'    => { type: :update, property: :server_transfer_prohibited, old_value: false, value: true },
+  'set server update prohibited'      => { type: :update, property: :server_update_prohibited, old_value: false, value: true },
+  'unset server hold'                 => { type: :update, property: :server_hold, old_value: true, value: false },
+  'unset server delete prohibited'    => { type: :update, property: :server_delete_prohibited, old_value: true, value: false },
+  'unset server renew prohibited'     => { type: :update, property: :server_renew_prohibited, old_value: true, value: false },
+  'unset server transfer prohibited'  => { type: :update, property: :server_transfer_prohibited, old_value: true, value: false },
+  'unset server update prohibited'    => { type: :update, property: :server_update_prohibited, old_value: true, value: false },
 }
 
 

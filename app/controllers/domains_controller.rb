@@ -58,7 +58,9 @@ class DomainsController < SecureController
   end
 
   def domain_params
-    params.permit(:registrant_handle, :authcode, :admin_handle, :billing_handle, :tech_handle, :client_hold, :client_delete_prohibited, :client_renew_prohibited, :client_transfer_prohibited, :client_update_prohibited)
+    params.permit :registrant_handle, :authcode, :admin_handle, :billing_handle, :tech_handle,
+                  :client_hold, :client_delete_prohibited, :client_renew_prohibited, :client_transfer_prohibited, :client_update_prohibited,
+                  :server_hold, :server_delete_prohibited, :server_renew_prohibited, :server_transfer_prohibited, :server_update_prohibited
   end
 
   def search_domains
