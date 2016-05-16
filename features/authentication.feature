@@ -1,7 +1,4 @@
 Feature: Authentication
-  As I Partner or Administrator
-  I want to authenticate with the system
-  So I can transact with it
 
   Scenario: Successful authentication
     When  partner authenticates with valid credentials
