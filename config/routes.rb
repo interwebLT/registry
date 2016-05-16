@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :activities,      only: [:index]
   resources :migrations,      only: [:create]
   resources :contacts,        only: [:index, :create, :show, :update]
+  resources :partners,        only: [:index, :show]
 
   get '/whois/:id',     to: 'whois#show',           as: :whois, id: /.*/
   get '/availability',  to: 'availabilities#index'
@@ -22,10 +23,6 @@ Rails.application.routes.draw do
 
   resources :domains, only: [:index, :show, :update, :destroy], id: /.*/ do
     resources :hosts, controller: :domain_hosts, only: [:create, :show, :destroy]
-  end
-
-  resources :partners, only: [:index, :show] do
-    resources :users, only: [:create]
   end
 
   resources :hosts, only: [:index, :create, :show], id: /.*/ do
