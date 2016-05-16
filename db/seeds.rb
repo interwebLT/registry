@@ -25,8 +25,7 @@ Credit.delete_all
 
 def create_user username, admin: false, staff: false
   partner = Partner.create  name: username,
-                            encrypted_password: 'password',
-                            salt: '1234567890abcdef',
+                            password: 'password',
                             representative: 'Representative',
                             organization: 'Company',
                             position: 'Position',
