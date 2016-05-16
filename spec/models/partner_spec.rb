@@ -85,12 +85,15 @@ RSpec.describe Partner do
   end
 
   describe '.authorize' do
-    subject { Partner.authorize authorization.token }
+    subject { Partner.authorize token }
 
-    let(:current_partner) { FactoryGirl.create :partner }
-    let(:authorization)   { current_partner.authorizations.create }
+    let(:partner)       { FactoryGirl.create :partner }
+    let(:authorization) { partner.authorizations.create }
+    let(:application)   { FactoryGirl.create :application, partner: partner }
 
-    context 'when authorized' do
+    let(:token) { authorization.token }
+
+    context 'when authorized as partner' do
       it { is_expected.to eql authorization }
     end
 
@@ -100,6 +103,17 @@ RSpec.describe Partner do
       end
 
       it { is_expected.to be nil }
+    end
+
+    context 'when authorized as application' do
+      let(:token) { application.token }
+
+      it 'returns authorization' do
+        expect(subject).not_to be nil
+
+        expect(subject.token).to eql application.token
+        expect(subject.partner).to eql partner
+      end
     end
   end
 end

@@ -1,3 +1,10 @@
+Given /^I have an application token$/ do
+  application = FactoryGirl.create :application
+
+  header  'Authorization',
+          ActionController::HttpAuthentication::Token.encode_credentials(application.token)
+end
+
 When /^I try to access secure data$/ do
   get domains_url
 end

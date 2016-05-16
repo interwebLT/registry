@@ -35,9 +35,15 @@ class Partner < ActiveRecord::Base
   end
 
   def self.authorize token
-    conditions = { token: token, last_authorized_at: (Time.current - TIMEOUT)..Time.current }
+    application = Application.find_by token: token
 
-    Authorization.where(conditions).last
+    if application
+      Authorization.new partner: application.partner, token: application.token
+    else
+      conditions = { token: token, last_authorized_at: (Time.current - TIMEOUT)..Time.current }
+
+      Authorization.where(conditions).last
+    end
   end
 
   def password= password
