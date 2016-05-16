@@ -40,9 +40,10 @@ def create_user username, admin: false, staff: false
                             admin: admin,
                             staff: staff
 
-  user = User.new name: username,
-                  email: username,
-                  partner: partner
+  user = User.new name:     username,
+                  email:    username,
+                  username: username,
+                  partner:  partner
   user.password = 'password'
   user.registered_at = Time.now
   user.save
