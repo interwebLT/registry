@@ -5,5 +5,9 @@ RSpec.describe Authorization do
     it 'belongs to user' do
       expect(subject.user).not_to be nil
     end
+
+    it 'belongs to partner' do
+      expect(subject.partner).not_to be nil
+    end
   end
 end

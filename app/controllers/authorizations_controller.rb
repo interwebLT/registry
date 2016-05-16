@@ -4,7 +4,7 @@ class AuthorizationsController < ApplicationController
     user ||= User.find_by(username: params[:username]) unless params[:username].blank?
 
     if user.present? && user.password_matches(params[:password])
-      authorization = user.authorizations.create
+      authorization = user.authorizations.create partner: user.partner
 
       render json: authorization, status: :created, location: authorization
     else
