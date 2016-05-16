@@ -8,7 +8,7 @@ class ContactsController < SecureController
   end
 
   def index
-    if current_user.admin?
+    if current_partner.admin?
       render json: Contact.all.limit(1000)
     else
       render json: []
@@ -34,8 +34,8 @@ class ContactsController < SecureController
   private
 
   def create_valid?
-    valid_admin_create = (current_user.admin? and contact_params.include? :partner)
-    valid_user_create = (not current_user.admin? and not contact_params.include? :partner)
+    valid_admin_create = (current_partner.admin? and contact_params.include? :partner)
+    valid_user_create = (not current_partner.admin? and not contact_params.include? :partner)
 
     not contact_params.empty? and (valid_admin_create or valid_user_create)
   end
@@ -77,7 +77,7 @@ class ContactsController < SecureController
     contact.partner = contact_partner
 
     if contact.save
-      if Rails.configuration.x.cocca_api_sync and not current_user.admin
+      if Rails.configuration.x.cocca_api_sync and not current_partner.admin
         SyncCreateContactJob.perform_later contact.partner, create_params
       end
 
@@ -90,7 +90,7 @@ class ContactsController < SecureController
   end
 
   def contact_partner
-    current_user.admin? ? Partner.find_by(name: contact_params[:partner]) : current_user.partner
+    current_partner.admin? ? Partner.find_by(name: contact_params[:partner]) : current_partner
   end
 
   def update_contact
@@ -104,16 +104,16 @@ class ContactsController < SecureController
   end
 
   def find_contact handle
-    if current_user.admin?
+    if current_partner.admin?
       Contact.find_by handle: handle
     else
-      Contact.find_by handle: handle, partner: current_user.partner
+      Contact.find_by handle: handle, partner: current_partner
     end
   end
 
   def update_existing_contact contact
     if contact.update(update_params)
-      if Rails.configuration.x.cocca_api_sync and not current_user.admin
+      if Rails.configuration.x.cocca_api_sync and not current_partner.admin
         SyncUpdateContactJob.perform_later contact.partner, contact.handle, update_params
       end
 

@@ -1,14 +1,14 @@
 class OrdersController < SecureController
   def index
-    if current_user.admin
+    if current_partner.admin
       render json: Order.latest
     else
-      render json: current_user.partner.order_history
+      render json: current_partner.order_history
     end
   end
 
   def create
-    if current_user.admin? and not order_params.include? :partner
+    if current_partner.admin? and not order_params.include? :partner
       render missing_fields [:partner]
     elsif order_params.empty?
       render bad_request
@@ -20,7 +20,7 @@ class OrdersController < SecureController
   def show
     order = Order.find(params[:id])
 
-    if order.partner == current_user.partner or current_user.admin
+    if order.partner == current_partner or current_partner.admin
       render json: order
     else
       render not_found
@@ -37,7 +37,7 @@ class OrdersController < SecureController
     order = Order.build order_params, order_partner
 
     if order.save and order.complete!
-      order.sync! if Rails.configuration.x.cocca_api_sync and not current_user.admin
+      order.sync! if Rails.configuration.x.cocca_api_sync and not current_partner.admin
 
       render  json: order,
               status: :created,
@@ -48,6 +48,6 @@ class OrdersController < SecureController
   end
 
   def order_partner
-    current_user.admin? ?  Partner.find_by(name: order_params[:partner]) : current_user.partner
+    current_partner.admin? ?  Partner.find_by(name: order_params[:partner]) : current_partner
   end
 end

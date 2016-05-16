@@ -12,6 +12,8 @@ class Partner < ActiveRecord::Base
 
   validates :name, uniqueness: true
 
+  attr_accessor :token
+
   def self.build params
     name      = params[:name]
     password  = params.delete(:epp_password)

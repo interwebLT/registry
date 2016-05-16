@@ -1,30 +1,30 @@
 require 'test_helper'
 
 describe DomainInfoSerializer do
-  let(:current_user) { create :user }
-  let(:other_user) { create :other_user }
-  let(:admin) { create :admin }
+  let(:current_partner) { create :partner }
+  let(:other_partner) { create :other_partner }
+  let(:admin_partner) { create :admin_partner }
 
-  subject { 
+  subject {
     d = DomainInfoSerializer.new(domain)
     d.class.module_eval {
-      attr_accessor :current_user
+      attr_accessor :current_partner
     }
-    d.current_user = current_user
-    d.serializable_hash 
+    d.current_partner = current_partner
+    d.serializable_hash
   }
 
   context :when_contact_registrant_only do
     let(:domain) { create :domain }
-		
+
 		subject {
 			d = DomainInfoSerializer.new(domain)
 			d.class.module_eval {
-				attr_accessor :current_user
+				attr_accessor :current_partner
 			}
-			current_user.name = domain.partner.name
-			d.current_user = current_user
-			d.serializable_hash 
+			current_partner.name = domain.partner.name
+			d.current_partner = current_partner
+			d.serializable_hash
 		}
 
     before do
@@ -55,13 +55,13 @@ describe DomainInfoSerializer do
   context :when_admin do
     let(:domain) { create :domain }
 
-    subject { 
+    subject {
       d = DomainInfoSerializer.new(domain)
       d.class.module_eval {
-        attr_accessor :current_user
+        attr_accessor :current_partner
       }
-      d.current_user = admin
-      d.serializable_hash 
+      d.current_partner = admin_partner
+      d.serializable_hash
     }
 
     specify { subject[:activities].wont_be_empty }
@@ -70,13 +70,13 @@ describe DomainInfoSerializer do
   context :when_other_partner do
     let(:domain) { create :domain }
 
-    subject { 
+    subject {
       d = DomainInfoSerializer.new(domain)
       d.class.module_eval {
-        attr_accessor :current_user
+        attr_accessor :current_partner
       }
-      d.current_user = other_user
-      d.serializable_hash 
+      d.current_partner = other_partner
+      d.serializable_hash
     }
 
     specify { subject[:activities].must_be_empty }

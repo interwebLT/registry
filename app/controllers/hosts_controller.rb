@@ -10,7 +10,7 @@ class HostsController < SecureController
   end
 
   def index
-    unless current_user.admin?
+    unless current_partner.admin?
       render json: []
       return
     end
@@ -19,7 +19,7 @@ class HostsController < SecureController
   end
 
   def show
-    unless current_user.admin?
+    unless current_partner.admin?
       render json: []
       return
     end

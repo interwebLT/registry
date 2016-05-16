@@ -12,7 +12,7 @@ class DomainsController < SecureController
   def show
     domain = (Domain.find_by(id: params[:id]) || Domain.find_by(name: params[:id]))
 
-    if domain and ((domain.partner == current_user.partner) or current_user.admin)
+    if domain and ((domain.partner == current_partner) or current_partner.admin)
       render json: domain, serializer: DomainInfoSerializer
     else
       render not_found
@@ -76,10 +76,10 @@ class DomainsController < SecureController
   end
 
   def get_domains
-    if current_user.admin
+    if current_partner.admin
       Domain.latest
     else
-      current_user.partner.domains.order(:expires_at, :name)
+      current_partner.domains.order(:expires_at, :name)
     end
   end
 end
