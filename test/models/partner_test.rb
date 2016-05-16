@@ -1,25 +1,6 @@
 require 'test_helper'
 
 describe Partner do
-  describe :associations do
-    subject { create :partner }
-
-    before do
-      contact = create :contact
-
-      create :domain, partner: subject, registrant: contact
-      create :partner_pricing, partner: subject
-      create :ledger, partner: subject
-      create :host, partner: subject
-    end
-
-    specify { subject.domains.wont_be_empty }
-    specify { subject.ledgers.wont_be_empty }
-    specify { subject.partner_configurations.wont_be_empty }
-    specify { subject.partner_pricings.wont_be_empty }
-    specify { subject.hosts.wont_be_empty }
-  end
-
   describe :current_balance do
     subject { create :partner }
 
