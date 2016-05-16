@@ -10,6 +10,7 @@ RSpec.describe Partner do
       FactoryGirl.create :ledger,           partner: subject
       FactoryGirl.create :host,             partner: subject
       FactoryGirl.create :authorization,    partner: subject
+      FactoryGirl.create :application,      partner: subject
     end
 
     it 'has many domains' do
@@ -30,6 +31,10 @@ RSpec.describe Partner do
 
     it 'has many hosts' do
       expect(subject.hosts.count).to eql 3
+    end
+
+    it 'has many applications' do
+      expect(subject.applications.count).to eql 1
     end
   end
 

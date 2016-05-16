@@ -11,6 +11,7 @@ class Partner < ActiveRecord::Base
   has_many :ledgers
   has_many :hosts
   has_many :authorizations
+  has_many :applications
 
   validates :name, uniqueness: true
 
