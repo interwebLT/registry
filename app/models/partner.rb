@@ -1,3 +1,5 @@
+require 'bcrypt'
+
 class Partner < ActiveRecord::Base
   TIMEOUT = 15.minutes
 
