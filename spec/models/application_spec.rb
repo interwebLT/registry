@@ -1,11 +1,13 @@
 RSpec.describe Application do
   subject do
     Application.new partner:  partner,
-                    token:    token
+                    token:    token,
+                    client:   client
   end
 
   let(:partner) { FactoryGirl.create :partner }
   let(:token)   { '1234567890ABCDEF' }
+  let(:client)  { 'client' }
 
   describe 'associations' do
     subject { FactoryGirl.create :application }
@@ -36,6 +38,12 @@ RSpec.describe Application do
       before do
         FactoryGirl.create :application
       end
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'when client is nil' do
+      let(:client) { nil }
 
       it { is_expected.not_to be_valid }
     end

@@ -3,6 +3,7 @@ class Application < ActiveRecord::Base
 
   validates :partner, presence: true
   validates :token,   presence: true, uniqueness: true
+  validates :client,  presence: true
 
   after_initialize :generate_token
 
