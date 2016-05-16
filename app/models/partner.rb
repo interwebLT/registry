@@ -6,6 +6,7 @@ class Partner < ActiveRecord::Base
   has_many :credits
   has_many :ledgers
   has_many :hosts
+  has_many :authorizations
 
   validates :name, uniqueness: true
 
