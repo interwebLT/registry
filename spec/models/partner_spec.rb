@@ -78,4 +78,23 @@ RSpec.describe Partner do
       expect(subject.salt).not_to eql salt
     end
   end
+
+  describe '.authorize' do
+    subject { Partner.authorize authorization.token }
+
+    let(:current_partner) { FactoryGirl.create :partner }
+    let(:authorization)   { current_partner.authorizations.create }
+
+    context 'when authorized' do
+      it { is_expected.to eql authorization }
+    end
+
+    context 'when timed out' do
+      before do
+        authorization.update! last_authorized_at: Time.current + Partner::TIMEOUT
+      end
+
+      it { is_expected.to be nil }
+    end
+  end
 end

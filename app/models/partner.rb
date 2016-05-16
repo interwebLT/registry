@@ -1,4 +1,6 @@
 class Partner < ActiveRecord::Base
+  TIMEOUT = 15.minutes
+
   has_many :domains
   has_many :orders
   has_many :partner_configurations
@@ -25,6 +27,12 @@ class Partner < ActiveRecord::Base
     else
       self.find partner
     end
+  end
+
+  def self.authorize token
+    conditions = { token: token, last_authorized_at: (Time.current - TIMEOUT)..Time.current }
+
+    Authorization.where(conditions).last
   end
 
   def password= password
