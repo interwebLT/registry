@@ -10,6 +10,10 @@ class SecureController < ApplicationController
     partner
   end
 
+  def current_user
+    current_partner
+  end
+
   private
 
   def authenticate

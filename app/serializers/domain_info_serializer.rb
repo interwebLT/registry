@@ -20,7 +20,7 @@ class DomainInfoSerializer < DomainSerializer
 
   def activities
     (object.domain_activities.order(activity_at: :asc).collect do |activity|
-      activity.as_json if current_partner.admin || activity.partner.name == current_partner.name
+      activity.as_json if current_user.admin || activity.partner.name == current_user.name
     end).compact
   end
 

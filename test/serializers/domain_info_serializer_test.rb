@@ -2,30 +2,30 @@ require 'test_helper'
 
 describe DomainInfoSerializer do
   let(:current_partner) { create :partner }
-  let(:other_partner) { create :other_partner }
-  let(:admin_partner) { create :admin_partner }
+  let(:other_partner)   { create :other_partner }
+  let(:admin_partner)   { create :admin_partner }
 
   subject {
     d = DomainInfoSerializer.new(domain)
     d.class.module_eval {
-      attr_accessor :current_partner
+      attr_accessor :current_user
     }
-    d.current_partner = current_partner
+    d.current_user = current_partner
     d.serializable_hash
   }
 
   context :when_contact_registrant_only do
     let(:domain) { create :domain }
 
-		subject {
-			d = DomainInfoSerializer.new(domain)
-			d.class.module_eval {
-				attr_accessor :current_partner
-			}
-			current_partner.name = domain.partner.name
-			d.current_partner = current_partner
-			d.serializable_hash
-		}
+    subject {
+      d = DomainInfoSerializer.new(domain)
+      d.class.module_eval {
+        attr_accessor :current_user
+      }
+      current_partner.name = domain.partner.name
+      d.current_user = current_partner
+      d.serializable_hash
+    }
 
     before do
       create :domain_host, product: domain.product, name: 'ns3.domains.ph'
@@ -58,9 +58,9 @@ describe DomainInfoSerializer do
     subject {
       d = DomainInfoSerializer.new(domain)
       d.class.module_eval {
-        attr_accessor :current_partner
+        attr_accessor :current_user
       }
-      d.current_partner = admin_partner
+      d.current_user = admin_partner
       d.serializable_hash
     }
 
@@ -73,9 +73,9 @@ describe DomainInfoSerializer do
     subject {
       d = DomainInfoSerializer.new(domain)
       d.class.module_eval {
-        attr_accessor :current_partner
+        attr_accessor :current_user
       }
-      d.current_partner = other_partner
+      d.current_user = other_partner
       d.serializable_hash
     }
 
