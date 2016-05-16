@@ -27,6 +27,17 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def password= password
+    return if (password.nil? or password.blank?)
+
+    self.salt = BCrypt::Engine.generate_salt
+    self.encrypted_password = BCrypt::Engine.hash_secret(password, salt)
+  end
+
+  def password_matches password
+    encrypted_password == BCrypt::Engine.hash_secret(password, salt)
+  end
+
   def current_balance
     ledgers.map(&:amount).reduce(Money.new(0.00), :+)
   end

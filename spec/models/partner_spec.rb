@@ -31,10 +31,6 @@ RSpec.describe Partner do
     it 'has many hosts' do
       expect(subject.hosts.count).to eql 3
     end
-
-    it 'has many authorizations' do
-      expect(subject.authorizations.count).to eql 1
-    end
   end
 
   describe '.named' do
@@ -52,6 +48,34 @@ RSpec.describe Partner do
       let(:param) { partner.id }
 
       it { is_expected.to eql partner }
+    end
+  end
+
+  describe '#password' do
+    subject { Partner.new }
+
+    it 'is encrypted upon being set' do
+      expect(subject.encrypted_password).to be nil
+
+      subject.password = 'password'
+
+      expect(subject.encrypted_password).not_to be nil
+      expect(subject.encrypted_password).not_to eql 'password'
+    end
+
+    it 'authenticates properly' do
+      subject.password = 'password'
+
+      expect(subject.password_matches('password')).to be true
+      expect(subject.password_matches('wrong')).to be false
+    end
+
+    it 'changes salt when it is set' do
+      salt = subject.salt
+
+      subject.password = 'password'
+
+      expect(subject.salt).not_to eql salt
     end
   end
 end
