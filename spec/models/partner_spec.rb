@@ -94,7 +94,10 @@ RSpec.describe Partner do
     let(:token) { authorization.token }
 
     context 'when authorized as partner' do
-      it { is_expected.to eql authorization }
+      it 'returns authorization' do
+        expect(subject).to eql authorization
+        expect(subject.client).to be nil
+      end
     end
 
     context 'when timed out' do
@@ -111,8 +114,9 @@ RSpec.describe Partner do
       it 'returns authorization' do
         expect(subject).not_to be nil
 
-        expect(subject.token).to eql application.token
         expect(subject.partner).to eql partner
+        expect(subject.token).to eql application.token
+        expect(subject.client).to eql application.client
       end
     end
   end
