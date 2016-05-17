@@ -10,6 +10,10 @@ Given /^I am authenticated as staff$/ do
   staff_authenticated
 end
 
+Given /^external registries are defined$/ do
+  FactoryGirl.create :external_registry
+end
+
 Then /^error must be bad request$/ do
   assert_response_message_must_be_bad_request
 end

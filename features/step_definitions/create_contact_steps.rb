@@ -3,7 +3,7 @@ CREATE_CONTACT = Transform /^create a new contact(?: |)(.*?)$/ do |scenario|
 end
 
 When /^I (#{CREATE_CONTACT})$/ do |request|
-  stub_request(:post, SyncCreateContactJob::URL)
+  stub_request(:post, 'http://localhost:9001/contacts')
     .with(headers: headers, body: request.body)
     .to_return status: 201
 
@@ -32,9 +32,9 @@ Then /^contact must be created$/ do
 end
 
 Then /^create contact must be synced to other systems$/ do
-  assert_requested :post, SyncCreateContactJob::URL, times: 1
+  assert_requested :post, 'http://localhost:9001/contacts', times: 1
 end
 
 Then /^create contact must not be synced to other systems$/ do
-  assert_not_requested :post, SyncCreateContactJob::URL
+  assert_not_requested :post, 'http://localhost:9001/contacts'
 end

@@ -77,8 +77,10 @@ class ContactsController < SecureController
     contact.partner = contact_partner
 
     if contact.save
-      if Rails.configuration.x.cocca_api_sync and not current_partner.admin
-        SyncCreateContactJob.perform_later contact.partner, create_params
+      ExternalRegistry.all.each do |registry|
+        next if registry.name == current_partner.client
+
+        SyncCreateContactJob.perform_later registry.url, contact.partner, create_params
       end
 
       render  json: contact,
