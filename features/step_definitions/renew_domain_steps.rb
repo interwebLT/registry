@@ -1,14 +1,21 @@
-RENEW_DOMAIN = Transform /^renew an existing domain(?: |)(.*?)$/ do |scenario|
-  build_request scenario: scenario, resource: :order, action: :post_renew_domain
+When /^I renew an existing domain$/ do
+  request = 'orders/post_renew_domain_request'
+
+  create :domain, partner: @current_partner
+
+  stub_request(:post, 'http://localhost:9001/orders')
+    .with(headers: headers, body: request.body)
+    .to_return status: 201
+
+  post orders_path, request.json
 end
 
-When /^I (#{RENEW_DOMAIN})$/ do |request|
-  registrant = create :contact
+When /^I renew an existing domain with two-level TLD$/ do
+  request = 'orders/post_renew_domain_with_two_level_tld_request'
 
-  create :domain, partner: @current_partner, registrant: registrant
-  create :domain, partner: @current_partner, registrant: registrant, name: 'domain.com.ph'
+  create :domain, partner: @current_partner, name: 'domain.com.ph'
 
-  stub_request(:post, SyncOrderJob::URL)
+  stub_request(:post, 'http://localhost:9001/orders')
     .with(headers: headers, body: request.body)
     .to_return status: 201
 
@@ -18,7 +25,7 @@ end
 When /^I renew an existing domain which other systems reject$/ do
   request = 'orders/post_renew_domain_request'
 
-  stub_request(:post, SyncOrderJob::URL)
+  stub_request(:post, 'http://localhost:9001/orders')
     .with(headers: headers, body: request.body)
     .to_return status: 422
 
@@ -29,6 +36,14 @@ When /^I renew an existing domain which other systems reject$/ do
   rescue RuntimeError
     @exception_thrown = true
   end
+end
+
+When /^I renew an existing domain with no domain name$/ do
+  post orders_path, 'orders/post_renew_domain_with_no_domain_name_request'.json
+end
+
+When /^I renew an existing domain with no period$/ do
+  post orders_path, 'orders/post_renew_domain_with_no_period_request'.json
 end
 
 Then /^domain must be renewed$/ do

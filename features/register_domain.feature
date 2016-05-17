@@ -2,6 +2,7 @@ Feature: Register Domain
 
   Scenario: Register domain successfully
     Given I am authenticated as partner
+    And   external registries are defined
     When  I register a domain
     Then  domain must be registered
     And   domain must not have domain hosts by default
@@ -11,6 +12,7 @@ Feature: Register Domain
 
   Scenario: Register domain with two-level TLD successfully
     Given I am authenticated as partner
+    And   external registries are defined
     When  I register a domain with two-level TLD
     Then  domain with two-level TLD must be registered
     And   order must be synced to other systems

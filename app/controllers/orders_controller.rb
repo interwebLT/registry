@@ -37,7 +37,7 @@ class OrdersController < SecureController
     order = Order.build order_params, order_partner
 
     if order.save and order.complete!
-      order.sync! if Rails.configuration.x.cocca_api_sync and not current_partner.admin
+      sync order
 
       render  json: order,
               status: :created,
@@ -49,5 +49,18 @@ class OrdersController < SecureController
 
   def order_partner
     current_partner.admin? ?  Partner.find_by(name: order_params[:partner]) : current_partner
+  end
+
+  def sync order
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+
+      order.order_details.each do |order_detail|
+        next unless (order_detail.is_a? OrderDetail::RegisterDomain \
+                     or order_detail.is_a? OrderDetail::RenewDomain)
+
+        SyncOrderJob.perform_later registry.url, order.partner, order_detail.as_json_request
+      end
+    end
   end
 end

@@ -3,7 +3,7 @@ When /^I register a domain$/ do
 
   create :contact
 
-  stub_request(:post, SyncOrderJob::URL)
+  stub_request(:post, 'http://localhost:9001/orders')
     .with(headers: headers, body: request.body)
     .to_return status: 201
 
@@ -15,7 +15,7 @@ When /^I register a domain with two-level TLD$/ do
 
   create :contact
 
-  stub_request(:post, SyncOrderJob::URL)
+  stub_request(:post, 'http://localhost:9001/orders')
     .with(headers: headers, body: request.body)
     .to_return status: 201
 
