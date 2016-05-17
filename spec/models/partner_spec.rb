@@ -3,7 +3,7 @@ RSpec.describe Partner do
     subject { FactoryGirl.create :partner }
 
     before do
-      contact = FactoryGirl.create :contact
+      contact = FactoryGirl.create :contact, partner: subject
 
       FactoryGirl.create :domain,           partner: subject, registrant: contact
       FactoryGirl.create :partner_pricing,  partner: subject
@@ -22,11 +22,11 @@ RSpec.describe Partner do
     end
 
     it 'has many partner_configurations' do
-      expect(subject.partner_configurations.count).to eql 4
+      expect(subject.partner_configurations.count).to eql 2
     end
 
     it 'has many partner_pricings' do
-      expect(subject.partner_pricings.count).to eql 27
+      expect(subject.partner_pricings.count).to eql 14
     end
 
     it 'has many hosts' do
@@ -35,6 +35,10 @@ RSpec.describe Partner do
 
     it 'has many applications' do
       expect(subject.applications.count).to eql 1
+    end
+
+    it 'has many contacts' do
+      expect(subject.contacts.count).to eql 1
     end
   end
 
