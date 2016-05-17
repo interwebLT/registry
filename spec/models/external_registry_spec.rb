@@ -18,5 +18,13 @@ RSpec.describe ExternalRegistry do
 
       it { is_expected.not_to be_valid }
     end
+
+    context 'when name is not unique' do
+      before do
+        FactoryGirl.create :external_registry
+      end
+
+      it { is_expected.not_to be_valid }
+    end
   end
 end
