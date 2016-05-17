@@ -1,14 +1,15 @@
 Feature: Create Contact
 
-  Scenario: Create new contact successfully
+  Background:
     Given I am authenticated as partner
     And   external registries are defined
+
+  Scenario: Create new contact successfully
     When  I create a new contact
     Then  contact must be created
     And   create contact must be synced to other systems
 
   Scenario Outline: Invalid parameters
-    Given I am authenticated as partner
     When  I create a new contact <invalid parameter>
     Then  error must be validation failed
     And   validation error on <field> must be "<code>"

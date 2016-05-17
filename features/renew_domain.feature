@@ -1,23 +1,21 @@
 Feature: Renew Domain
 
-  Scenario: Renew existing domain successfully
+  Background:
     Given I am authenticated as partner
     And   external registries are defined
+
+  Scenario: Renew existing domain successfully
     When  I renew an existing domain
     Then  domain must be renewed
     And   renew domain fee must be deducted
     And   order must be synced to other systems
 
   Scenario: Renew existing domain with two-level TLD successfully
-    Given I am authenticated as partner
-    And   external registries are defined
     When  I renew an existing domain with two-level TLD
     Then  domain with two-level TLD must be renewed
     And   order must be synced to other systems
 
   Scenario: Other systems unavailable
-    Given I am authenticated as partner
-    And   external registries are defined
     When  I renew an existing domain which other systems reject
     #Then  domain must be renewed
     And   renew domain fee must be deducted
@@ -26,20 +24,17 @@ Feature: Renew Domain
 
   @wip
   Scenario: Renew non-existing domain
-    Given I am authenticated as partner
     When  I renew a non-existing domain
     Then  error must be validation failed
     And   validation error on order_details must be "invalid"
 
   @wip
   Scenario: Renew existing domain that another partner owns
-    Given I am authenticated as partner
     When  I renew an existing domain under another partner
     Then  error must be validation failed
     And   validation error on order_details must be "invalid"
 
   Scenario Outline: Invalid parameters
-    Given I am authenticated as partner
     When  I renew an existing domain with <invalid parameter>
     Then  error must be validation failed
     And   validation error on <field> must be "<code>"

@@ -1,8 +1,10 @@
 Feature: Register Domain
 
-  Scenario: Register domain successfully
+  Background:
     Given I am authenticated as partner
     And   external registries are defined
+
+  Scenario: Register domain successfully
     When  I register a domain
     Then  domain must be registered
     And   domain must not have domain hosts by default
@@ -11,14 +13,11 @@ Feature: Register Domain
     And   order must be synced to other systems
 
   Scenario: Register domain with two-level TLD successfully
-    Given I am authenticated as partner
-    And   external registries are defined
     When  I register a domain with two-level TLD
     Then  domain with two-level TLD must be registered
     And   order must be synced to other systems
 
   Scenario Outline: Invalid parameters
-    Given I am authenticated as partner
     When  I register a domain with <invalid parameter>
     Then  error must be validation failed
     And   validation error on <field> must be "<code>"
