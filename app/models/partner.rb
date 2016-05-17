@@ -17,15 +17,6 @@ class Partner < ActiveRecord::Base
 
   attr_accessor :token
 
-  def self.build params
-    name      = params[:name]
-    password  = params.delete(:epp_password)
-
-    self.create! params
-
-    SyncCreatePartnerJob.perform_later name, password
-  end
-
   def self.named partner
     if self.exists? name: partner
       self.find_by name: partner
