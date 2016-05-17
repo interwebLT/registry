@@ -3,11 +3,7 @@ class ContactsController < SecureController
     contact = current_partner.contacts.build contact_params
 
     if contact.save
-      ExternalRegistry.all.each do |registry|
-        next if registry.name == current_partner.client
-
-        SyncCreateContactJob.perform_later registry.url, contact.partner, contact_params
-      end
+      sync_create contact
 
       render  json: contact,
               status: :created,
@@ -64,15 +60,27 @@ class ContactsController < SecureController
 
   def update_contact contact
     if contact.update(update_params)
-      ExternalRegistry.all.each do |registry|
-        next if registry.name == current_partner.client
-
-        SyncUpdateContactJob.perform_later registry.url, contact.partner, contact.handle, update_params
-      end
+      sync_update contact
 
       render json: contact
     else
       validation_failed contact
+    end
+  end
+
+  def sync_create contact
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+
+      SyncCreateContactJob.perform_later registry.url, contact.partner, contact_params
+    end
+  end
+
+  def sync_update contact
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+
+      SyncUpdateContactJob.perform_later registry.url, contact.partner, contact.handle, update_params
     end
   end
 end
