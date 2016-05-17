@@ -16,12 +16,6 @@ When /^I create a new contact with existing handle$/ do
   post contacts_path, 'contacts/post_request'.json
 end
 
-When /^I create a new contact for another partner with existing handle$/ do
-  create :contact
-
-  post contacts_path, 'contacts/admin_post_request'.json
-end
-
 Then /^contact must be created$/ do
   last_response.status.must_equal 201
 

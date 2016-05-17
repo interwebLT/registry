@@ -1,9 +1,19 @@
 class ContactsController < SecureController
   def create
-    if create_valid?
-      create_contact
+    contact = current_partner.contacts.build contact_params
+
+    if contact.save
+      ExternalRegistry.all.each do |registry|
+        next if registry.name == current_partner.client
+
+        SyncCreateContactJob.perform_later registry.url, contact.partner, contact_params
+      end
+
+      render  json: contact,
+              status: :created,
+              location: contact_url(contact.id)
     else
-      render bad_request
+      render validation_failed contact
     end
   end
 
@@ -24,99 +34,40 @@ class ContactsController < SecureController
   end
 
   def update
-    if update_valid?
-      update_contact
+    contact = Contact.find_by handle:   contact_params[:id],
+                              partner:  current_partner
+
+    if contact
+      update_contact contact
     else
-      render bad_request
+      render not_found
     end
   end
 
   private
 
-  def create_valid?
-    valid_admin_create = (current_partner.admin? and contact_params.include? :partner)
-    valid_user_create = (not current_partner.admin? and not contact_params.include? :partner)
-
-    not contact_params.empty? and (valid_admin_create or valid_user_create)
-  end
-
-  def update_valid?
-    handle_key_present = contact_params.include? :handle
-    partner_key_present = contact_params.include? :partner
-
-    not (handle_key_present or partner_key_present)
-  end
-
   def contact_params
-    params.permit :id, :partner, :handle,
-                  :name, :organization, :street, :street2, :street3,
+    params.permit :id, :handle, :name, :organization, :street, :street2, :street3,
                   :city, :state, :postal_code, :country_code,
                   :local_name, :local_organization, :local_street, :local_street2, :local_street3,
                   :local_city, :local_state, :local_postal_code, :local_country_code,
                   :voice, :voice_ext, :fax, :fax_ext, :email
   end
 
-  def create_params
-    create_params = contact_params
-    create_params.delete :partner
-
-    create_params
-  end
-
   def update_params
     update_params = contact_params
-    update_params.delete :partner
     update_params.delete :handle
     update_params.delete :id
 
     update_params
   end
 
-  def create_contact
-    contact = Contact.new(create_params)
-    contact.partner = contact_partner
-
-    if contact.save
+  def update_contact contact
+    if contact.update(update_params)
       ExternalRegistry.all.each do |registry|
         next if registry.name == current_partner.client
 
-        SyncCreateContactJob.perform_later registry.url, contact.partner, create_params
-      end
-
-      render  json: contact,
-              status: :created,
-              location: contact_url(contact.id)
-    else
-      render validation_failed contact
-    end
-  end
-
-  def contact_partner
-    current_partner.admin? ? Partner.find_by(name: contact_params[:partner]) : current_partner
-  end
-
-  def update_contact
-    contact = find_contact(contact_params[:id])
-
-    if contact
-      update_existing_contact contact
-    else
-      render not_found
-    end
-  end
-
-  def find_contact handle
-    if current_partner.admin?
-      Contact.find_by handle: handle
-    else
-      Contact.find_by handle: handle, partner: current_partner
-    end
-  end
-
-  def update_existing_contact contact
-    if contact.update(update_params)
-      if Rails.configuration.x.cocca_api_sync and not current_partner.admin
-        SyncUpdateContactJob.perform_later contact.partner, contact.handle, update_params
+        SyncUpdateContactJob.perform_later registry.url, contact.partner, contact.handle, update_params
       end
 
       render json: contact
