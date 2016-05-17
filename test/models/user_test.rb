@@ -38,7 +38,7 @@ describe User do
     subject { User.authorize! authorization.token }
 
     let(:current_user) { create :user }
-    let(:authorization) { current_user.authorizations.create }
+    let(:authorization) { current_user.authorizations.create partner: current_user.partner }
 
     context :when_authorized do
       specify { subject.must_equal authorization }

@@ -3,6 +3,7 @@ class Authorization < ActiveRecord::Base
   after_find :update_last_authorized_at
 
   belongs_to :user
+  belongs_to :partner
 
   private
 

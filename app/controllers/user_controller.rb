@@ -1,10 +1,11 @@
 class UserController < SecureController
   def index
-    render json: current_user
+    render  json: current_partner,
+            serializer: UserSerializer
   end
 
   def partner
-    render  json: current_user.partner,
+    render  json: current_partner,
             serializer: PartnerInfoSerializer
   end
 end

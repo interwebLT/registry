@@ -11,17 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160502082633) do
+ActiveRecord::Schema.define(version: 20160516104053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "applications", force: :cascade do |t|
+    t.integer "partner_id",            null: false
+    t.string  "token",      limit: 32, null: false
+    t.string  "client",     limit: 16, null: false
+  end
+
   create_table "authorizations", force: :cascade do |t|
     t.string   "token",              limit: 32, null: false
-    t.integer  "user_id",                       null: false
+    t.integer  "user_id"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
     t.datetime "last_authorized_at",            null: false
+    t.integer  "partner_id",                    null: false
   end
 
   create_table "contact_history", force: :cascade do |t|
@@ -309,7 +316,7 @@ ActiveRecord::Schema.define(version: 20160502082633) do
   create_table "partners", force: :cascade do |t|
     t.integer  "old_id"
     t.string   "name",                limit: 64,                   null: false
-    t.string   "encrypted_password",  limit: 255
+    t.string   "encrypted_password",  limit: 255,                  null: false
     t.string   "representative",      limit: 255,                  null: false
     t.string   "position",            limit: 255,                  null: false
     t.string   "organization",        limit: 255,                  null: false
@@ -339,6 +346,7 @@ ActiveRecord::Schema.define(version: 20160502082633) do
     t.boolean  "staff",                            default: false, null: false
     t.datetime "created_at",                                       null: false
     t.datetime "updated_at",                                       null: false
+    t.string   "salt",                limit: 255,                  null: false
   end
 
   add_index "partners", ["name"], name: "index_partners_on_name", unique: true, using: :btree

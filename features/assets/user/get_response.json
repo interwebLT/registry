@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "username": "alpha",
+  "token": "abcd123456",
+  "partner_id": 1,
+  "partner_name": "alpha",
+  "credits": 0.00,
+  "transactions_allowed": true,
+  "admin": false,
+  "staff": false,
+  "email": "alpha@alpha.ph"
+}

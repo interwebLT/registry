@@ -1,4 +1,8 @@
+require 'bcrypt'
+
 class Partner < ActiveRecord::Base
+  TIMEOUT = 15.minutes
+
   has_many :domains
   has_many :orders
   has_many :partner_configurations
@@ -6,17 +10,12 @@ class Partner < ActiveRecord::Base
   has_many :credits
   has_many :ledgers
   has_many :hosts
+  has_many :authorizations
+  has_many :applications
 
   validates :name, uniqueness: true
 
-  def self.build params
-    name      = params[:name]
-    password  = params.delete(:epp_password)
-
-    self.create! params
-
-    SyncCreatePartnerJob.perform_later name, password
-  end
+  attr_accessor :token
 
   def self.named partner
     if self.exists? name: partner
@@ -24,6 +23,29 @@ class Partner < ActiveRecord::Base
     else
       self.find partner
     end
+  end
+
+  def self.authorize token
+    application = Application.find_by token: token
+
+    if application
+      Authorization.new partner: application.partner, token: application.token
+    else
+      conditions = { token: token, last_authorized_at: (Time.current - TIMEOUT)..Time.current }
+
+      Authorization.where(conditions).last
+    end
+  end
+
+  def password= password
+    return if (password.nil? or password.blank?)
+
+    self.salt = BCrypt::Engine.generate_salt
+    self.encrypted_password = BCrypt::Engine.hash_secret(password, salt)
+  end
+
+  def password_matches password
+    encrypted_password == BCrypt::Engine.hash_secret(password, salt)
   end
 
   def current_balance

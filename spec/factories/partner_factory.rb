@@ -22,6 +22,7 @@ FactoryGirl.define do
     voice '+63.1234567'
     fax '+63.1234567'
     email 'alpha@alpha.ph'
+    password  'password'
 
     after :create do |partner, evaluator|
       ns3 = 'ns3.domains.ph'
@@ -70,6 +71,7 @@ FactoryGirl.define do
     voice '+63.1234567'
     fax '+63.1234567'
     email 'alpha@alpha.ph'
+    password  'password'
 
     after :create do |partner|
       [
@@ -94,7 +96,6 @@ FactoryGirl.define do
 
   factory :admin_partner, class: Partner do
     name 'admin'
-    encrypted_password 'password'
     representative 'Representative'
     organization 'Company'
     nature 'Nature'
@@ -108,6 +109,7 @@ FactoryGirl.define do
     voice '+63.21234567'
     fax '+63.21234567'
     email 'alpha@alpha.org'
+    password  'password'
 
     admin true
   end

@@ -76,7 +76,7 @@ class DomainHostsController < SecureController
     domain_host = domain.product.domain_hosts.find_by(name: name)
 
     if domain_host
-      domain_host.sync! unless current_user.admin
+      domain_host.sync! unless current_partner.admin
 
       render json: domain_host
 

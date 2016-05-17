@@ -3,11 +3,15 @@ class SecureController < ApplicationController
 
   before_action :authenticate
 
-  def current_user
-    user = @authorization.user
-    user.token = @authorization.token
+  def current_partner
+    partner = @authorization.partner
+    partner.token = @authorization.token
 
-    user
+    partner
+  end
+
+  def current_user
+    current_partner
   end
 
   private
@@ -18,7 +22,7 @@ class SecureController < ApplicationController
 
   def authenticate_token
     authenticate_with_http_token do |token, options|
-      @authorization = User.authorize! token
+      @authorization = Partner.authorize token
     end
   end
 end

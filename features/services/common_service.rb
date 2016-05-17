@@ -119,7 +119,7 @@ def other_admin_partner_exists
 end
 
 def authenticate!
-  authorization = @current_user.authorizations.create
+  authorization = @current_user.authorizations.create partner: @current_user.partner
 
   header  'Authorization',
           ActionController::HttpAuthentication::Token.encode_credentials(authorization.token)

@@ -72,6 +72,6 @@ class ApplicationController < ActionController::API
   end
 
   def missing_admin_params
-    current_user.admin and not params.include? :partner
+    current_partner.admin and not params.include? :partner
   end
 end
