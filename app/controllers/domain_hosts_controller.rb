@@ -76,13 +76,24 @@ class DomainHostsController < SecureController
     domain_host = domain.product.domain_hosts.find_by(name: name)
 
     if domain_host
-      domain_host.sync! unless current_partner.admin
+      sync_delete domain_host
 
       render json: domain_host
 
       domain_host.destroy!
     else
       render not_found
+    end
+  end
+
+  def sync_delete domain_host
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+
+      SyncDeleteDomainHostJob.perform_later registry.url,
+                                            domain_host.product.domain.partner,
+                                            domain_host.product.domain.name,
+                                            domain_host.name
     end
   end
 end
