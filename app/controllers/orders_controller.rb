@@ -8,12 +8,16 @@ class OrdersController < SecureController
   end
 
   def create
-    if current_partner.admin? and not order_params.include? :partner
-      render missing_fields [:partner]
-    elsif order_params.empty?
-      render bad_request
+    order = Order.build order_params, current_partner
+
+    if order.save and order.complete!
+      sync order
+
+      render  json: order,
+        status: :created,
+        location: order_url(order.id)
     else
-      create_order
+      render validation_failed order
     end
   end
 
@@ -30,24 +34,21 @@ class OrdersController < SecureController
   private
 
   def order_params
-    params.permit(:partner, :currency_code, :ordered_at, order_details: [:type, :domain, :authcode, :period, :registrant_handle, :registered_at, :credits])
+    params.permit :partner, :currency_code, :ordered_at, order_details: [
+      :type, :domain, :authcode, :period, :registrant_handle, :registered_at, :credits
+    ]
   end
 
-  def create_order
-    order = Order.build order_params, order_partner
+  def sync order
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
 
-    if order.save and order.complete!
-      order.sync! if Rails.configuration.x.cocca_api_sync and not current_partner.admin
+      order.order_details.each do |order_detail|
+        next unless (order_detail.is_a? OrderDetail::RegisterDomain \
+                     or order_detail.is_a? OrderDetail::RenewDomain)
 
-      render  json: order,
-              status: :created,
-              location: order_url(order.id)
-    else
-      render validation_failed order
+        SyncOrderJob.perform_later registry.url, order.partner, order_detail.as_json_request
+      end
     end
-  end
-
-  def order_partner
-    current_partner.admin? ?  Partner.find_by(name: order_params[:partner]) : current_partner
   end
 end

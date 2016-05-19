@@ -108,12 +108,6 @@ class Order < ActiveRecord::Base
     self.order_details.where(type: OrderDetail::CheckoutReplenishCredits).count > 0
   end
 
-  def sync!
-    self.order_details.each do |order_detail|
-      order_detail.sync! if order_detail.respond_to? :sync!
-    end
-  end
-
   private
 
   def generate_order_number

@@ -489,10 +489,10 @@ describe Domain do
     specify { subject.client_renew_prohibited.must_equal domain.client_renew_prohibited }
     specify { subject.client_delete_prohibited.must_equal domain.client_delete_prohibited }
 
-    specify { activities[7].must_be_kind_of ObjectActivity::Update }
-    specify { activities[7].property_changed.must_equal 'domain_host' }
-    specify { activities[7].old_value.must_equal 'ns5.domains.ph' }
-    specify { activities[7].value.must_be_nil }
+    specify { activities.last.must_be_kind_of ObjectActivity::Update }
+    specify { activities.last.property_changed.must_equal 'domain_host' }
+    specify { activities.last.old_value.must_equal 'ns5.domains.ph' }
+    specify { activities.last.value.must_be_nil }
   end
 
   describe :delete_domain! do

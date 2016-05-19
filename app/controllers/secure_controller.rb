@@ -5,7 +5,8 @@ class SecureController < ApplicationController
 
   def current_partner
     partner = @authorization.partner
-    partner.token = @authorization.token
+    partner.token   = @authorization.token
+    partner.client  = @authorization.client
 
     partner
   end

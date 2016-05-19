@@ -1,15 +1,37 @@
-REGISTER_DOMAIN = Transform /^register a domain(?: |)(.*?)$/ do |scenario|
-  build_request scenario: scenario, resource: :order, action: :post_register_domain
-end
+When /^I register a domain$/ do
+  request = 'orders/post_register_domain_request'
 
-When /^I (#{REGISTER_DOMAIN})$/ do |request|
   create :contact
 
-  stub_request(:post, SyncOrderJob::URL)
+  stub_request(:post, 'http://localhost:9001/orders')
     .with(headers: headers, body: request.body)
     .to_return status: 201
 
   post orders_path, request.json
+end
+
+When /^I register a domain with two-level TLD$/ do
+  request = 'orders/post_register_domain_with_two_level_tld_request'
+
+  create :contact
+
+  stub_request(:post, 'http://localhost:9001/orders')
+    .with(headers: headers, body: request.body)
+    .to_return status: 201
+
+  post orders_path, request.json
+end
+
+When /^I register a domain with no domain name$/ do
+  post orders_path, 'orders/post_register_domain_with_no_domain_name_request'.json
+end
+
+When /^I register a domain with no period$/ do
+  post orders_path, 'orders/post_register_domain_with_no_period_request'.json
+end
+
+When /^I register a domain with no registrant handle$/ do
+  post orders_path, 'orders/post_register_domain_with_no_registrant_handle_request'.json
 end
 
 Then /^domain must be registered$/ do

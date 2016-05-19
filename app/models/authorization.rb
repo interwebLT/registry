@@ -5,6 +5,8 @@ class Authorization < ActiveRecord::Base
   belongs_to :user
   belongs_to :partner
 
+  attr_accessor :client
+
   private
 
   def generate_token

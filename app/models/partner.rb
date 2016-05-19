@@ -12,10 +12,11 @@ class Partner < ActiveRecord::Base
   has_many :hosts
   has_many :authorizations
   has_many :applications
+  has_many :contacts
 
   validates :name, uniqueness: true
 
-  attr_accessor :token
+  attr_accessor :token, :client
 
   def self.named partner
     if self.exists? name: partner
@@ -29,7 +30,9 @@ class Partner < ActiveRecord::Base
     application = Application.find_by token: token
 
     if application
-      Authorization.new partner: application.partner, token: application.token
+      Authorization.new partner:  application.partner,
+                        token:    application.token,
+                        client:   application.client
     else
       conditions = { token: token, last_authorized_at: (Time.current - TIMEOUT)..Time.current }
 

@@ -5,7 +5,7 @@ end
 When /^I (#{UPDATE_CONTACT})$/ do |request|
   contact = create :contact
 
-  stub_request(:patch, SyncUpdateContactJob.url(contact.handle))
+  stub_request(:patch, 'http://localhost:9001/contacts/contact')
     .with(headers: headers, body: request.body)
     .to_return status: 200
 
@@ -28,9 +28,9 @@ Then /^contact must be updated$/ do
 end
 
 Then /^update contact must be synced to other systems$/ do
-  assert_requested :patch, SyncUpdateContactJob.url(build(:contact).handle), times: 1
+  assert_requested :patch, 'http://localhost:9001/contacts/contact', times: 1
 end
 
 Then /^update contact must not be synced to other systems$/ do
-  assert_not_requested :patch, SyncUpdateContactJob.url(build(:contact).handle)
+  assert_not_requested :patch, 'http://localhost:9001/contacts/contact'
 end

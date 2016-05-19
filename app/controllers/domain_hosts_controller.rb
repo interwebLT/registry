@@ -10,7 +10,15 @@ class DomainHostsController < SecureController
   end
 
   def destroy
-    destroy_domain_host
+    domain_id = destroy_params.delete(:domain_id)
+
+    domain = Domain.named(domain_id)
+
+    if domain
+      destroy_domain_host domain
+    else
+      render not_found
+    end
   end
 
   private
@@ -54,35 +62,33 @@ class DomainHostsController < SecureController
   end
 
   def destroy_params
-    params.permit(:domain_id, :id)
+    params.permit :domain_id, :id
   end
 
-  def destroy_domain_host
-    domain_host_params = destroy_params
-    domain_id = domain_host_params.delete(:domain_id)
-
-    domain = Domain.named(domain_id)
-
-    if domain
-      destroy_domain_host_for_existing_domain domain, domain_host_params
-    else
-      render not_found
-    end
-  end
-
-  def destroy_domain_host_for_existing_domain domain, destroy_params
+  def destroy_domain_host domain
     name = destroy_params.delete(:id)
 
     domain_host = domain.product.domain_hosts.find_by(name: name)
 
     if domain_host
-      domain_host.sync! unless current_partner.admin
+      sync_delete domain_host
 
       render json: domain_host
 
       domain_host.destroy!
     else
       render not_found
+    end
+  end
+
+  def sync_delete domain_host
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+
+      SyncDeleteDomainHostJob.perform_later registry.url,
+                                            domain_host.product.domain.partner,
+                                            domain_host.product.domain.name,
+                                            domain_host.name
     end
   end
 end
