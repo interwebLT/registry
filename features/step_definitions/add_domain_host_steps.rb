@@ -16,7 +16,7 @@ Then /^domain must now have domain host$/ do
   expect(DomainHost.last).to have_attributes name: 'ns5.domains.ph'
 end
 
-Then /^add domain host must be synced to other systems$/ do
+Then /^add domain host must be synced to external registries$/ do
   url     = 'http://localhost:9001/domains/domain.ph/hosts'
   request = 'domains/domain.ph/hosts/post_request'
 

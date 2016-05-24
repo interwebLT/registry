@@ -25,10 +25,10 @@ Then /^contact must be created$/ do
   Contact.last.contact_histories.count.must_equal 1
 end
 
-Then /^create contact must be synced to other systems$/ do
+Then /^create contact must be synced to external registries$/ do
   assert_requested :post, 'http://localhost:9001/contacts', times: 1
 end
 
-Then /^create contact must not be synced to other systems$/ do
+Then /^create contact must not be synced to external registries$/ do
   assert_not_requested :post, 'http://localhost:9001/contacts'
 end

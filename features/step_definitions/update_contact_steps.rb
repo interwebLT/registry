@@ -27,10 +27,10 @@ Then /^contact must be updated$/ do
   Contact.last.contact_histories.count.must_equal 2
 end
 
-Then /^update contact must be synced to other systems$/ do
+Then /^update contact must be synced to external registries$/ do
   assert_requested :patch, 'http://localhost:9001/contacts/contact', times: 1
 end
 
-Then /^update contact must not be synced to other systems$/ do
+Then /^update contact must not be synced to external registries$/ do
   assert_not_requested :patch, 'http://localhost:9001/contacts/contact'
 end

@@ -22,10 +22,10 @@ Then /I must see my orders that were refunded$/ do
   assert_refunded_orders_displayed
 end
 
-Then /^order must be synced to other systems$/ do
+Then /^order must be synced to external registries$/ do
   assert_requested :post, 'http://localhost:9001/orders', times: 1
 end
 
-Then /^order must not be synced to other systems$/ do
+Then /^order must not be synced to external registries$/ do
   assert_not_requested :post, 'http://localhost:9001/orders', times: 1
 end

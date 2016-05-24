@@ -22,7 +22,7 @@ When /^I renew an existing domain with two-level TLD$/ do
   post orders_path, request.json
 end
 
-When /^I renew an existing domain which other systems reject$/ do
+When /^I renew an existing domain which external registries reject$/ do
   request = 'orders/post_renew_domain_request'
 
   stub_request(:post, 'http://localhost:9001/orders')

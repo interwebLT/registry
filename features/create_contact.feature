@@ -7,7 +7,7 @@ Feature: Create Contact
   Scenario: Create new contact successfully
     When  I create a new contact
     Then  contact must be created
-    And   create contact must be synced to other systems
+    And   create contact must be synced to external registries
 
   Scenario Outline: Invalid parameters
     When  I create a new contact <invalid parameter>
