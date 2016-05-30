@@ -8,18 +8,18 @@ Feature: Renew Domain
     When  I renew an existing domain
     Then  domain must be renewed
     And   renew domain fee must be deducted
-    And   order must be synced to other systems
+    And   order must be synced to external registries
 
   Scenario: Renew existing domain with two-level TLD successfully
     When  I renew an existing domain with two-level TLD
     Then  domain with two-level TLD must be renewed
-    And   order must be synced to other systems
+    And   order must be synced to external registries
 
-  Scenario: Other systems unavailable
-    When  I renew an existing domain which other systems reject
+  Scenario: External registries unavailable
+    When  I renew an existing domain which external registries reject
     #Then  domain must be renewed
     And   renew domain fee must be deducted
-    And   order must be synced to other systems
+    And   order must be synced to external registries
     And   exception must be thrown
 
   @wip

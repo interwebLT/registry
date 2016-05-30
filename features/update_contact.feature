@@ -7,7 +7,7 @@ Feature: Update Contact
   Scenario: Update contact successfully
     When  I update a contact
     Then  contact must be updated
-    And   update contact must be synced to other systems
+    And   update contact must be synced to external registries
 
   Scenario Outline: Invalid parameters
     When  I update a contact <invalid update>
