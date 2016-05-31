@@ -35,7 +35,7 @@ class DomainHostsController < SecureController
     domain_host = DomainHost.new name: name, product: domain.product
 
     if domain_host.save
-      sync_create domain_host
+      #sync_create domain_host
 
       render  json: domain_host,
               status: :created,
