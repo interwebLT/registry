@@ -1,7 +1,7 @@
 Feature: Migrate Domain
 
   Background:
-    Given I am authenticated as administrator
+    Given I am authenticated as partner
 
   Scenario: Migrate domain
     When  I migrate a domain into registry for another partner
