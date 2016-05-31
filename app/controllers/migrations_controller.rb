@@ -1,6 +1,6 @@
 class MigrationsController < SecureController
   def create
-    order = Order.build migration_params, migration_partner
+    order = Order.build migration_params, current_partner
 
     if order.save
       order.complete!
@@ -17,9 +17,5 @@ class MigrationsController < SecureController
 
   def migration_params
     params.permit(:partner, :currency_code, :ordered_at, order_details: [:type, :domain, :authcode, :registrant_handle, :registered_at, :expires_at])
-  end
-
-  def migration_partner
-    Partner.find_by(name: migration_params[:partner])
   end
 end
