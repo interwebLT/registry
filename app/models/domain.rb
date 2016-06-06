@@ -41,7 +41,8 @@ class Domain < ActiveRecord::Base
       if domain
         true
       elsif domain.try(:partner).try(:name).try(:downcase) == 'direct'
-        true
+        # Include if its direct
+        false
       else
         false
       end
