@@ -37,7 +37,14 @@ class Domain < ActiveRecord::Base
     tlds = ['ph', 'com.ph', 'net.ph', 'org.ph']
 
     tlds.reject do |tld|
-      Domain.find_by(name: "#{domain_name}.#{tld}")
+      domain = Domain.find_by(name: "#{domain_name}.#{tld}")
+      if domain
+        true
+      elsif domain.try(:partner).try(:name).try(:downcase) == 'direct'
+        true
+      else
+        false
+      end
     end
   end
 
