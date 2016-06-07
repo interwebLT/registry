@@ -4,14 +4,14 @@ Feature: Migrate Domain
     Given I am authenticated as partner
 
   Scenario: Migrate domain
-    When  I migrate a domain into registry for another partner
-    Then  domain must be migrated under non-admin partner
+    When  I migrate my domain into registry
+    Then  domain must be migrated into my partner
     And   domain must not have domain hosts by default
     And   domain status must be inactive
-    And   migrate domain fee must be deducted from credits of non-admin partner
+    And   no fees must be deducted from my credits
 
   Scenario Outline: Invalid parameters
-    When  I migrate a domain into registry for another partner with <invalid parameter>
+    When  I migrate a domain into registry with <invalid parameter>
     Then  error must be validation failed
     And   validation error on <field> must be "<code>"
 
