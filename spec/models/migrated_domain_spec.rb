@@ -64,6 +64,12 @@ RSpec.describe MigratedDomain do
 
       it { is_expected.not_to be_valid }
     end
+
+    context 'when authcode is nil' do
+      let(:authcode) { nil }
+
+      it { is_expected.not_to be_valid }
+    end
   end
 
   describe '#save' do

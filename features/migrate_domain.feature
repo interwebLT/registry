@@ -21,3 +21,4 @@ Feature: Migrate Domain
       | no registered at                | registered_at     | invalid |
       | no expires at                   | expires_at        | invalid |
       | expires at before registered at | expires_at        | invalid |
+      | no authcode                     | authcode          | invalid |

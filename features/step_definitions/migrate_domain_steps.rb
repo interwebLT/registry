@@ -34,6 +34,12 @@ When /^I migrate a domain into registry with expires at before registered at$/ d
   post migrations_path, 'migrations/post_with_expires_at_before_registered_at_request'.json
 end
 
+When /^I migrate a domain into registry with no authcode$/ do
+  create :contact
+
+  post migrations_path, 'migrations/post_with_no_authcode_request'.json
+end
+
 Then /^domain must be migrated into my partner$/ do
   expect(last_response.status).to eq 201
 

@@ -8,6 +8,7 @@ class MigratedDomain < ActiveRecord::Base
   validates :registrant_handle, presence: true
   validates :registered_at,     presence: true
   validates :expires_at,        presence: true
+  validates :authcode,          presence: true
 
   validate  :registered_at_must_be_before_expires_at
 
