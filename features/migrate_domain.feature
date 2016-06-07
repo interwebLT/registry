@@ -8,7 +8,6 @@ Feature: Migrate Domain
     Then  domain must be migrated into my partner
     And   domain must not have domain hosts by default
     And   domain status must be inactive
-    And   no fees must be deducted from my credits
 
   Scenario Outline: Invalid parameters
     When  I migrate a domain into registry with <invalid parameter>

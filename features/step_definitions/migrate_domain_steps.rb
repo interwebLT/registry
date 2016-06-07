@@ -37,14 +37,11 @@ end
 Then /^domain must be migrated into my partner$/ do
   expect(last_response.status).to eq 201
 
-  expect(Domain.exists?(name: DOMAIN)).to be true
+  expect(Domain.last).to have_attributes  name:               'domain.ph',
+                                          registrant_handle:  'contact',
+                                          registered_at:      '2016-06-07 10:00:00 AM'.in_time_zone,
+                                          expires_at:         '2018-06-07 10:00:00 AM'.in_time_zone,
+                                          authcode:           '123456789ABCDEF'
+
   expect(Domain.last.domain_activities.first).to be_kind_of ObjectActivity::Create
-end
-
-Then /^no fees must be deducted from my credits$/ do
-  ledgers = @current_partner.ledgers.last
-
-  expect(ledgers).not_to be nil
-  expect(ledgers.activity_type).to eq 'use'
-  expect(ledgers.amount).to eql 0.00.money
 end

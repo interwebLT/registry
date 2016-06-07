@@ -1,21 +1,22 @@
 class MigrationsController < SecureController
   def create
-    order = Order.build migration_params, current_partner
+    domain = MigratedDomain.new migration_params
+    domain.partner = current_partner
 
-    if order.save
-      order.complete!
+    if domain.save
+      saved_domain = Domain.find_by name: domain.name
 
-      render  json: order,
-              status: :created,
-              location: orders_url(1)
+      render  json:     saved_domain,
+              status:   :created,
+              location: domain_path(saved_domain.id)
     else
-      render validation_failed order
+      render validation_failed domain
     end
   end
 
   private
 
   def migration_params
-    params.permit(:partner, :currency_code, :ordered_at, order_details: [:type, :domain, :authcode, :registrant_handle, :registered_at, :expires_at])
+    params.permit :name, :registrant_handle, :registered_at, :expires_at, :authcode
   end
 end
