@@ -1,8 +1,6 @@
 class MigratedDomain < ActiveRecord::Base
   belongs_to :partner
 
-  after_create :migrate_domain
-
   validates :name,              presence: true
   validates :partner,           presence: true
   validates :registrant_handle, presence: true
@@ -12,10 +10,8 @@ class MigratedDomain < ActiveRecord::Base
 
   validate  :registered_at_must_be_before_expires_at
 
-  private
-
-  def migrate_domain
-    return if Domain.exists? name: name
+  def migrate!
+    return false if Domain.exists? name: name
 
     product = Product.create product_type: 'domain'
 
@@ -26,6 +22,8 @@ class MigratedDomain < ActiveRecord::Base
                             authcode:           authcode,
                             product:            product
   end
+
+  private
 
   def registered_at_must_be_before_expires_at
     return if registered_at.nil? or expires_at.nil?

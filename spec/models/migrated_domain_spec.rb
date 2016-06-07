@@ -72,15 +72,15 @@ RSpec.describe MigratedDomain do
     end
   end
 
-  describe '#save' do
+  describe '#migrate!' do
+    before do
+      subject.save
+    end
+
     context 'when domain not yet migrated' do
-      before do
-        subject.save
-      end
+      it 'migrates domain' do
+        subject.migrate!
 
-      it { is_expected.to be_persisted }
-
-      it 'migrates domain on save' do
         expect(Domain.last).to have_attributes  name:               name,
                                                 partner:            partner,
                                                 registrant_handle:  registrant_handle,
@@ -94,11 +94,11 @@ RSpec.describe MigratedDomain do
       before do
         FactoryGirl.create :domain, name:       name,
                                     registrant: registrant
-
-        subject.save
       end
 
-      it { is_expected.to be_persisted }
+      it 'returns false' do
+        expect(subject.migrate!).to eq false
+      end
     end
   end
 end

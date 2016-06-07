@@ -4,6 +4,7 @@ class MigrationsController < SecureController
     domain.partner = current_partner
 
     if domain.save
+      domain.migrate!
       saved_domain = Domain.find_by name: domain.name
 
       render  json:     saved_domain,
