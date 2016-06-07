@@ -12,7 +12,7 @@ RSpec.describe MigratedDomain do
   let(:partner)           { FactoryGirl.create :partner }
   let(:registrant_handle) { registrant.handle }
   let(:registered_at)     { '2016-06-07 10:00:00 AM'.in_time_zone }
-  let(:expires_at)        { '2016-06-07 10:00:00 AM'.in_time_zone }
+  let(:expires_at)        { '2018-06-07 10:00:00 AM'.in_time_zone }
   let(:authcode)          { '123456789ABCDEF' }
 
   let(:registrant)        { FactoryGirl.create :registrant }
@@ -24,6 +24,45 @@ RSpec.describe MigratedDomain do
 
     it 'belongs to partner' do
       expect(subject.partner).to eq partner
+    end
+  end
+
+  describe '#valid?' do
+    context 'when expires_at before registered_at' do
+      let(:registered_at) { '2018-06-07 10:00:00 AM'.in_time_zone }
+      let(:expires_at)    { '2016-06-07 10:00:00 AM'.in_time_zone }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'when name is nil' do
+      let(:name)  { nil }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'when registrant_handle is nil' do
+      let(:registrant_handle) { nil }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'when registered_at is nil' do
+      let(:registered_at) { nil }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'when expires_at is nil' do
+      let(:expires_at)  { nil }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'when partner is nil' do
+      let(:partner) { nil }
+
+      it { is_expected.not_to be_valid }
     end
   end
 

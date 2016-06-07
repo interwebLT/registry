@@ -3,6 +3,14 @@ class MigratedDomain < ActiveRecord::Base
 
   after_create :migrate_domain
 
+  validates :name,              presence: true
+  validates :partner,           presence: true
+  validates :registrant_handle, presence: true
+  validates :registered_at,     presence: true
+  validates :expires_at,        presence: true
+
+  validate  :registered_at_must_be_before_expires_at
+
   private
 
   def migrate_domain
@@ -16,5 +24,11 @@ class MigratedDomain < ActiveRecord::Base
                             expires_at:         expires_at,
                             authcode:           authcode,
                             product:            product
+  end
+
+  def registered_at_must_be_before_expires_at
+    return if registered_at.nil? or expires_at.nil?
+
+    errors.add :expires_at, I18n.t('errors.messages.invalid') if expires_at < registered_at
   end
 end

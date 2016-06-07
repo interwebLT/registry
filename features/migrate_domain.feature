@@ -15,9 +15,9 @@ Feature: Migrate Domain
     And   validation error on <field> must be "<code>"
 
     Examples:
-      | invalid parameter               | field         | code    |
-      | no domain name                  | order_details | invalid |
-      | no registrant handle            | order_details | invalid |
-      | no registered at                | order_details | invalid |
-      | no expires at                   | order_details | invalid |
-      | expires at before registered at | order_details | invalid |
+      | invalid parameter               | field             | code    |
+      | no domain name                  | name              | invalid |
+      | no registrant handle            | registrant_handle | invalid |
+      | no registered at                | registered_at     | invalid |
+      | no expires at                   | expires_at        | invalid |
+      | expires at before registered at | expires_at        | invalid |
