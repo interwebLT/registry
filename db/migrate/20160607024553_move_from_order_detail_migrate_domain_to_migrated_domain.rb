@@ -8,8 +8,8 @@ class MoveFromOrderDetailMigrateDomainToMigratedDomain < ActiveRecord::Migration
                             authcode:           order_detail.authcode,
                             created_at:         order_detail.order.ordered_at,
                             updated_at:         order_detail.order.created_at
-    end
 
-    OrderDetail::MigrateDomain.destroy_all
+      order_detail.order.destroy
+    end
   end
 end
