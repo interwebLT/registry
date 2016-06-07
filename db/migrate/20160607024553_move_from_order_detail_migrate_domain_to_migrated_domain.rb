@@ -2,6 +2,7 @@ class MoveFromOrderDetailMigrateDomainToMigratedDomain < ActiveRecord::Migration
   def change
     OrderDetail::MigrateDomain.all.each do |order_detail|
       MigratedDomain.create!  name:               order_detail.domain,
+                              partner:            order_detail.order.partner,
                               registrant_handle:  order_detail.registrant_handle,
                               registered_at:      order_detail.registered_at,
                               expires_at:         order_detail.expires_at,
