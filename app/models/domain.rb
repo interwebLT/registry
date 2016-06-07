@@ -39,9 +39,9 @@ class Domain < ActiveRecord::Base
     tlds.reject do |tld|
       domain = Domain.find_by(name: "#{domain_name}.#{tld}")
       if domain.try(:partner).try(:name).try(:downcase) == 'direct'
+        # Include if its direct
         false
       elsif domain
-        # Include if its direct
         true
       else
         false
