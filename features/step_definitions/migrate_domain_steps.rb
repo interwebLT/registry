@@ -1,37 +1,37 @@
 When /^I migrate my domain into registry$/ do
   create :contact
 
-  post migrations_path, 'migrations/admin_post_migrate_domain_request'.json
+  post migrations_path, 'migrations/post_request'.json
 end
 
 When /^I migrate a domain into registry with no domain name$/ do
   create :contact
 
-  post migrations_path, 'migrations/admin_post_migrate_domain_with_no_domain_name_request'.json
+  post migrations_path, 'migrations/post_with_no_domain_name_request'.json
 end
 
 When /^I migrate a domain into registry with no registrant handle$/ do
   create :contact
 
-  post migrations_path, 'migrations/admin_post_migrate_domain_with_no_registrant_handle_request'.json
+  post migrations_path, 'migrations/post_with_no_registrant_handle_request'.json
 end
 
 When /^I migrate a domain into registry with no registered at$/ do
   create :contact
 
-  post migrations_path, 'migrations/admin_post_migrate_domain_with_no_registered_at_request'.json
+  post migrations_path, 'migrations/post_with_no_registered_at_request'.json
 end
 
 When /^I migrate a domain into registry with no expires at$/ do
   create :contact
 
-  post migrations_path, 'migrations/admin_post_migrate_domain_with_no_expires_at_request'.json
+  post migrations_path, 'migrations/post_with_no_expires_at_request'.json
 end
 
 When /^I migrate a domain into registry with expires at before registered at$/ do
   create :contact
 
-  post migrations_path, 'migrations/admin_post_migrate_domain_with_expires_at_before_registered_at_request'.json
+  post migrations_path, 'migrations/post_with_expires_at_before_registered_at_request'.json
 end
 
 Then /^domain must be migrated into my partner$/ do
