@@ -5,7 +5,7 @@ class ApplicationJob < ActiveJob::Base
       body:     body.to_json
     }
 
-    response = HTTParty.post url, request
+    process_response HTTParty.post url, request
   end
 
   def patch url, body, token:
@@ -27,10 +27,10 @@ class ApplicationJob < ActiveJob::Base
 
   private
 
-  def execute action:, url:, params:, token: nil
-    response = HTTParty.send action, url, body: params.to_json, headers: headers(token: token)
-
+  def process_response response
     raise "Code: #{response.code}, Message: #{response.parsed_response}" if error_code response.code
+
+    JSON.parse response.body, symbolize_names: true
   end
 
   def headers token

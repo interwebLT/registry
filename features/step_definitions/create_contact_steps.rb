@@ -1,34 +1,33 @@
-CREATE_CONTACT = Transform /^create a new contact(?: |)(.*?)$/ do |scenario|
-  build_request scenario: scenario, resource: :contact, action: :post
+When /^I create a new contact$/ do
+  stub_request(:post, 'http://localhost:9001/contacts')
+    .to_return status: 201, body: 'contacts/post_response'.body
+
+  post contacts_path, 'contacts/post_request'.json
 end
 
-When /^I (#{CREATE_CONTACT})$/ do |request|
-  stub_request(:post, 'http://localhost:9001/contacts')
-    .with(headers: headers, body: request.body)
-    .to_return status: 201
-
-  post contacts_path, request.json
+When /^I create a new contact with empty request$/ do
+  post contacts_path, 'contacts/post_with_empty_request_request'.json
 end
 
 When /^I create a new contact with existing handle$/ do
-  create :contact
+  FactoryGirl.create :contact
 
   post contacts_path, 'contacts/post_request'.json
 end
 
 Then /^contact must be created$/ do
-  last_response.status.must_equal 201
+  expect(last_response.status).to eq 201
+  expect(json_response).to eql 'contacts/post_response'.json
 
-  json_response.must_equal 'contacts/post_response'.json
-
-  Contact.count.must_equal 1
-  Contact.last.contact_histories.count.must_equal 1
+  expect(Contact.last).to have_attributes handle: 'contact'
+  expect(Contact.last.contact_histories.last).to have_attributes handle: 'contact'
 end
 
 Then /^create contact must be synced to external registries$/ do
-  assert_requested :post, 'http://localhost:9001/contacts', times: 1
+  expect(WebMock).to have_requested(:post, 'http://localhost:9001/contacts')
+    .with headers: HEADERS, body: 'contacts/post_request'.json
 end
 
 Then /^create contact must not be synced to external registries$/ do
-  assert_not_requested :post, 'http://localhost:9001/contacts'
+  expect(WebMock).not_to have_requested(:post, 'http://localhost:9001/contacts')
 end

@@ -4,7 +4,7 @@ Feature: Create Contact
     Given I am authenticated as partner
     And   external registries are defined
 
-  Scenario: Create new contact successfully
+  Scenario: Create new contact
     When  I create a new contact
     Then  contact must be created
     And   create contact must be synced to external registries
@@ -13,6 +13,7 @@ Feature: Create Contact
     When  I create a new contact <invalid parameter>
     Then  error must be validation failed
     And   validation error on <field> must be "<code>"
+    And   create contact must not be synced to external registries
 
     Examples:
       | invalid parameter     | field   | code            |
