@@ -72,7 +72,7 @@ class ContactsController < SecureController
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
 
-      SyncCreateContactJob.perform_later registry.url, contact.partner, contact_params
+      SyncCreateContactJob.perform_later registry.url, contact
     end
   end
 
@@ -80,7 +80,7 @@ class ContactsController < SecureController
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
 
-      SyncUpdateContactJob.perform_later registry.url, contact.partner, contact.handle, update_params
+      SyncUpdateContactJob.perform_later registry.url, contact
     end
   end
 end
