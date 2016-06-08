@@ -15,6 +15,7 @@ Feature: Renew Domain
     Then  domain with two-level TLD must be renewed
     And   order must be synced to external registries
 
+  @wip
   Scenario: External registries unavailable
     When  I renew an existing domain which external registries reject
     #Then  domain must be renewed

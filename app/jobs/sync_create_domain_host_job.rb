@@ -8,6 +8,6 @@ class SyncCreateDomainHostJob < ApplicationJob
       name: domain_host
     }
 
-    post url: domain_host_url, params: params, token: partner.name
+    post doman_host_url, params, token: partner.name
   end
 end

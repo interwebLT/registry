@@ -2,6 +2,6 @@ class SyncCreateContactJob < ApplicationJob
   queue_as :sync_registry_changes
 
   def perform url, partner, params
-    post url: "#{url}/contacts", params: params, token: partner.name
+    post "#{url}/contacts", params, token: partner.name
   end
 end
