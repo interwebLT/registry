@@ -22,7 +22,7 @@ class ApplicationJob < ActiveJob::Base
       headers:  headers(token)
     }
 
-    response = HTTParty.delete url, request
+    process_response HTTParty.delete url, request
   end
 
   private
