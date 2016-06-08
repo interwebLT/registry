@@ -14,7 +14,7 @@ class ApplicationJob < ActiveJob::Base
       body:     body.to_json
     }
 
-    response = HTTParty.patch url, request
+    process_response HTTParty.patch url, request
   end
 
   def delete url, token:

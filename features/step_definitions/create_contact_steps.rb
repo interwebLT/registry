@@ -20,6 +20,7 @@ Then /^contact must be created$/ do
   expect(json_response).to eql 'contacts/post_response'.json
 
   expect(Contact.last).to have_attributes handle: 'contact'
+  expect(Contact.last.contact_histories.count).to eq 1
   expect(Contact.last.contact_histories.last).to have_attributes handle: 'contact'
 end
 
