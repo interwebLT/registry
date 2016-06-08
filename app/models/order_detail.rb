@@ -19,10 +19,9 @@ class OrderDetail < ActiveRecord::Base
   REVERSED_ORDER_DETAIL = 'reversed'
 
   ORDER_DETAIL_TYPES = {
-    domain_create: OrderDetail::RegisterDomain,
-    domain_renew: OrderDetail::RenewDomain,
-    credits: OrderDetail::ReplenishCredits,
-    migrate_domain: OrderDetail::MigrateDomain,
+    domain_create:    OrderDetail::RegisterDomain,
+    domain_renew:     OrderDetail::RenewDomain,
+    credits:          OrderDetail::ReplenishCredits,
     transfer_domain:  OrderDetail::TransferDomain
   }
 
@@ -63,5 +62,4 @@ class OrderDetail < ActiveRecord::Base
   def action
     ''
   end
-  
 end

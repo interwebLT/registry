@@ -105,57 +105,6 @@ RSpec.describe RegistryConsole do
     end
   end
 
-  describe '.migrate_domain' do
-    before do
-      RegistryConsole.migrate_domain  partner: partner.name,
-                                      domain: domain,
-                                      registrant_handle: contact.handle,
-                                      registered_at: registered_at,
-                                      expires_at: expires_at,
-                                      at: migrated_at
-    end
-
-    let(:partner)       { FactoryGirl.create :partner }
-    let(:domain)        { 'test.ph' }
-    let(:contact)       { FactoryGirl.create :contact }
-    let(:registered_at) { '2015-05-11 5:30 PM'.in_time_zone }
-    let(:expires_at)    { '2017-05-11 5:30 PM'.in_time_zone }
-    let(:migrated_at)   { '2015-08-10 4:00 PM'.in_time_zone }
-
-    it 'creates a completed order' do
-      expect(Order.last).not_to be nil
-      expect(Order.last.total_price).to eql 0.00.money
-      expect(Order.last.ordered_at).to eql migrated_at
-      expect(Order.last).to be_complete
-
-      expect(OrderDetail.last).not_to be nil
-      expect(OrderDetail.last).to be_an_instance_of OrderDetail::MigrateDomain
-      expect(OrderDetail.last.order).to eql Order.last
-      expect(OrderDetail.last.price).to eql 0.00.money
-      expect(OrderDetail.last.domain).to eql domain
-      expect(OrderDetail.last.authcode).to eql '1'
-      expect(OrderDetail.last.registrant_handle).to eql contact.handle
-      expect(OrderDetail.last.registered_at).to eql registered_at
-      expect(OrderDetail.last.expires_at).to eql expires_at
-      expect(OrderDetail.last).to be_complete
-    end
-
-    it 'migrates domain' do
-      expect(Domain.last).not_to be nil
-      expect(Domain.last.name).to eql domain
-      expect(Domain.last.partner).to eql partner
-      expect(Domain.last.registrant).to eql contact
-      expect(Domain.last.registered_at).to eql registered_at
-      expect(Domain.last.expires_at).to eql expires_at
-    end
-
-    it 'logs activity on migrate domain' do
-      expect(ObjectActivity.last).not_to be nil
-      expect(ObjectActivity.last).to be_an_instance_of ObjectActivity::Create
-      expect(ObjectActivity.last.activity_at).to eql migrated_at
-    end
-  end
-
   describe '.transfer_domain' do
     before do
       RegistryConsole.transfer_domain domain: domain.name,

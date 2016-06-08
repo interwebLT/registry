@@ -110,35 +110,6 @@ describe Order do
     specify { subject[3].pending?.must_equal true }
   end
 
-  describe :build do
-    subject { Order.build params, partner }
-
-    let(:partner) { create :partner }
-
-    context :when_type_migration do
-      let(:params) {
-        {
-          partner: partner.name,
-          currency_code: 'USD',
-          ordered_at: '2015-08-07T15:00:00Z',
-          order_details: [
-            {
-              type: 'migrate_domain',
-              domain: 'test.ph',
-              authcode: 'ABC123',
-              registrant_handle: 'registrant',
-              registered_at: '2015-01-01T00:00:00Z',
-              expires_at: '2017-01-01T00:00:00Z'
-            }
-          ]
-        }
-      }
-
-      specify { subject.valid?.must_equal true }
-      specify { subject.order_details.first.must_be_kind_of OrderDetail::MigrateDomain }
-    end
-  end
-
   describe :reverse! do
     subject { create :renew_domain_order }
 

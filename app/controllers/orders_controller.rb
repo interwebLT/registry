@@ -44,10 +44,11 @@ class OrdersController < SecureController
       next if registry.name == current_partner.client
 
       order.order_details.each do |order_detail|
-        next unless (order_detail.is_a? OrderDetail::RegisterDomain \
-                     or order_detail.is_a? OrderDetail::RenewDomain)
-
-        SyncOrderJob.perform_later registry.url, order.partner, order_detail.as_json_request
+        if order_detail.is_a? OrderDetail::RegisterDomain
+          SyncRegisterDomainJob.perform_later registry.url, order
+        elsif order_detail.is_a? OrderDetail::RenewDomain
+          SyncRenewDomainJob.perform_later registry.url, order
+        end
       end
     end
   end

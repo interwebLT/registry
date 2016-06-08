@@ -1,33 +1,44 @@
 class ApplicationJob < ActiveJob::Base
-  DEFAULT_HEADERS = {
-    'Content-Type'  => 'application/json',
-    'Accept'        => 'application/json'
-  }
+  def post url, body, token:
+    request = {
+      headers:  headers(token),
+      body:     body.to_json
+    }
 
-  def post url:, params:, token: nil
-    execute action: :post, url: url, params: params, token: token
+    process_response HTTParty.post url, request
   end
 
-  def patch url:, params:, token: nil
-    execute action: :patch, url: url, params: params, token: token
+  def patch url, body, token:
+    request = {
+      headers:  headers(token),
+      body:     body.to_json
+    }
+
+    process_response HTTParty.patch url, request
   end
 
-  def delete url:, token:
-    execute action: :delete, url: url, params: {}, token: token
+  def delete url, token:
+    request = {
+      headers:  headers(token)
+    }
+
+    process_response HTTParty.delete url, request
   end
 
   private
 
-  def execute action:, url:, params:, token: nil
-    response = HTTParty.send action, url, body: params.to_json, headers: headers(token: token)
-
+  def process_response response
     raise "Code: #{response.code}, Message: #{response.parsed_response}" if error_code response.code
+
+    JSON.parse response.body, symbolize_names: true
   end
 
-  def headers token: nil
-    DEFAULT_HEADERS.tap do |headers|
-      headers['Authorization'] = "Token token=#{token}" if token
-    end
+  def headers token
+    {
+      'Content-Type'  => 'application/json',
+      'Accept'        => 'application/json',
+      'Authorization' => "Token token=#{token}"
+    }
   end
 
   def error_code code

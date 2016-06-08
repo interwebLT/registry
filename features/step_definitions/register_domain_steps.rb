@@ -1,25 +1,19 @@
 When /^I register a domain$/ do
-  request = 'orders/post_register_domain_request'
-
-  create :contact
+  FactoryGirl.create :contact
 
   stub_request(:post, 'http://localhost:9001/orders')
-    .with(headers: headers, body: request.body)
-    .to_return status: 201
+    .to_return status: 201, body: 'orders/post_register_domain_response'.body
 
-  post orders_path, request.json
+  post orders_path, 'orders/post_register_domain_request'.json
 end
 
 When /^I register a domain with two-level TLD$/ do
-  request = 'orders/post_register_domain_with_two_level_tld_request'
-
-  create :contact
+  FactoryGirl.create :contact
 
   stub_request(:post, 'http://localhost:9001/orders')
-    .with(headers: headers, body: request.body)
-    .to_return status: 201
+    .to_return status: 201, body: 'orders/post_register_domain_with_two_level_tld_response'.body
 
-  post orders_path, request.json
+  post orders_path, 'orders/post_register_domain_with_two_level_tld_request'.json
 end
 
 When /^I register a domain with no domain name$/ do
@@ -35,15 +29,26 @@ When /^I register a domain with no registrant handle$/ do
 end
 
 Then /^domain must be registered$/ do
-  json_response.must_equal 'orders/post_register_domain_response'.json
+  expect(last_response.status).to eq 201
+  expect(json_response).to eq 'orders/post_register_domain_response'.json
 
-  Domain.exists? name: DOMAIN
+  expect(Domain.last).to have_attributes name: 'domain.ph'
 end
 
 Then /^domain with two-level TLD must be registered$/ do
-  json_response.must_equal 'orders/post_register_domain_with_two_level_tld_response'.json
+  expect(last_response.status).to eq 201
+  expect(json_response).to eq 'orders/post_register_domain_with_two_level_tld_response'.json
 
-  Domain.exists? name: TWO_LEVEL_DOMAIN
+  expect(Domain.last).to have_attributes name: 'domain.com.ph'
+end
+
+Then /^register domain must be synced to external registries$/ do
+  expect(WebMock).to have_requested(:post, 'http://localhost:9001/orders')
+    .with headers: HEADERS, body: 'orders/post_register_domain_request'.json
+end
+
+Then /^register domain must not be synced to external registries$/ do
+  expect(WebMock).not_to have_requested(:post, 'http://localhost:9001/orders')
 end
 
 Then /^register domain fee must be deducted$/ do

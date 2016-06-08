@@ -1,13 +1,15 @@
 class SyncCreateDomainHostJob < ApplicationJob
   queue_as :sync_registry_changes
 
-  def perform url, partner, domain, domain_host
-    domain_host_url = "#{url}/domains/#{domain}/hosts"
+  def perform url, domain_host
+    domain = domain_host.product.domain
 
-    params = {
-      name: domain_host
+    domain_host_url = "#{url}/domains/#{domain.name}/hosts"
+
+    body = {
+      name: domain_host.name
     }
 
-    post url: domain_host_url, params: params, token: partner.name
+    post domain_host_url, body, token: domain.partner.name
   end
 end

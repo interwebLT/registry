@@ -57,19 +57,4 @@ class OrderDetail::RenewDomain < OrderDetail
       period: self.period.to_i
     }
   end
-
-  def as_json_request
-    {
-      currency_code:  'USD',
-      ordered_at: self.order.ordered_at.iso8601,
-      order_details: [
-        {
-          type: self.action,
-          domain: self.domain,
-          period: self.period,
-          current_expires_at: self.current_expires_at.iso8601
-        }
-      ]
-    }
-  end
 end

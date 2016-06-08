@@ -69,10 +69,7 @@ class DomainHostsController < SecureController
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
 
-      SyncCreateDomainHostJob.perform_later registry.url,
-                                            domain_host.product.domain.partner,
-                                            domain_host.product.domain.name,
-                                            domain_host.name
+      SyncCreateDomainHostJob.perform_later registry.url, domain_host
     end
   end
 
@@ -80,10 +77,7 @@ class DomainHostsController < SecureController
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
 
-      SyncDeleteDomainHostJob.perform_later registry.url,
-                                            domain_host.product.domain.partner,
-                                            domain_host.product.domain.name,
-                                            domain_host.name
+      SyncDeleteDomainHostJob.perform_later registry.url, domain_host
     end
   end
 end
