@@ -1,5 +1,5 @@
 When /^I update an existing contact$/ do
-  contact = create :contact
+  contact = FactoryGirl.create :contact
 
   stub_request(:patch, 'http://localhost:9001/contacts/contact')
     .to_return status: 200, body: 'contacts/patch_request'.body
@@ -8,7 +8,14 @@ When /^I update an existing contact$/ do
 end
 
 When /^I update a contact that does not exist$/ do
-  contact = build :contact
+  contact = FactoryGirl.build :contact
+
+  patch contact_path(contact.handle), 'contacts/patch_request'.json
+end
+
+When /^I update a contact that I do not own$/ do
+  partner = FactoryGirl.create :partner, name: 'other'
+  contact = FactoryGirl.create :contact, partner: partner
 
   patch contact_path(contact.handle), 'contacts/patch_request'.json
 end

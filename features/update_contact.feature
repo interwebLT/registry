@@ -17,4 +17,4 @@ Feature: Update Contact
     Examples:
       | invalid update      | error       |
       | that does not exist | not found   |
-      # | that I do not own | not found   |
+      | that I do not own   | not found   |
