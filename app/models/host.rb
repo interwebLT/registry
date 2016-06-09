@@ -4,6 +4,6 @@ class Host < ActiveRecord::Base
   has_many :host_addresses
 
   validates :partner, presence: true
-  validates :name, presence: true
-  validates :name, uniqueness: true
+  validates :name,    presence: true
+  validates :name,    uniqueness: true
 end

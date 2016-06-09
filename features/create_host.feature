@@ -7,7 +7,6 @@ Feature: Create Host
     When  I create a host entry
     Then  host entry must be created under my partner
 
-  @wip
   Scenario Outline: Invalid parameters
     When  I create a host entry with <invalid parameter>
     Then  error must be validation failed
