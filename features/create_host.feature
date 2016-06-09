@@ -3,7 +3,6 @@ Feature: Create Host
   Background:
     Given I am authenticated as partner
 
-  @wip
   Scenario: Create host
     When  I create a host entry
     Then  host entry must be created under my partner
