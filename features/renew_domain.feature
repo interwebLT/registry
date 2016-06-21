@@ -33,10 +33,18 @@ Feature: Renew Domain
     Then  error must be validation failed
     And   validation error on order_details must be "invalid"
 
+  Scenario: Excluded from sync
+    Given I am excluded from sync
+    When  I renew an existing domain
+    Then  domain must be renewed
+    And   renew domain fee must be deducted
+    And   renew domain must not be synced to external registries
+
   Scenario Outline: Invalid parameters
     When  I renew an existing domain with <invalid parameter>
     Then  error must be validation failed
     And   validation error on <field> must be "<code>"
+    And   renew domain must not be synced to external registries
 
     Examples:
       | invalid parameter       | field         | code    |

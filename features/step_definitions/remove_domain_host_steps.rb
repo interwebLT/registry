@@ -20,3 +20,9 @@ Then /^remove domain host must be synced to external registries$/ do
 
   expect(WebMock).to have_requested(:delete, url).with headers: default_headers
 end
+
+Then /^remove domain host must not be synced to external registries$/ do
+  url = 'http://localhost:9001/domains/domain.ph/hosts/ns5.domains.ph'
+
+  expect(WebMock).not_to have_requested(:delete, url)
+end

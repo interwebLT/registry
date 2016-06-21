@@ -14,6 +14,10 @@ Given /^external registries are defined$/ do
   FactoryGirl.create :external_registry
 end
 
+Given /^I am excluded from sync$/ do
+  FactoryGirl.create :excluded_partner
+end
+
 Then /^error must be bad request$/ do
   assert_response_message_must_be_bad_request
 end

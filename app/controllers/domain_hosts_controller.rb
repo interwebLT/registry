@@ -76,6 +76,7 @@ class DomainHostsController < SecureController
   def sync_delete domain_host
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
 
       SyncDeleteDomainHostJob.perform_later registry.url, domain_host
     end
