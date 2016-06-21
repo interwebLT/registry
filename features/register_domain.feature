@@ -16,6 +16,15 @@ Feature: Register Domain
     When  I register a domain with two-level TLD
     Then  domain with two-level TLD must be registered
 
+  Scenario: Excluded from sync
+    Given I am excluded from sync
+    When  I register a domain
+    Then  domain must be registered
+    And   domain must not have domain hosts by default
+    And   domain status must be inactive
+    And   register domain fee must be deducted
+    And   register domain must not be synced to external registries
+
   Scenario Outline: Invalid parameters
     When  I register a domain with <invalid parameter>
     Then  error must be validation failed

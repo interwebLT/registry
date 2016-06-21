@@ -42,6 +42,7 @@ class OrdersController < SecureController
   def sync order
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
 
       order.order_details.each do |order_detail|
         if order_detail.is_a? OrderDetail::RegisterDomain

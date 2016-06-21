@@ -71,6 +71,7 @@ class ContactsController < SecureController
   def sync_create contact
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
 
       SyncCreateContactJob.perform_later registry.url, contact
     end
@@ -79,6 +80,7 @@ class ContactsController < SecureController
   def sync_update contact
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
 
       SyncUpdateContactJob.perform_later registry.url, contact
     end

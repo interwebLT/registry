@@ -9,6 +9,12 @@ Feature: Create Contact
     Then  contact must be created
     And   create contact must be synced to external registries
 
+  Scenario: Excluded from sync
+    Given I am excluded from sync
+    When  I create a new contact
+    Then  contact must be created
+    And   create contact must not be synced to external registries
+
   Scenario Outline: Invalid parameters
     When  I create a new contact <invalid parameter>
     Then  error must be validation failed
