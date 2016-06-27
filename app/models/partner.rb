@@ -113,6 +113,7 @@ class Partner < ActiveRecord::Base
     domains.destroy_all
     hosts.destroy_all
     contacts.destroy_all
+    object_activities.destroy_all
   end
 
   private
