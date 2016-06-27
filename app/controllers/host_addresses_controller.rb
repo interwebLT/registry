@@ -1,4 +1,4 @@
-class HostAddressesController < ApplicationController
+class HostAddressesController < SecureController
   def create
     host_id = create_params.delete :host_id
 
@@ -41,6 +41,8 @@ class HostAddressesController < ApplicationController
     host_address = host.host_addresses.build address: address, type: type
 
     if host_address.save
+      sync_create host_address
+
       render  json:     host_address,
               status:   :created,
               location: host_address_url(host.name, host_address.address)
@@ -61,6 +63,15 @@ class HostAddressesController < ApplicationController
       host_address.destroy!
     else
       render not_found
+    end
+  end
+
+  def sync_create host_address
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
+
+      SyncCreateHostAddressJob.perform_later registry.url, host_address
     end
   end
 end
