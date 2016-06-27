@@ -40,6 +40,10 @@ RSpec.describe Partner do
     it 'has many contacts' do
       expect(subject.contacts.count).to eql 1
     end
+
+    it 'has many object_activities' do
+      expect(subject.object_activities.count).to eql 1
+    end
   end
 
   describe '.named' do
