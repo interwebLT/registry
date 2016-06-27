@@ -1,8 +1,8 @@
 class Contact < ActiveRecord::Base
   self.primary_key = 'handle'
 
-  has_many :domains, foreign_key: :registrant_handle
-  has_many :contact_histories, foreign_key: :handle
+  has_many :domains,                                  foreign_key: :registrant_handle
+  has_many :contact_histories,  dependent: :destroy,  foreign_key: :handle
 
   belongs_to :partner
 

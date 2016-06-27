@@ -1,6 +1,6 @@
 class Domain < ActiveRecord::Base
   belongs_to :partner
-  belongs_to :product
+  belongs_to :product, dependent: :destroy
 
   belongs_to :registrant, foreign_key: :registrant_handle, class_name: Contact
   belongs_to :admin_contact, foreign_key: :admin_handle, class_name: Contact
