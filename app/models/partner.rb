@@ -13,6 +13,7 @@ class Partner < ActiveRecord::Base
   has_many :authorizations
   has_many :applications
   has_many :contacts
+  has_many :object_activities
 
   validates :name, uniqueness: true
 
