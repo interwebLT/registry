@@ -110,6 +110,7 @@ class Partner < ActiveRecord::Base
 
   def clear_data
     orders.destroy_all
+    credits.destroy_all
     domains.destroy_all
     hosts.destroy_all
     contacts.destroy_all
