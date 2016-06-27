@@ -107,6 +107,13 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def clear_data
+    orders.destroy_all
+    domains.destroy_all
+    hosts.destroy_all
+    contacts.destroy_all
+  end
+
   private
 
   def quick_orders
