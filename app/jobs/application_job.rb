@@ -25,6 +25,16 @@ class ApplicationJob < ActiveJob::Base
     process_response HTTParty.delete url, request
   end
 
+  def check url, token:
+    request = {
+      headers:  headers(token)
+    }
+
+    response = HTTParty.get url, request
+
+    not error_code response.code
+  end
+
   private
 
   def process_response response
