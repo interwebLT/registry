@@ -19,3 +19,7 @@ Feature: Remove Domain Host
     When  I try to remove a domain host before domain is registered
     Then  domain must be checked until registered
     Then  domain host must be removed
+
+  Scenario: Remove domain host where domain does not exist
+    When  I try to remove a domain host where domain does not exist
+    Then  remove domain host must reach max retries

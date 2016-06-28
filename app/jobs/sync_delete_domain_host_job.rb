@@ -7,6 +7,8 @@ class SyncDeleteDomainHostJob < ApplicationJob
     domain_url      = "#{url}/domains/#{domain.name}"
     domain_host_url = "#{domain_url}/hosts/#{domain_host.name}"
 
+    raise 'Max retry reached!' unless retry_count < MAX_SYNC_RETRY_COUNT
+
     unless check domain_url, token: domain.partner.name
       SyncDeleteDomainHostJob.perform_later url, domain_host, (retry_count + 1)
 
