@@ -35,6 +35,13 @@ When /^I renew a domain before it is registered$/ do
   post orders_path, 'orders/post_renew_domain_request'.json
 end
 
+When /^I renew a domain where domain does not exist$/ do
+  FactoryGirl.create :domain
+
+  stub_request(:get, 'http://localhost:9001/domains/domain.ph')
+    .to_return(status: 404, body: 'common/404'.body)
+end
+
 When /^I renew an existing domain with no domain name$/ do
   post orders_path, 'orders/post_renew_domain_with_no_domain_name_request'.json
 end
@@ -72,4 +79,14 @@ end
 
 Then /^domain must be checked until registered$/ do
   expect(WebMock).to have_requested(:get, 'http://localhost:9001/domains/domain.ph').times(10)
+end
+
+Then /^renew domain must reach max retries$/ do
+  begin
+    post orders_path, 'orders/post_renew_domain_request'.json
+
+    fail
+  rescue Exception => e
+    expect(e).to be_an_instance_of RuntimeError
+  end
 end

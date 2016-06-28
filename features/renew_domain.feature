@@ -19,6 +19,10 @@ Feature: Renew Domain
     Then  domain must be checked until registered
     And   domain must be renewed
 
+  Scenario: Renew domain where domain does not exist
+    When  I renew a domain where domain does not exist
+    Then  renew domain must reach max retries
+
   @wip
   Scenario: Renew non-existing domain
     When  I renew a non-existing domain

@@ -7,6 +7,8 @@ class SyncRenewDomainJob < ApplicationJob
     domain_url  = "#{url}/domains/#{order_detail.domain}"
     orders_url  = "#{url}/orders"
 
+    raise 'Max retry reached!' unless retry_count < MAX_SYNC_RETRY_COUNT
+
     unless check domain_url, token: order.partner.name
       SyncRenewDomainJob.perform_later url, order, (retry_count + 1)
 
