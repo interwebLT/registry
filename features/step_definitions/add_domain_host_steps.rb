@@ -49,5 +49,6 @@ Then /^add domain host must reach max retries$/ do
     fail
   rescue Exception => e
     expect(e).to be_an_instance_of RuntimeError
+    expect(e).to have_attributes message: 'Max retry reached!'
   end
 end
