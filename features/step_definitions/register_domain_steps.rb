@@ -36,13 +36,8 @@ When /^I register a domain before registrant exists$/ do
 end
 
 When /^I register a domain where registrant does not exist$/ do
-  FactoryGirl.create :contact
-
   stub_request(:get, 'http://localhost:9001/contacts/contact')
     .to_return(status: 404, body: 'common/404'.body)
-
-  stub_request(:post, 'http://localhost:9001/orders')
-    .to_return status: 201, body: 'orders/post_register_domain_response'.body
 end
 
 When /^I register a domain with no domain name$/ do
