@@ -35,6 +35,16 @@ When /^I register a domain before registrant exists$/ do
   post orders_path, 'orders/post_register_domain_request'.json
 end
 
+When /^I register a domain where registrant does not exist$/ do
+  FactoryGirl.create :contact
+
+  stub_request(:get, 'http://localhost:9001/contacts/contact')
+    .to_return(status: 404, body: 'common/404'.body)
+
+  stub_request(:post, 'http://localhost:9001/orders')
+    .to_return status: 201, body: 'orders/post_register_domain_response'.body
+end
+
 When /^I register a domain with no domain name$/ do
   post orders_path, 'orders/post_register_domain_with_no_domain_name_request'.json
 end
@@ -76,4 +86,14 @@ end
 
 Then /^registrant must be checked until available$/ do
   expect(WebMock).to have_requested(:get, 'http://localhost:9001/contacts/contact').times(10)
+end
+
+Then /^register domain must reach max retries$/ do
+  begin
+    post orders_path, 'orders/post_register_domain_request'.json
+
+    fail
+  rescue Exception => e
+    expect(e).to be_an_instance_of RuntimeError
+  end
 end

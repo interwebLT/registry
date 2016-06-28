@@ -7,6 +7,8 @@ class SyncRegisterDomainJob < ApplicationJob
     registrant_url  = "#{url}/contacts/#{order_detail.registrant_handle}"
     orders_url      = "#{url}/orders"
 
+    raise 'Max retry reached!' unless retry_count < MAX_SYNC_RETRY_COUNT
+
     unless check registrant_url, token: order.partner.name
       SyncRegisterDomainJob.perform_later url, order, (retry_count + 1)
 

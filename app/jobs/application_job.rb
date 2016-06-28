@@ -1,4 +1,6 @@
 class ApplicationJob < ActiveJob::Base
+  MAX_SYNC_RETRY_COUNT = 10
+
   def post url, body, token:
     request = {
       headers:  headers(token),
