@@ -1,6 +1,9 @@
 When /^I renew an existing domain$/ do
   FactoryGirl.create :domain
 
+  stub_request(:get, 'http://localhost:9001/domains/domain.ph')
+    .to_return status: 200, body: 'domains/domain.ph/get_response'.body
+
   stub_request(:post, 'http://localhost:9001/orders')
     .to_return status: 201, body: 'orders/post_renew_domain_response'.body
 
@@ -10,14 +13,33 @@ end
 When /^I renew an existing domain with two-level TLD$/ do
   FactoryGirl.create :domain, name: 'domain.com.ph'
 
+  stub_request(:get, 'http://localhost:9001/domains/domain.com.ph')
+    .to_return status: 200, body: 'domains/domain.ph/get_response'.body
+
   stub_request(:post, 'http://localhost:9001/orders')
     .to_return status: 201, body: 'orders/post_renew_domain_with_two_level_tld_response'.body
 
   post orders_path, 'orders/post_renew_domain_with_two_level_tld_request'.json
 end
 
+When /^I renew a domain before it is registered$/ do
+  FactoryGirl.create :domain
+
+  stub_request(:get, 'http://localhost:9001/domains/domain.ph')
+    .to_return(status: 404, body: 'common/404'.body).times(9)
+    .to_return status: 200, body: 'domains/domain.ph/get_response'.body
+
+  stub_request(:post, 'http://localhost:9001/orders')
+    .to_return status: 201, body: 'orders/post_renew_domain_response'.body
+
+  post orders_path, 'orders/post_renew_domain_request'.json
+end
+
 When /^I renew an existing domain which external registries reject$/ do
   FactoryGirl.create :domain
+
+  stub_request(:get, 'http://localhost:9001/domains/domain.ph')
+    .to_return status: 200, body: 'domains/domain.ph/get_response'.body
 
   stub_request(:post, 'http://localhost:9001/orders').to_return status: 422
 
@@ -61,4 +83,8 @@ end
 
 Then /^renew domain fee must be deducted$/ do
   assert_fee_deducted 64.00.money
+end
+
+Then /^domain must be checked until registered$/ do
+  expect(WebMock).to have_requested(:get, 'http://localhost:9001/domains/domain.ph').times(10)
 end

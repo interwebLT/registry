@@ -1,8 +1,17 @@
 class SyncRenewDomainJob < ApplicationJob
   queue_as :sync_registry_changes
 
-  def perform url, order
+  def perform url, order, retry_count = 0
     order_detail = order.order_details.first
+
+    domain_url  = "#{url}/domains/#{order_detail.domain}"
+    orders_url  = "#{url}/orders"
+
+    unless check domain_url, token: order.partner.name
+      SyncRenewDomainJob.perform_later url, order, (retry_count + 1)
+
+      return
+    end
 
     body = {
       currency_code:  'USD',
@@ -17,6 +26,6 @@ class SyncRenewDomainJob < ApplicationJob
       ]
     }
 
-    post "#{url}/orders", body, token: order.partner.name
+    post orders_url, body, token: order.partner.name
   end
 end
