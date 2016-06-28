@@ -35,21 +35,6 @@ When /^I renew a domain before it is registered$/ do
   post orders_path, 'orders/post_renew_domain_request'.json
 end
 
-When /^I renew an existing domain which external registries reject$/ do
-  FactoryGirl.create :domain
-
-  stub_request(:get, 'http://localhost:9001/domains/domain.ph')
-    .to_return status: 200, body: 'domains/domain.ph/get_response'.body
-
-  stub_request(:post, 'http://localhost:9001/orders').to_return status: 422
-
-  begin
-    post orders_path, 'orders/post_renew_domain_request'.json
-  rescue RuntimeError
-    @exception_thrown = true
-  end
-end
-
 When /^I renew an existing domain with no domain name$/ do
   post orders_path, 'orders/post_renew_domain_with_no_domain_name_request'.json
 end

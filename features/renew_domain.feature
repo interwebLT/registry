@@ -19,13 +19,6 @@ Feature: Renew Domain
     Then  domain must be checked until registered
     And   domain must be renewed
 
-  Scenario: External registries unavailable
-    When  I renew an existing domain which external registries reject
-    #Then  domain must be renewed
-    And   renew domain fee must be deducted
-    And   renew domain must be synced to external registries
-    And   exception must be thrown
-
   @wip
   Scenario: Renew non-existing domain
     When  I renew a non-existing domain
