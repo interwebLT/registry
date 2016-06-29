@@ -16,6 +16,15 @@ Feature: Register Domain
     When  I register a domain with two-level TLD
     Then  domain with two-level TLD must be registered
 
+  Scenario: Register domain before registrant exists
+    When  I register a domain before registrant exists
+    Then  domain must be registered
+    And   registrant must be checked until available
+
+  Scenario: Register domain where registrant does not exist
+    When  I register a domain where registrant does not exist
+    Then  register domain must reach max retries
+
   Scenario: Excluded from sync
     Given I am excluded from sync
     When  I register a domain

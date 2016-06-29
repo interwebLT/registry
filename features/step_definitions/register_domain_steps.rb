@@ -1,6 +1,9 @@
 When /^I register a domain$/ do
   FactoryGirl.create :contact
 
+  stub_request(:get, 'http://localhost:9001/contacts/contact')
+    .to_return status: 200, body: 'contacts/contact/get_response'.body
+
   stub_request(:post, 'http://localhost:9001/orders')
     .to_return status: 201, body: 'orders/post_register_domain_response'.body
 
@@ -10,10 +13,31 @@ end
 When /^I register a domain with two-level TLD$/ do
   FactoryGirl.create :contact
 
+  stub_request(:get, 'http://localhost:9001/contacts/contact')
+    .to_return status: 200, body: 'contacts/contact/get_response'.body
+
   stub_request(:post, 'http://localhost:9001/orders')
     .to_return status: 201, body: 'orders/post_register_domain_with_two_level_tld_response'.body
 
   post orders_path, 'orders/post_register_domain_with_two_level_tld_request'.json
+end
+
+When /^I register a domain before registrant exists$/ do
+  FactoryGirl.create :contact
+
+  stub_request(:get, 'http://localhost:9001/contacts/contact')
+    .to_return(status: 404, body: 'common/404'.body).times(9)
+    .to_return status: 200, body: 'contacts/contact/get_response'.body
+
+  stub_request(:post, 'http://localhost:9001/orders')
+    .to_return status: 201, body: 'orders/post_register_domain_response'.body
+
+  post orders_path, 'orders/post_register_domain_request'.json
+end
+
+When /^I register a domain where registrant does not exist$/ do
+  stub_request(:get, 'http://localhost:9001/contacts/contact')
+    .to_return(status: 404, body: 'common/404'.body)
 end
 
 When /^I register a domain with no domain name$/ do
@@ -53,4 +77,19 @@ end
 
 Then /^register domain fee must be deducted$/ do
   assert_fee_deducted 70.00.money
+end
+
+Then /^registrant must be checked until available$/ do
+  expect(WebMock).to have_requested(:get, 'http://localhost:9001/contacts/contact').times(10)
+end
+
+Then /^register domain must reach max retries$/ do
+  begin
+    post orders_path, 'orders/post_register_domain_request'.json
+
+    fail
+  rescue Exception => e
+    expect(e).to be_an_instance_of RuntimeError
+    expect(e).to have_attributes message: 'Max retry reached!'
+  end
 end
