@@ -23,6 +23,8 @@ OrderDetail.delete_all
 
 Credit.delete_all
 
+Nameserver.delete_all
+
 def create_user username, admin: false, staff: false
   partner = Partner.create  name: username,
                             password: 'password',
@@ -225,9 +227,16 @@ def create_partner name:, domain_count: 0, admin: false, staff: false
   partner
 end
 
+def create_nameserver name
+  Nameserver.create name: name
+end
+
 create_partner name: 'sync',  admin: true
 create_partner name: 'admin', admin: true
 create_partner name: 'staff', domain_count: 4, staff: true
+
+create_nameserver 'ns3.domains.ph'
+create_nameserver 'ns4.domains.ph'
 
 alpha = create_partner name: 'alpha', domain_count: 4
 
