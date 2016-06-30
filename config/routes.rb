@@ -13,6 +13,11 @@ Rails.application.routes.draw do
   resources :partners,        only: [:index, :show]
   resources :nameservers,     only: [:index]
 
+  namespace :powerdns do
+    resources :records
+    resources :domains
+  end
+
   get '/whois/:id',     to: 'whois#show',           as: :whois, id: /.*/
   get '/availability',  to: 'availabilities#index'
 
