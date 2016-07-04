@@ -31,3 +31,14 @@ Feature: Update Domain
       | non-existing admin handle       | admin_handle      | invalid |
       | non-existing billing handle     | billing_handle    | invalid |
       | non-existing tech handle        | tech_handle       | invalid |
+
+  @wip
+  Scenario: Update domain before domain exists
+    When  I update a domain before domain exists
+    Then  domain must be updated
+    And   update domain must be checked until available
+
+  @wip
+  Scenario: Update domain where domain does not exist
+    When  I update a domain where domain does not exist
+    Then  update domain must reach max retries
