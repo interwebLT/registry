@@ -1,11 +1,9 @@
 Feature: Update Domain
-  As a Partner
-  I want to be able to update an existing domain that I own
 
   Background:
     Given I am authenticated as partner
 
-  Scenario Outline: Successfully update domain contact handles
+  Scenario Outline: Update domain contacts
     When  I update <contact handle> of my domain
     Then  <contact handle> of my domain must be updated
 

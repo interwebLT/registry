@@ -25,25 +25,6 @@ def domain_with_complete_contacts_exists domain: DOMAIN
   domain_exists domain: domain, factory: :complete_domain
 end
 
-def update_domain_contact registrant_handle: NO_UPDATE,
-                          admin_handle: NO_UPDATE,
-                          billing_handle: NO_UPDATE,
-                          tech_handle: NO_UPDATE
-  json_request = {
-    registrant_handle: registrant_handle,
-    admin_handle: admin_handle,
-    billing_handle: billing_handle,
-    tech_handle: tech_handle
-  }
-
-  json_request.delete(:registrant_handle) if registrant_handle == NO_UPDATE
-  json_request.delete(:admin_handle)      if admin_handle == NO_UPDATE
-  json_request.delete(:billing_handle)    if billing_handle == NO_UPDATE
-  json_request.delete(:tech_handle)       if tech_handle == NO_UPDATE
-
-  patch domain_path(DOMAIN), json_request
-end
-
 UPDATE_DOMAIN_PARAMS = {
   'set client hold'                     =>  { client_hold: true },
   'set client delete prohibited'        =>  { client_delete_prohibited: true },
