@@ -19,3 +19,7 @@ Feature: Add Host Address
     When  I try to add a host address before host exists
     Then  host must be checked until available
     And   host must now have host address
+
+  Scenario: Add host address where host does not exist
+    When  I try to add a host address where host does not exist
+    Then  create host address must reach max retries

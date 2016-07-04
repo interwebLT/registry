@@ -7,6 +7,8 @@ class SyncCreateHostAddressJob < ApplicationJob
     host_url          = "#{url}/hosts/#{host.name}"
     host_address_url  = "#{host_url}/addresses"
 
+    raise 'Max retry reached!' unless retry_count < MAX_SYNC_RETRY_COUNT
+
     unless check host_url, token: host.partner.name
       SyncCreateHostAddressJob.perform_later url, host_address, (retry_count + 1)
 
