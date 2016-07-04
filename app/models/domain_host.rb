@@ -7,7 +7,7 @@ class DomainHost < ActiveRecord::Base
 #  validate :name_must_match_existing_host
 
   after_create :create_add_domain_host_domain_activity
-  after_create :create_pdns_domain_and_soa_record
+#  after_create :create_pdns_domain_and_soa_record
   before_destroy :create_remove_domain_host_domain_activity
   after_destroy :update_domain_status
 
