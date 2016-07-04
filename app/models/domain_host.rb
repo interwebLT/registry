@@ -7,6 +7,7 @@ class DomainHost < ActiveRecord::Base
 #  validate :name_must_match_existing_host
 
   after_create :create_add_domain_host_domain_activity
+#  after_create :create_pdns_domain_and_soa_record
   before_destroy :create_remove_domain_host_domain_activity
   after_destroy :update_domain_status
 
@@ -38,5 +39,34 @@ class DomainHost < ActiveRecord::Base
 
   def update_domain_status
     product.domain.save
+  end
+
+  def create_pdns_domain_and_soa_record
+    output = true
+    domain = Domain.find self.product_id
+    nameservers = Nameserver.all
+    hosts = domain.product.domain_hosts
+    date_today = Date.today.strftime("%Y%m%d")
+
+    if hosts.count != nameservers.count
+      output = false
+    else
+      hosts.each do |host|
+        output = nameservers.map{|nameserver| nameserver.name}.include?(host.name.strip)
+        break if !output
+      end
+    end
+
+    if output
+      pdns_domain =  Powerdns::Domain.find_or_create_by(domain_id: domain.id) do |pdns_domain|
+        pdns_domain.name = domain.name
+      end
+
+      Powerdns::Record.find_or_create_by(powerdns_domain_id: pdns_domain.id) do |pdns_record|
+        pdns_record.name = pdns_domain.name
+        pdns_record.type = "SOA"
+        pdns_record.content = "nsfwd.domains.ph root.nsfwd.domains.ph #{date_today}01 28800 7200 864000 14400"
+      end
+    end
   end
 end

@@ -1,7 +1,17 @@
 class SyncUpdateContactJob < ApplicationJob
   queue_as :sync_registry_changes
 
-  def perform url, contact
+  def perform url, contact, retry_count = 0
+    contact_url = "#{url}/contacts/#{contact.handle}"
+
+    raise 'Max retry reached!' unless retry_count < MAX_SYNC_RETRY_COUNT
+
+    unless check contact_url, token: contact.partner.name
+      SyncUpdateContactJob.perform_later url, contact, (retry_count + 1)
+
+      return
+    end
+
     body = {
       name:               contact.name,
       organization:       contact.organization,
@@ -28,6 +38,6 @@ class SyncUpdateContactJob < ApplicationJob
       email:              contact.email
     }
 
-    patch "#{url}/contacts/#{contact.handle}", body, token: contact.partner.name
+    patch contact_url, body, token: contact.partner.name
   end
 end

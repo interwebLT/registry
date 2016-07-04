@@ -1,5 +1,6 @@
 When /^I delete a domain that currently exists$/ do
   domain = FactoryGirl.create :domain
+
   FactoryGirl.create :domain_host, product: domain.product
 
   delete domain_path(domain.name)
@@ -10,6 +11,9 @@ When /^I delete a domain that does not exist$/ do
 end
 
 Then /^domain must no longer exist$/ do
+  expect(last_response).to have_attributes status: 200
+  expect(json_response).to eql 'domains/domain.ph/delete_response'.json
+
   expect(Domain.last).to be nil
 end
 

@@ -14,12 +14,14 @@ Feature: Renew Domain
     When  I renew an existing domain with two-level TLD
     Then  domain with two-level TLD must be renewed
 
-  Scenario: External registries unavailable
-    When  I renew an existing domain which external registries reject
-    #Then  domain must be renewed
-    And   renew domain fee must be deducted
-    And   renew domain must be synced to external registries
-    And   exception must be thrown
+  Scenario: Renew domain before domain is registered
+    When  I renew a domain before it is registered
+    Then  domain must be checked until registered
+    And   domain must be renewed
+
+  Scenario: Renew domain where domain does not exist
+    When  I renew a domain where domain does not exist
+    Then  renew domain must reach max retries
 
   @wip
   Scenario: Renew non-existing domain

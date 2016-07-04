@@ -32,6 +32,8 @@ class DomainsController < SecureController
 
     if domain
       domain.destroy
+
+      render json: domain, serializer: DomainInfoSerializer
     else
       render not_found
     end

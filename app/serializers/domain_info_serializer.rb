@@ -1,6 +1,7 @@
 class DomainInfoSerializer < DomainSerializer
   attributes  :registrant, :admin_contact, :billing_contact, :tech_contact,
               :activities, :hosts
+  #, :powerdns_domain, :powerdns_records
 
   def registrant
     ContactSerializer.new(object.registrant).serializable_hash
@@ -29,4 +30,13 @@ class DomainInfoSerializer < DomainSerializer
       DomainHostSerializer.new(host).serializable_hash
     end
   end
+
+#   def powerdns_domain
+#   end
+
+#   def powerdns_records
+#     # object.powerdns_domain.powerdns_records.collect do |record|
+#     #   Powerdns::RecordSerializer.new(record).serializable_hash
+#     # end
+#   end
 end

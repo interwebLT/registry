@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160620071601) do
+ActiveRecord::Schema.define(version: 20160628045039) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -237,6 +237,12 @@ ActiveRecord::Schema.define(version: 20160620071601) do
     t.datetime "updated_at",                    null: false
   end
 
+  create_table "nameservers", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "object_activities", force: :cascade do |t|
     t.string   "type",              limit: 64,  null: false
     t.integer  "partner_id",                    null: false
@@ -372,6 +378,28 @@ ActiveRecord::Schema.define(version: 20160620071601) do
   end
 
   add_index "partners", ["name"], name: "index_partners_on_name", unique: true, using: :btree
+
+  create_table "powerdns_domains", force: :cascade do |t|
+    t.integer  "domain_id",                   null: false
+    t.integer  "notified_serial", default: 1, null: false
+    t.string   "name",                        null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  create_table "powerdns_records", force: :cascade do |t|
+    t.integer  "powerdns_domain_id",             null: false
+    t.string   "name",               limit: 255, null: false
+    t.string   "type",               limit: 10,  null: false
+    t.text     "content"
+    t.integer  "ttl"
+    t.integer  "prio"
+    t.integer  "change_date"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  add_index "powerdns_records", ["name"], name: "index_powerdns_records_on_name", using: :btree
 
   create_table "products", force: :cascade do |t|
     t.string "product_type", limit: 20, null: false

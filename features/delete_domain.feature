@@ -1,7 +1,7 @@
-Feature: Delete Domain as Administrator
+Feature: Delete Domain
 
   Background:
-    Given I am authenticated as administrator
+    Given I am authenticated as partner
 
   Scenario: Delete domain
     When  I delete a domain that currently exists

@@ -13,6 +13,8 @@ class Domain < ActiveRecord::Base
                                 through:    :product,
                                 source:     :object_activities
 
+  has_one :powerdns_domain, class_name: Powerdns::Domain, dependent: :destroy
+
   alias_attribute :domain, :name
 
   validate :contact_handle_associations_must_exist

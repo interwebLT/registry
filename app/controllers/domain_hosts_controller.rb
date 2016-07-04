@@ -31,11 +31,10 @@ class DomainHostsController < SecureController
 
   def create_domain_host domain
     name = create_params.delete :name
-
     domain_host = DomainHost.new name: name, product: domain.product
-
     if domain_host.save
-      #sync_create domain_host
+
+      sync_create domain_host
 
       render  json: domain_host,
               status: :created,

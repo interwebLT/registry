@@ -1,8 +1,19 @@
 class SyncRegisterDomainJob < ApplicationJob
   queue_as :sync_registry_changes
 
-  def perform url, order
+  def perform url, order, retry_count = 0
     order_detail = order.order_details.first
+
+    registrant_url  = "#{url}/contacts/#{order_detail.registrant_handle}"
+    orders_url      = "#{url}/orders"
+
+    raise 'Max retry reached!' unless retry_count < MAX_SYNC_RETRY_COUNT
+
+    unless check registrant_url, token: order.partner.name
+      SyncRegisterDomainJob.perform_later url, order, (retry_count + 1)
+
+      return
+    end
 
     body = {
       currency_code:  'USD',
@@ -18,6 +29,6 @@ class SyncRegisterDomainJob < ApplicationJob
       ]
     }
 
-    post "#{url}/orders", body, token: order.partner.name
+    post orders_url, body, token: order.partner.name
   end
 end

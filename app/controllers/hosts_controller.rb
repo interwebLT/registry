@@ -4,6 +4,8 @@ class HostsController < SecureController
     host.partner = current_partner
 
     if host.save
+      sync_create host
+
       render  json:     host,
               status:   :created,
               location: host_url(host.id)
@@ -34,5 +36,14 @@ class HostsController < SecureController
 
   def host_params
     params.permit :name
+  end
+
+  def sync_create host
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
+
+      SyncCreateHostJob.perform_later registry.url, host
+    end
   end
 end

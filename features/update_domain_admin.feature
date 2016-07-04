@@ -5,22 +5,6 @@ Feature: Update Domain as Administrator
   Background:
     Given I am authenticated as administrator
 
-  Scenario Outline: Successfully update domain contact handles
-    When  I update <contact handle> of my domain
-    Then  <contact handle> of my domain must be updated
-
-    Examples:
-      | contact handle        |
-      | all contact handles   |
-      | the registrant handle |
-      | the admin handle      |
-      | the billing handle    |
-      | the tech handle       |
-
-  Scenario: Domain does not exist
-    When  I update a domain that does not exist
-    Then  error must be not found
-
   Scenario Outline: Set domain status
     When  I update an existing domain to <action> <status>
     Then  domain status <status> must be <action>

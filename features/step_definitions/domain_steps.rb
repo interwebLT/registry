@@ -1,45 +1,11 @@
-When /^I update all contact handles of my domain$/ do
+When /^I try to view my domains$/ do
   domain_exists
-  contact_exists
 
-  update_domain_contact registrant_handle: CONTACT_HANDLE,
-                        admin_handle: CONTACT_HANDLE,
-                        billing_handle: CONTACT_HANDLE,
-                        tech_handle: CONTACT_HANDLE
+  view_domains
 end
 
-When /^I update the registrant handle of my domain$/ do
-  domain_exists
-  contact_exists
-
-  update_domain_contact registrant_handle: CONTACT_HANDLE
-end
-
-When /^I update the admin handle of my domain$/ do
-  domain_exists
-  contact_exists
-
-  update_domain_contact admin_handle: CONTACT_HANDLE
-end
-
-When /^I update the billing handle of my domain$/ do
-  domain_exists
-  contact_exists
-
-  update_domain_contact billing_handle: CONTACT_HANDLE
-end
-
-When /^I update the tech handle of my domain$/ do
-  domain_exists
-  contact_exists
-
-  update_domain_contact tech_handle: CONTACT_HANDLE
-end
-
-When /^I update a domain that does not exist$/ do
-  domain_does_not_exist
-
-  update_domain_contact registrant_handle: CONTACT_HANDLE
+When /^I try to view the latest domains registered in my zone$/ do
+  view_latest_domains
 end
 
 When /^I update an existing domain (?:to|with) (.*)$/ do |scenario|
@@ -53,41 +19,6 @@ When /^I update an existing domain that has (.*) set to (.*)$/ do |status, scena
   domain_changes_not_allowed status: status
 
   update_domain scenario: scenario
-end
-
-When /^I try to view my domains$/ do
-  domain_exists
-
-  view_domains
-end
-
-When /^I try to view the latest domains registered in my zone$/ do
-  view_latest_domains
-end
-
-Then /^all contact handles of my domain must be updated$/ do
-  assert_response_must_be_updated_domain with: {
-    registrant_handle: CONTACT_HANDLE,
-    admin_handle: CONTACT_HANDLE,
-    billing_handle: CONTACT_HANDLE,
-    tech_handle: CONTACT_HANDLE
-  }
-end
-
-Then /^the registrant handle of my domain must be updated$/ do
-  assert_response_must_be_updated_domain with: { registrant_handle: CONTACT_HANDLE }
-end
-
-Then /^the admin handle of my domain must be updated$/ do
-  assert_response_must_be_updated_domain with: { admin_handle: CONTACT_HANDLE }
-end
-
-Then /^the billing handle of my domain must be updated$/ do
-  assert_response_must_be_updated_domain with: { billing_handle: CONTACT_HANDLE }
-end
-
-Then /^the tech handle of my domain must be updated$/ do
-  assert_response_must_be_updated_domain with: { tech_handle: CONTACT_HANDLE }
 end
 
 Then /^domain status must have ([a-zA-Z]*) ([a-zA-Z]*)$/ do |status, flag|
