@@ -14,3 +14,8 @@ Feature: Add Host Address
     When  I try to add a host address to an existing host
     Then  host must now have host address
     But   add host address must not be synced to external registries
+
+  Scenario: Add host address before host exists
+    When  I try to add a host address before host exists
+    Then  host must be checked until available
+    And   host must now have host address
