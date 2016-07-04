@@ -67,6 +67,7 @@ class DomainHostsController < SecureController
   def sync_create domain_host
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
 
       SyncCreateDomainHostJob.perform_later registry.url, domain_host
     end
