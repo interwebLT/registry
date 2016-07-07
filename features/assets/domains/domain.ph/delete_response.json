@@ -214,5 +214,7 @@
       "new_value": null
     }
   ],
-  "hosts": []
+  "hosts": [],
+  "powerdns_domain": null,
+  "powerdns_records": null
 }
