@@ -7,7 +7,7 @@ class Powerdns::RecordsController < SecureController
     powerdns_record = Powerdns::Record.find params[:id]
 
     if powerdns_record
-      render json: powerdns_record
+      render json: powerdns_record.to_json
     end
   end
 
@@ -43,6 +43,6 @@ class Powerdns::RecordsController < SecureController
   private
   def pdns_record_params
     params.permit :id, :name, :type, :prio, :content, :powerdns_domain_id,
-                  :change_date, :ttl, :created_at, :updated_at
+                  :change_date, :ttl, preferences: [:weight, :port, :srv_content]
   end
 end

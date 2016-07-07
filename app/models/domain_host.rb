@@ -7,7 +7,7 @@ class DomainHost < ActiveRecord::Base
 #  validate :name_must_match_existing_host
 
   after_create :create_add_domain_host_domain_activity
-#  after_create :create_pdns_domain_and_soa_record
+  after_create :create_pdns_domain_and_soa_record
   before_destroy :create_remove_domain_host_domain_activity
   after_destroy :update_domain_status
 
@@ -43,7 +43,7 @@ class DomainHost < ActiveRecord::Base
 
   def create_pdns_domain_and_soa_record
     output = true
-    domain = Domain.find self.product_id
+    domain = Domain.find_by_product_id self.product_id
     nameservers = Nameserver.all
     hosts = domain.product.domain_hosts
     date_today = Date.today.strftime("%Y%m%d")
