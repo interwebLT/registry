@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   resources :credits,         only: [:index, :create, :show]
   resources :activities,      only: [:index]
   resources :migrations,      only: [:create]
-  resources :contacts,        only: [:index, :create, :show, :update]
+  resources :contacts,        only: [:index, :create, :show, :update], id: /.*/
   resources :partners,        only: [:index, :show]
   resources :nameservers,     only: [:index]
 
