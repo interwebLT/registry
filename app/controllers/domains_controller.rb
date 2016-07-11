@@ -10,7 +10,7 @@ class DomainsController < SecureController
   end
 
   def show
-    domain = (Domain.find_by(id: params[:id]) || Domain.find_by(name: params[:id]))
+    domain = (Domain.find_by(name: params[:id]) || Domain.find_by(id: params[:id]))
 
     if domain and ((domain.partner == current_partner) or current_partner.admin)
       render json: domain, serializer: DomainInfoSerializer
