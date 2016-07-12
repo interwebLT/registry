@@ -65,6 +65,7 @@ class DomainHost < ActiveRecord::Base
       Powerdns::Record.find_or_create_by(powerdns_domain_id: pdns_domain.id) do |pdns_record|
         pdns_record.name = pdns_domain.name
         pdns_record.type = "SOA"
+        pdns_record.prio = 0
         pdns_record.content = "nsfwd.domains.ph root.nsfwd.domains.ph #{date_today}01 28800 7200 864000 14400"
       end
     end
