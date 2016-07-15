@@ -11,6 +11,10 @@ class Powerdns::Record < ActiveRecord::Base
 
   before_save :create_content_for_srv_type
 
+  after_save :add_powerdns_record_domain_activity
+
+  before_destroy :destroy_powerdns_record_domain_activity
+
   validate :check_field_formats_per_type
 
   def self.update_end_dates domain
@@ -109,5 +113,37 @@ class Powerdns::Record < ActiveRecord::Base
     if self.type == "SRV"
       self.content = "#{self.preferences["weight"]} #{self.preferences["port"]} #{self.preferences["srv_content"]}"
     end
+  end
+
+  def add_powerdns_record_domain_activity
+    pdns_domain = self.powerdns_domain.domain_id
+    domain = Domain.find pdns_domain
+
+    if self.id_changed?
+      ObjectActivity::Update.create activity_at: Time.now,
+                                    partner: domain.partner,
+                                    product: domain.product,
+                                    property_changed: "powerdns_record",
+                                    value: self.name
+    else
+      ObjectActivity::Update.create activity_at: Time.now,
+                                    partner: domain.partner,
+                                    product: domain.product,
+                                    property_changed: "powerdns_record",
+                                    value: self.name,
+                                    old_value: ""
+    end
+  end
+
+  def destroy_powerdns_record_domain_activity
+    pdns_domain = self.powerdns_domain.domain_id
+    domain = Domain.find pdns_domain
+
+    ObjectActivity::Update.create activity_at: Time.now,
+                                  partner: domain.partner,
+                                  product: domain.product,
+                                  property_changed: "powerdns_record",
+                                  old_value: self.name,
+                                  value: nil
   end
 end
