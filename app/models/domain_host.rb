@@ -7,9 +7,10 @@ class DomainHost < ActiveRecord::Base
 #  validate :name_must_match_existing_host
 
   after_create :create_add_domain_host_domain_activity
-  after_create :create_pdns_domain_and_soa_record
+  after_create :create_pdns_domain_and_soa_record_and_update_end_date
   before_destroy :create_remove_domain_host_domain_activity
   after_destroy :update_domain_status
+  after_destroy :update_powerdns_record_end_dates
 
   private
 
@@ -41,7 +42,7 @@ class DomainHost < ActiveRecord::Base
     product.domain.save
   end
 
-  def create_pdns_domain_and_soa_record
+  def create_pdns_domain_and_soa_record_and_update_end_date
     output = true
     domain = Domain.find_by_product_id self.product_id
     nameservers = Nameserver.all
@@ -58,16 +59,60 @@ class DomainHost < ActiveRecord::Base
     end
 
     if output
-      pdns_domain =  Powerdns::Domain.find_or_create_by(domain_id: domain.id) do |pdns_domain|
+      powerdns_domain =  Powerdns::Domain.find_or_create_by(domain_id: domain.id) do |pdns_domain|
         pdns_domain.name = domain.name
       end
 
-      Powerdns::Record.find_or_create_by(powerdns_domain_id: pdns_domain.id) do |pdns_record|
-        pdns_record.name = pdns_domain.name
-        pdns_record.type = "SOA"
-        pdns_record.prio = 0
-        pdns_record.content = "nsfwd.domains.ph root.nsfwd.domains.ph #{date_today}01 28800 7200 864000 14400"
-        pdns_record.end_date = domain.expires_at
+      Powerdns::Record.find_or_create_by(powerdns_domain_id: powerdns_domain.id) do |powerdns_record|
+        powerdns_record.name = powerdns_domain.name
+        powerdns_record.type = "SOA"
+        powerdns_record.prio = 0
+        powerdns_record.content = "nsfwd.domains.ph root.nsfwd.domains.ph #{date_today}01 28800 7200 864000 14400"
+        powerdns_record.end_date = domain.expires_at
+      end
+    else
+      powerdns_domain = Powerdns::Domain.find_by_domain_id(domain.id)
+
+      if powerdns_domain
+        powerdns_records = powerdns_domain.powerdns_records
+
+        if powerdns_records
+          powerdns_records.each do |powerdns_record|
+            powerdns_record.end_date = DateTime.now + 1.day
+            powerdns_record.save!
+          end
+        end
+      end
+    end
+  end
+
+  def update_powerdns_record_end_dates
+    output = true
+    domain = Domain.find_by_product_id self.product_id
+    nameservers = Nameserver.all
+    hosts = domain.product.domain_hosts
+
+    if hosts.count != nameservers.count
+      output = false
+    else
+      hosts.each do |host|
+        output = nameservers.map{|nameserver| nameserver.name}.include?(host.name.strip)
+        break if !output
+      end
+    end
+
+    if output
+      powerdns_domain = Powerdns::Domain.find_by_domain_id(domain.id)
+
+      if powerdns_domain
+        powerdns_records = powerdns_domain.powerdns_records
+
+        if powerdns_records
+          powerdns_records.each do |powerdns_record|
+            powerdns_record.end_date = domain.expires_at
+            powerdns_record.save!
+          end
+        end
       end
     end
   end
