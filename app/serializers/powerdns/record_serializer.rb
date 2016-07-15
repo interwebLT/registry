@@ -1,4 +1,4 @@
 class Powerdns::RecordSerializer < ActiveModel::Serializer
-  attributes  :id, :powerdns_domain_id, :name, :type, :content,
+  attributes  :id, :powerdns_domain_id, :name, :type, :content, :end_date,
               :ttl, :prio, :change_date, :created_at, :updated_at
 end

@@ -13,6 +13,21 @@ class Powerdns::Record < ActiveRecord::Base
 
   validate :check_field_formats_per_type
 
+  def self.update_end_dates domain
+    powerdns_domain = Powerdns::Domain.find_by_domain_id(domain.id)
+
+    if powerdns_domain
+      powerdns_records = powerdns_domain.powerdns_records
+
+      if powerdns_records
+        powerdns_records.each do |powerdns_record|
+          powerdns_record.end_date = domain.expires_at
+          powerdns_record.save!
+        end
+      end
+    end
+  end
+
   def validate_name name
     if name.nil?
       errors.add(:name, "Name should be a valid Domain format.")

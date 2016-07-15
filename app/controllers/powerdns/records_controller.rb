@@ -42,7 +42,7 @@ class Powerdns::RecordsController < SecureController
 
   private
   def pdns_record_params
-    params.permit :id, :name, :type, :prio, :content, :powerdns_domain_id,
+    params.permit :id, :name, :type, :prio, :content, :powerdns_domain_id, :end_date,
                   :change_date, :ttl, preferences: [:weight, :port, :srv_content]
   end
 end

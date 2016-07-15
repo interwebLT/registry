@@ -62,6 +62,8 @@ class Domain < ActiveRecord::Base
 
     self.expires_at += period.to_i.years
     self.save
+
+    Powerdns::Record.update_end_dates self
   end
 
   def zone
