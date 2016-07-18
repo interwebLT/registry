@@ -73,7 +73,7 @@ class DomainsController < SecureController
   end
 
   def fetch_domain
-    Domain.where("name = e'#{params[:name]}'")
+    Domain.where("name = '#{params[:name]}'")
 
 
   end
