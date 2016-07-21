@@ -120,11 +120,13 @@ class Powerdns::Record < ActiveRecord::Base
     domain = Domain.find pdns_domain
 
     if self.id_changed?
-      ObjectActivity::Update.create activity_at: Time.now,
-                                    partner: domain.partner,
-                                    product: domain.product,
-                                    property_changed: "powerdns_record",
-                                    value: self.name
+      unless self.type == "SOA"
+        ObjectActivity::Update.create activity_at: Time.now,
+                                      partner: domain.partner,
+                                      product: domain.product,
+                                      property_changed: "powerdns_record",
+                                      value: self.name
+      end
     else
       ObjectActivity::Update.create activity_at: Time.now,
                                     partner: domain.partner,
