@@ -40,6 +40,14 @@ class ContactsController < SecureController
     end
   end
 
+  def destroy
+    contact = Contact.find params[:id]
+    if contact.destroy
+      render  json: contact
+    else
+    end
+  end
+
   private
 
   def contact_params
