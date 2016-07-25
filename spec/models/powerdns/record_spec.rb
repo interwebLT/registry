@@ -17,11 +17,6 @@ RSpec.describe Powerdns::Record, type: :model do
       record = FactoryGirl.build(:powerdns_record, type: nil)
       expect(record).not_to be_valid
     end
-
-    it 'is invalid without priority' do
-      record = FactoryGirl.build(:powerdns_record, prio: nil)
-      expect(record).not_to be_valid
-    end
   end
 
   describe 'when validating name and content' do
