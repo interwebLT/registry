@@ -29,7 +29,10 @@ class HostsController < SecureController
       return
     end
 
-    host = (Host.find_by(name: params[:id]) || Host.find_by(id: params[:id]))
+    id = params[:id]
+
+    host = Host.find_by name: id
+    host ||= Host.find_by id: id if id.numeric?
 
     if host
       render json: host
