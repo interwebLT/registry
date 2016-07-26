@@ -47,7 +47,7 @@ class HostAddressesController < SecureController
               status:   :created,
               location: host_address_url(host.name, host_address.address)
     else
-      render validation_failed host_addrss
+      render validation_failed host_address
     end
   end
 
