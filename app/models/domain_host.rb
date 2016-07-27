@@ -12,6 +12,10 @@ class DomainHost < ActiveRecord::Base
   after_destroy :update_domain_status
   after_destroy :update_powerdns_record_end_dates
 
+  skip_callback :create, :after, :create_add_domain_host_domain_activity, if: :troy_migration
+
+  attr_accessor :troy_migration
+
   private
 
   def name_must_match_existing_host

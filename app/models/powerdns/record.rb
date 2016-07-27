@@ -16,6 +16,10 @@ class Powerdns::Record < ActiveRecord::Base
 
   validate :check_field_formats_per_type
 
+  skip_callback :save, :after, :add_powerdns_record_domain_activity, if: :troy_migration
+
+  attr_accessor :troy_migration
+
   def self.update_end_dates domain
     powerdns_domain = Powerdns::Domain.find_by_domain_id(domain.id)
 
@@ -65,12 +69,17 @@ class Powerdns::Record < ActiveRecord::Base
 
     case record_type
       when "NS"
+        nameservers = Nameserver.all.map{|ns| ns.name}
         name_domain = self.name =~ valid_domain
-        name_subdomain = self.name =~ has_atleast_one_subdomain
         content = self.content =~ valid_domain
 
         validate_name name_domain
-        validate_subdomain name_subdomain
+
+        unless nameservers.include? self.content
+          name_subdomain = self.name =~ has_atleast_one_subdomain
+          validate_subdomain name_subdomain
+        end
+
         validate_content content, "Content should be a valid Domain format."
       when "CNAME"
         name_domain = self.name =~ valid_domain
