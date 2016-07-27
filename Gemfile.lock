@@ -267,6 +267,7 @@ DEPENDENCIES
   pg
   rails (= 4.2.6)
   rails-api
+  redis (~> 3.2)
   rest-client
   rspec-rails
   sidekiq
@@ -276,4 +277,4 @@ DEPENDENCIES
   whenever
 
 BUNDLED WITH
-   1.11.2
+   1.12.5
