@@ -24,12 +24,16 @@ class HostsController < SecureController
   end
 
   def show
-    unless current_partner.admin?
-      render json: []
-      return
-    end
+    id = params[:id]
 
-    render json: Host.find(params[:id])
+    host = Host.find_by name: id
+    host ||= Host.find_by id: id if id.numeric?
+
+    if host
+      render json: host
+    else
+      render not_found
+    end
   end
 
   private
