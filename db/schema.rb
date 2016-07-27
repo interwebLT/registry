@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160718072006) do
+ActiveRecord::Schema.define(version: 20160722034103) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -400,6 +400,8 @@ ActiveRecord::Schema.define(version: 20160718072006) do
     t.datetime "updated_at",                     null: false
     t.hstore   "preferences"
     t.datetime "end_date"
+    t.boolean  "active"
+    t.datetime "start_date"
   end
 
   add_index "powerdns_records", ["name"], name: "index_powerdns_records_on_name", using: :btree

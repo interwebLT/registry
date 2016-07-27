@@ -132,6 +132,10 @@ class Domain < ActiveRecord::Base
     self.save
   end
 
+  def migrate_records
+    TroyMigrationWorker.perform_async self.id
+  end
+
   private
 
   def contact_handle_associations_must_exist
