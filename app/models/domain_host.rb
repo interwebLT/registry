@@ -7,7 +7,7 @@ class DomainHost < ActiveRecord::Base
 #  validate :name_must_match_existing_host
 
   after_create :create_add_domain_host_domain_activity
-  after_create :create_pdns_domain_and_soa_record_and_update_end_date
+  after_create :create_pdns_domain_and_record_and_update_end_date
   before_destroy :create_remove_domain_host_domain_activity
   after_destroy :update_domain_status
   after_destroy :update_powerdns_record_end_dates
@@ -46,7 +46,7 @@ class DomainHost < ActiveRecord::Base
     product.domain.save
   end
 
-  def create_pdns_domain_and_soa_record_and_update_end_date
+  def create_pdns_domain_and_record_and_update_end_date
     output = true
     domain = Domain.find_by_product_id self.product_id
     nameservers = Nameserver.all
@@ -73,6 +73,16 @@ class DomainHost < ActiveRecord::Base
         powerdns_record.prio = 0
         powerdns_record.content = "nsfwd.domains.ph root.nsfwd.domains.ph #{date_today}01 28800 7200 864000 14400"
         powerdns_record.end_date = domain.expires_at
+      end
+
+      nameservers.each do |nameserver|
+        Powerdns::Record.create(
+          powerdns_domain_id: powerdns_domain.id,
+          name: powerdns_domain.name,
+          type: "NS",
+          content: nameserver.name,
+          end_date: domain.expires_at
+        )
       end
     else
       powerdns_domain = Powerdns::Domain.find_by_domain_id(domain.id)
