@@ -26,14 +26,14 @@ class DomainHostsController < SecureController
   private
 
   def create_params
-    params.permit :domain_id, :name
+    params.permit :domain_id, :name, :ip_list
   end
 
   def create_domain_host domain
+    ip_list = create_params.delete :ip_list
     name = create_params.delete :name
-    domain_host = DomainHost.new name: name, product: domain.product
+    domain_host = DomainHost.new name: name, product: domain.product, ip_list: ip_list
     if domain_host.save
-
       sync_create domain_host
 
       render  json: domain_host,
