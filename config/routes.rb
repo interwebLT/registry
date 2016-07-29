@@ -28,7 +28,7 @@ Rails.application.routes.draw do
   end
 
   resources :domains, only: [:index, :show, :update, :destroy], id: /.*/ do
-    resources :hosts, controller: :domain_hosts, only: [:create, :show, :destroy]
+    resources :hosts, controller: :domain_hosts, only: [:create, :show, :update, :destroy]
   end
 
   resources :hosts, only: [:index, :create, :show], id: /.*/ do

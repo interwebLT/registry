@@ -1,4 +1,10 @@
 class DomainHostsController < SecureController
+  def show
+    domain_host = DomainHost.find params[:id]
+
+    render json: domain_host
+  end
+
   def create
     domain_id = create_params.delete :domain_id
 
@@ -8,6 +14,19 @@ class DomainHostsController < SecureController
       create_domain_host domain
     else
       render not_found
+    end
+  end
+
+  def update
+    domain = Domain.find params[:domain_id]
+    domain_host = DomainHost.find params[:id]
+
+    if domain_host.update_attributes! update_params
+      # sync_create domain_host
+      render  json: domain_host,
+              location: domain_host_url(domain.full_name, domain_host.name)
+    else
+      render validation_failed domain_host
     end
   end
 
@@ -24,6 +43,10 @@ class DomainHostsController < SecureController
   end
 
   private
+
+  def update_params
+    params.permit :name, :ip_list
+  end
 
   def create_params
     params.permit :domain_id, :name, :ip_list
