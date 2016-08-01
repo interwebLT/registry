@@ -23,6 +23,22 @@ class HostAddressesController < SecureController
     end
   end
 
+  def show
+    host = Host.find_by name: params[:host_id]
+
+    if host
+      host_address = HostAddress.find_by address: params[:address]
+
+      if host_address
+        render json: host_address
+      else
+        render not_found
+      end
+    else
+      render not_found
+    end
+  end
+
   private
 
   def create_params
