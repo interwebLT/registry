@@ -27,7 +27,7 @@ class HostAddressesController < SecureController
     host = Host.find_by name: params[:host_id]
 
     if host
-      host_address = HostAddress.find_by address: params[:address]
+      host_address = HostAddress.find_by address: params[:id]
 
       if host_address
         render json: host_address
