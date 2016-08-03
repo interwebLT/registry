@@ -22,7 +22,7 @@ RSpec.describe Partner do
     end
 
     it 'has many partner_configurations' do
-      expect(subject.partner_configurations.count).to eql 2
+      expect(subject.partner_configurations.count).to eql 3
     end
 
     it 'has many partner_pricings' do

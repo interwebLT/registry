@@ -170,6 +170,7 @@ def partner_info_response
         period: 0,
         price: 15.00
       }
-    ]
+    ],
+    credit_limit: "500"
   }
 end

@@ -111,7 +111,8 @@ def assert_current_partner_info_displayed
         period: 0,
         price: 15.00
       }
-    ]
+    ],
+    credit_limit: "500"
   }
 
   json_response.must_equal expected_response
