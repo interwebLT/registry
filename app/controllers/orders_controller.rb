@@ -11,6 +11,7 @@ class OrdersController < SecureController
     order = Order.build order_params, current_partner
 
     if order.save and order.complete!
+      order.check_credit_balance
       sync order
 
       render  json: order,

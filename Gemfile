@@ -38,3 +38,4 @@ gem 'whenever'
 gem 'httparty'
 gem 'sidekiq'
 gem 'redis', '~>3.2'
+gem "mailcatcher"
