@@ -10,6 +10,8 @@ class Credit < ActiveRecord::Base
 
   before_create :generate_credit_number
 
+  after_create :sync_external_registry
+
   after_initialize do
     self.status ||= PENDING_CREDIT
   end
@@ -77,6 +79,15 @@ class Credit < ActiveRecord::Base
     self.credit_number = loop do
       credit_number = SecureRandom.hex(5).upcase
       break credit_number unless self.class.exists? credit_number: credit_number
+    end
+  end
+
+  def sync_external_registry
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == self.partner.client
+      next if ExcludedPartner.exists? name: self.partner.name
+
+      SyncCreateCreditJob.perform_later registry.url, self
     end
   end
 end
