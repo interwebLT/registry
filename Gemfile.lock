@@ -294,7 +294,6 @@ DEPENDENCIES
   pg
   rails (= 4.2.6)
   rails-api
-  redis (~> 3.2)
   rest-client
   rspec-rails
   sidekiq
