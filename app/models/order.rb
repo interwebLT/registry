@@ -12,11 +12,9 @@ class Order < ActiveRecord::Base
   validates :ordered_at, presence: true
 
   validate :partner_must_exist
-  validate :validate_credit_sufficiency
 
   before_create :generate_order_number
-
-  # after_save :check_credit_balance
+  before_create :validate_credit_sufficiency
 
   COMPLETE_ORDER  = 'complete'
   PENDING_ORDER   = 'pending'
@@ -112,9 +110,12 @@ class Order < ActiveRecord::Base
   end
 
   def check_credit_balance
+    balance_before_transaction = @current_balance
     current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
-    if current_balance < 0
-      PartnerCreditMailer.credit_balance_notification(self).deliver_now
+    if balance_before_transaction > 0
+      if current_balance < 0
+        PartnerCreditMailer.credit_balance_notification(self).deliver_now
+      end
     end
   end
 
@@ -134,9 +135,9 @@ class Order < ActiveRecord::Base
   def validate_credit_sufficiency
     unless partner.nil?
       sufficient_credit = true
-      credit_limit      = self.partner.credit_limit
-      current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','')
-      total_credit      = credit_limit.to_i + current_balance.to_i
+      credit_limit      = self.partner.credit_limit.to_i
+      @current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(/,/,'').to_i
+      total_credit      = credit_limit + @current_balance
       order_price       = self.total_price_cents / 100
       sufficient_credit = total_credit >= order_price
 
