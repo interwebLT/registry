@@ -7,6 +7,12 @@ class PartnerCreditMailer < ApplicationMailer
   def credit_limit_notification order
     @partner = order.partner
     @order = order
-    mail to: order.partner.email, subject: "Partner Credit Limit"
+    mail to: order.partner.email, subject: "Partner Credit Limit Reached"
+  end
+
+  def credit_limit_percentage_notification order
+    @partner = order.partner
+    @order = order
+    mail to: order.partner.email, subject: "Partner Credit Limit Reminder"
   end
 end
