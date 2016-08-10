@@ -12,6 +12,7 @@ class Order < ActiveRecord::Base
   validates :ordered_at, presence: true
 
   validate :partner_must_exist
+  validate :validate_credit_sufficiency
 
   before_create :generate_order_number
   before_create :get_credit_before_create
@@ -194,6 +195,21 @@ class Order < ActiveRecord::Base
         if credit_limit_third_boundary > current_credit_limit
           @third_notice = true
         end
+      end
+    end
+  end
+
+  def validate_credit_sufficiency
+    unless partner.nil?
+      sufficient_credit = true
+      credit_limit      = self.partner.credit_limit.to_i
+      current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(/,/,'').to_i
+      total_credit      = credit_limit + current_balance
+      order_price       = self.total_price_cents / 100
+      sufficient_credit = total_credit >= order_price
+
+      unless sufficient_credit
+        errors.add(:total_price_cents, "You don't have enough credit balance to complete this order.")
       end
     end
   end
