@@ -104,6 +104,16 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def credit_limit_notice_percentage
+    credit_limit = self.partner_configurations.where(config_name:"credit_limit_notice_percentage").first
+
+    if credit_limit
+      credit_limit.value
+    else
+      "0"
+    end
+  end
+
   def credit_history
     self.credits.where(status: Credit::COMPLETE_CREDIT).order(:created_at)
 

@@ -12,6 +12,8 @@ class OrdersController < SecureController
 
     if order.save and order.complete!
       order.check_credit_balance
+      order.check_credit_limit_percentage
+
       sync order
 
       render  json: order,

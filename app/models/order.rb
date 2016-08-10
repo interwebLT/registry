@@ -119,6 +119,20 @@ class Order < ActiveRecord::Base
     end
   end
 
+  def check_credit_limit_percentage
+    credit_limit  = self.partner.credit_limit.to_i
+    cl_percentage = self.partner.credit_limit_notice_percentage.to_f
+    current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
+
+    credit_limit_boundary = credit_limit * cl_percentage
+
+    current_credit_limit = current_balance + credit_limit
+
+    if credit_limit_boundary > current_credit_limit
+      PartnerCreditMailer.credit_limit_percentage_notification(self).deliver_now
+    end
+  end
+
   private
 
   def generate_order_number
