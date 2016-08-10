@@ -265,9 +265,4 @@ Partner.all.each do |partner|
     config_name: 'credit_limit',
     value: "500"
   )
-
-  partner.partner_configurations.create!(
-    config_name: 'credit_limit_notice_percentage',
-    value: ".75"
-  )
 end
