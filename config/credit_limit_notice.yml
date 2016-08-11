@@ -1,14 +1,20 @@
 development:
+  cl_notice_active: true
+  cl_notice_threshold: 100
   first_notice: ".75"
   second_notice: ".5"
   third_notice: ".25"
 
 test:
+  cl_notice_active: <%= ENV['CREDIT_LIMIT_ACTIVE'] %>
+  cl_notice_threshold: <%= ENV['CREDIT_LIMIT_THRESHOLD'] %>
   first_notice: <%= ENV['CREDIT_LIMIT_FIRST_NOTICE'] %>
   second_notice: <%= ENV['CREDIT_LIMIT_SECOND_NOTICE'] %>
   third_notice: <%= ENV['CREDIT_LIMIT_THIRD_NOTICE'] %>
 
 production:
+  cl_notice_active: <%= ENV['CREDIT_LIMIT_ACTIVE'] %>
+  cl_notice_threshold: <%= ENV['CREDIT_LIMIT_THRESHOLD'] %>
   first_notice: <%= ENV['CREDIT_LIMIT_FIRST_NOTICE'] %>
   second_notice: <%= ENV['CREDIT_LIMIT_SECOND_NOTICE'] %>
   third_notice: <%= ENV['CREDIT_LIMIT_THIRD_NOTICE'] %>

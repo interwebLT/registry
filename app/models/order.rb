@@ -131,8 +131,8 @@ class Order < ActiveRecord::Base
     if self.status == COMPLETE_ORDER
       balance_before_transaction = @current_balance
       current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
-      if balance_before_transaction > 100
-        if current_balance < 100
+      if balance_before_transaction > Rails.configuration.cl_notice_threshold.to_i
+        if current_balance < Rails.configuration.cl_notice_threshold.to_i
           PartnerCreditMailer.credit_balance_below_100_notification(self).deliver_now
         end
       end
@@ -145,7 +145,7 @@ class Order < ActiveRecord::Base
   end
 
   def check_credit_limit_percentage
-    if self.status == COMPLETE_ORDER
+    if self.status == COMPLETE_ORDER && Rails.configuration.cl_notice_active
       current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
       if current_balance < 0
         current_credit_limit = current_balance + @credit_limit
@@ -184,7 +184,7 @@ class Order < ActiveRecord::Base
 
   def check_credit_limit_if_notified
     unless partner.nil?
-      if self.status == COMPLETE_ORDER
+      if self.status == COMPLETE_ORDER && Rails.configuration.cl_notice_active
         current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
 
         if current_balance < 0
