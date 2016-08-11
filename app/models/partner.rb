@@ -100,7 +100,7 @@ class Partner < ActiveRecord::Base
     if credit_limit
       credit_limit.value
     else
-      "0"
+      Rails.configuration.default_credit_limit.to_s
     end
   end
 

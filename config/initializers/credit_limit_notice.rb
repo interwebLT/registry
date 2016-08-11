@@ -1,5 +1,6 @@
 config = Rails.application.config_for(:credit_limit_notice).with_indifferent_access
 
+Rails.configuration.default_credit_limit = config[:default_credit_limit]
 Rails.configuration.cl_notice_active     = config[:cl_notice_active]
 Rails.configuration.cl_notice_threshold  = config[:cl_notice_threshold]
 Rails.configuration.first_notice         = config[:first_notice]

@@ -1,11 +1,13 @@
 development:
+  default_credit_limit: 500
   cl_notice_active: true
-  cl_notice_threshold: 100
+  cl_notice_threshold: 30
   first_notice: ".75"
   second_notice: ".5"
   third_notice: ".25"
 
 test:
+  default_credit_limit: <%= ENV['CREDIT_LIMIT_DEFAULT'] %>
   cl_notice_active: <%= ENV['CREDIT_LIMIT_ACTIVE'] %>
   cl_notice_threshold: <%= ENV['CREDIT_LIMIT_THRESHOLD'] %>
   first_notice: <%= ENV['CREDIT_LIMIT_FIRST_NOTICE'] %>
@@ -13,6 +15,7 @@ test:
   third_notice: <%= ENV['CREDIT_LIMIT_THIRD_NOTICE'] %>
 
 production:
+  default_credit_limit: <%= ENV['CREDIT_LIMIT_DEFAULT'] %>
   cl_notice_active: <%= ENV['CREDIT_LIMIT_ACTIVE'] %>
   cl_notice_threshold: <%= ENV['CREDIT_LIMIT_THRESHOLD'] %>
   first_notice: <%= ENV['CREDIT_LIMIT_FIRST_NOTICE'] %>
