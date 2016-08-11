@@ -12,11 +12,14 @@ class Order < ActiveRecord::Base
   validates :ordered_at, presence: true
 
   validate :partner_must_exist
-  validate :validate_credit_sufficiency
+  validate :validate_credit_sufficiency, on: :create
 
   before_create :generate_order_number
   before_create :get_credit_before_create
   before_create :check_credit_limit_if_notified
+
+  after_save :check_credit_balance
+  after_save :check_credit_limit_percentage
 
   COMPLETE_ORDER  = 'complete'
   PENDING_ORDER   = 'pending'
@@ -111,46 +114,6 @@ class Order < ActiveRecord::Base
     self.order_details.where(type: OrderDetail::CheckoutReplenishCredits).count > 0
   end
 
-  def check_credit_balance
-    balance_before_transaction = @current_balance
-    current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
-    if balance_before_transaction > 0
-      if current_balance < 0
-        PartnerCreditMailer.credit_balance_notification(self).deliver_now
-      end
-    end
-  end
-
-  def check_credit_limit_percentage
-    current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
-    if current_balance < 0
-      credit_limit  = self.partner.credit_limit.to_i
-      current_credit_limit = current_balance + credit_limit
-
-      credit_limit_first_boundary  = credit_limit * Rails.configuration.first_notice.to_f
-      credit_limit_second_boundary = credit_limit * Rails.configuration.second_notice.to_f
-      credit_limit_third_boundary  = credit_limit * Rails.configuration.third_notice.to_f
-
-      if credit_limit_first_boundary > current_credit_limit
-        unless @first_notice
-          PartnerCreditMailer.credit_limit_notice(self).deliver_now
-        end
-      end
-
-      if credit_limit_second_boundary > current_credit_limit
-        unless @second_notice
-          PartnerCreditMailer.credit_limit_notice(self).deliver_now
-        end
-      end
-
-      if credit_limit_third_boundary > current_credit_limit
-        unless @third_notice
-          PartnerCreditMailer.credit_limit_notice(self).deliver_now
-        end
-      end
-    end
-  end
-
   private
 
   def generate_order_number
@@ -164,36 +127,87 @@ class Order < ActiveRecord::Base
     errors.add :partner, I18n.t('errors.messages.invalid') if partner.nil?
   end
 
+  def check_credit_balance
+    if self.status == COMPLETE_ORDER
+      balance_before_transaction = @current_balance
+      current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
+      if balance_before_transaction > 100
+        if current_balance < 100
+          PartnerCreditMailer.credit_balance_below_100_notification(self).deliver_now
+        end
+      end
+      if balance_before_transaction > 0
+        if current_balance < 0
+          PartnerCreditMailer.credit_balance_notification(self).deliver_now
+        end
+      end
+    end
+  end
+
+  def check_credit_limit_percentage
+    if self.status == COMPLETE_ORDER
+      current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
+      if current_balance < 0
+        current_credit_limit = current_balance + @credit_limit
+
+        credit_limit_first_boundary  = @credit_limit * Rails.configuration.first_notice.to_f
+        credit_limit_second_boundary = @credit_limit * Rails.configuration.second_notice.to_f
+        credit_limit_third_boundary  = @credit_limit * Rails.configuration.third_notice.to_f
+
+        if credit_limit_first_boundary > current_credit_limit
+          unless @first_notice
+            PartnerCreditMailer.credit_limit_notice(self).deliver_now
+          end
+        end
+
+        if credit_limit_second_boundary > current_credit_limit
+          unless @second_notice
+            PartnerCreditMailer.credit_limit_notice(self).deliver_now
+          end
+        end
+
+        if credit_limit_third_boundary > current_credit_limit
+          unless @third_notice
+            PartnerCreditMailer.credit_limit_notice(self).deliver_now
+          end
+        end
+      end
+    end
+  end
+
   def get_credit_before_create
     unless partner.nil?
-      @current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(/,/,'').to_i
+      @current_balance = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(/,/,'').to_i
+      @credit_limit    = self.partner.credit_limit.to_i
     end
   end
 
   def check_credit_limit_if_notified
     unless partner.nil?
-      current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
-      if current_balance < 0
-        credit_limit         = self.partner.credit_limit.to_i
-        current_credit_limit = current_balance + credit_limit
-        @first_notice        = false
-        @second_notice       = false
-        @third_notice        = false
+      if self.status == COMPLETE_ORDER
+        current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
 
-        credit_limit_first_boundary  = credit_limit * Rails.configuration.first_notice.to_f
-        credit_limit_second_boundary = credit_limit * Rails.configuration.second_notice.to_f
-        credit_limit_third_boundary  = credit_limit * Rails.configuration.third_notice.to_f
+        if current_balance < 0
+          current_credit_limit = current_balance + @credit_limit
+          @first_notice        = false
+          @second_notice       = false
+          @third_notice        = false
 
-        if credit_limit_first_boundary > current_credit_limit
-          @first_notice = true
-        end
+          credit_limit_first_boundary  = @credit_limit * Rails.configuration.first_notice.to_f
+          credit_limit_second_boundary = @credit_limit * Rails.configuration.second_notice.to_f
+          credit_limit_third_boundary  = @credit_limit * Rails.configuration.third_notice.to_f
 
-        if credit_limit_second_boundary > current_credit_limit
-          @second_notice = true
-        end
+          if credit_limit_first_boundary > current_credit_limit
+            @first_notice = true
+          end
 
-        if credit_limit_third_boundary > current_credit_limit
-          @third_notice = true
+          if credit_limit_second_boundary > current_credit_limit
+            @second_notice = true
+          end
+
+          if credit_limit_third_boundary > current_credit_limit
+            @third_notice = true
+          end
         end
       end
     end
@@ -202,9 +216,9 @@ class Order < ActiveRecord::Base
   def validate_credit_sufficiency
     unless partner.nil?
       sufficient_credit = true
-      credit_limit      = self.partner.credit_limit.to_i
+      @credit_limit      = self.partner.credit_limit.to_i
       current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(/,/,'').to_i
-      total_credit      = credit_limit + current_balance
+      total_credit      = @credit_limit + current_balance
       order_price       = self.total_price_cents / 100
       sufficient_credit = total_credit >= order_price
 
