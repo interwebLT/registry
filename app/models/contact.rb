@@ -13,6 +13,8 @@ class Contact < ActiveRecord::Base
 
   after_save :create_contact_history
 
+  after_save :check_details_format
+
   private
 
   def must_not_belong_to_admin_partner
@@ -24,5 +26,24 @@ class Contact < ActiveRecord::Base
     hash[:contact] = self
 
     ContactHistory.create hash
+  end
+
+  def check_details_format
+    printable_ascii_char = /^[ -~]*$/
+    non_ascii_attributes = {}
+    non_ascii_on_attr = false
+
+    self.attributes.each_pair do |name, value|
+      valid_ascii = value.to_s =~ printable_ascii_char
+
+      if valid_ascii.nil?
+        non_ascii_on_attr = true
+        non_ascii_attributes[name] = value
+      end
+    end
+
+    if non_ascii_on_attr
+      ContactRegistrationMailer.non_ascii_notification(self.partner, non_ascii_attributes).deliver_now
+    end
   end
 end

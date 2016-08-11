@@ -1,0 +1,15 @@
+<p>Dear <%= @partner.name %>,</p>
+
+<p>You entered a non ascii character contact information.</p>
+
+<% @contact.each do |key, value|%>
+<p><b><%= key %></b> = <%= value %><p>
+<% end %>
+
+<p>Should you have any concerns, please feel free to let us know.</p>
+
+<p>
+Kind regards,<br><br>
+Customer Support<br>
+<a href="www.dot.ph">www.dot.ph</a><br>
+</p>
