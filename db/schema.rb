@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160728035111) do
+ActiveRecord::Schema.define(version: 20160812014127) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -377,9 +377,11 @@ ActiveRecord::Schema.define(version: 20160728035111) do
     t.datetime "created_at",                                       null: false
     t.datetime "updated_at",                                       null: false
     t.string   "salt",                limit: 255,                  null: false
+    t.hstore   "preferences"
   end
 
   add_index "partners", ["name"], name: "index_partners_on_name", unique: true, using: :btree
+  add_index "partners", ["preferences"], name: "index_partners_on_preferences", using: :gist
 
   create_table "powerdns_domains", force: :cascade do |t|
     t.integer  "domain_id",                   null: false

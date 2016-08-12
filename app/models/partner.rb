@@ -19,6 +19,8 @@ class Partner < ActiveRecord::Base
 
   attr_accessor :token, :client
 
+  store_accessor :preferences
+
   def self.named partner
     if self.exists? name: partner
       self.find_by name: partner
