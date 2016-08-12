@@ -10,6 +10,8 @@ class Credit < ActiveRecord::Base
 
   before_create :generate_credit_number
 
+  after_save :replenish_partner_credit_limit
+
   after_create :sync_external_registry
 
   after_initialize do
@@ -80,6 +82,12 @@ class Credit < ActiveRecord::Base
       credit_number = SecureRandom.hex(5).upcase
       break credit_number unless self.class.exists? credit_number: credit_number
     end
+  end
+
+  def replenish_partner_credit_limit
+    @partner = self.partner
+    @partner.preferences = nil
+    @partner.save!
   end
 
   def sync_external_registry
