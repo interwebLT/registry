@@ -1,5 +1,9 @@
 development:
   url: redis://localhost:6379/12
+  :concurrency: 5
+  :queues:
+    - sync_registry_changes
+    - registry_mailer
 
 test:
   url: redis://localhost:6379/12
