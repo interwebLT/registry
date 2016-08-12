@@ -1,6 +1,9 @@
 <p>Dear <%= @partner.name %>,</p>
 
-<p>Your current balance for your partner account has dropped below your threshold level of USD 100.</p>
+<p>
+Your current balance for your partner account has dropped below your threshold level of USD 
+<%= Rails.configuration.cl_notice_threshold %>.
+</p>
 
 <p>
 Please replenish your account by logging into your Partner Console at 
