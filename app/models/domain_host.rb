@@ -8,6 +8,7 @@ class DomainHost < ActiveRecord::Base
 
   after_create :create_add_domain_host_domain_activity
   after_create :create_pdns_domain_and_record_and_update_end_date
+  before_save :generate_host_and_host_address
   before_destroy :create_remove_domain_host_domain_activity
   after_destroy :update_domain_status
   after_destroy :update_powerdns_record_end_dates
@@ -125,6 +126,72 @@ class DomainHost < ActiveRecord::Base
           powerdns_records.each do |powerdns_record|
             powerdns_record.end_date = domain.expires_at
             powerdns_record.save!
+          end
+        end
+      end
+    end
+  end
+
+  def generate_host_and_host_address
+    unless self.ip_list.nil?
+      hostname = self.name
+      ip_list = JSON.parse(self.ip_list)
+
+      host = Host.find_by(name: hostname)
+
+      if host.nil?
+        new_host = Host.create!(
+          partner_id: self.product.domain.partner.id,
+          name: hostname
+        )
+      end
+
+      unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
+        unless new_host.nil?
+          unless ip_list["ipv4"]["0"].empty?
+            ip_list["ipv4"].map{|key,value|
+              HostAddress.create!(
+                host_id: new_host.id,
+                address: value,
+                type: "v4"
+              )
+            }
+          end
+
+          unless ip_list["ipv6"]["0"].empty?
+            ip_list["ipv6"].map{|key,value|
+              HostAddress.create!(
+                host_id: new_host.id,
+                address: value,
+                type: "v6"
+              )
+            }
+          end
+        else
+          unless host.host_addresses.empty?
+            ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v}
+            host_address_array = host.host_addresses.map{|host| host.address}
+
+            address_for_add    = ip_array - host_address_array
+            address_for_remove = host_address_array - ip_array
+
+            unless address_for_remove.empty?
+              host.host_addresses.map{|host|
+                if address_for_remove.include?(host.address)
+                  host.destroy
+                end
+              }
+            end
+
+            unless address_for_add.empty?
+              address_for_add.map{ |address|
+                address_type = if address.length > 15 then "v6" else "v4" end
+                host.host_addresses.create!(
+                  address: address,
+                  type: address_type
+                )
+              }
+            end
           end
         end
       end
