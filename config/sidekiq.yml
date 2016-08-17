@@ -2,6 +2,7 @@ development:
   url: redis://localhost:6379/12
   :concurrency: 5
   :queues:
+    - internal_registry_changes
     - sync_registry_changes
     - registry_mailer
 

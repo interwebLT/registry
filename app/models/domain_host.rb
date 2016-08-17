@@ -134,40 +134,18 @@ class DomainHost < ActiveRecord::Base
 
   def generate_host_and_host_address
     unless self.ip_list.nil?
+      base_url = Rails.configuration.api_url
+      token = Authorization.first.token
       hostname = self.name
       ip_list = JSON.parse(self.ip_list)
 
       host = Host.find_by(name: hostname)
 
       if host.nil?
-        new_host = Host.create!(
-          partner_id: self.product.domain.partner.id,
-          name: hostname
-        )
-      end
-
-      unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
-        unless new_host.nil?
-          unless ip_list["ipv4"]["0"].empty?
-            ip_list["ipv4"].map{|key,value|
-              HostAddress.create!(
-                host_id: new_host.id,
-                address: value,
-                type: "v4"
-              )
-            }
-          end
-
-          unless ip_list["ipv6"]["0"].empty?
-            ip_list["ipv6"].map{|key,value|
-              HostAddress.create!(
-                host_id: new_host.id,
-                address: value,
-                type: "v6"
-              )
-            }
-          end
-        else
+        params = {partner_id: self.product.domain.partner.id, name: hostname , ip_list: ip_list}
+        RegistryCreateHostJob.perform_later base_url, params, token
+      else
+        unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
           unless host.host_addresses.empty?
             ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v}
             host_address_array = host.host_addresses.map{|host| host.address}
@@ -176,20 +154,20 @@ class DomainHost < ActiveRecord::Base
             address_for_remove = host_address_array - ip_array
 
             unless address_for_remove.empty?
-              host.host_addresses.map{|host|
-                if address_for_remove.include?(host.address)
-                  host.destroy
+              host.host_addresses.map{|host_address|
+                if address_for_remove.include?(host_address.address)
+                  RegistryDeleteHostAddressJob.perform_later base_url, host_address, token
                 end
               }
             end
 
             unless address_for_add.empty?
               address_for_add.map{ |address|
-                address_type = if address.length > 15 then "v6" else "v4" end
-                host.host_addresses.create!(
-                  address: address,
-                  type: address_type
-                )
+                unless address.empty?
+                  address_type = if address.length > 15 then "v6" else "v4" end
+                  params = {address: address, type: address_type, hostname: host.name}
+                  RegistryCreateHostAddressJob.perform_later base_url, params, token
+                end
               }
             end
           end
