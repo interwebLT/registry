@@ -92,7 +92,7 @@ class DomainHostsController < SecureController
       next if registry.name == current_partner.client
       next if ExcludedPartner.exists? name: current_partner.name
 
-      SyncCreateDomainHostJob.perform_later registry.url, domain_host
+      SyncCreateDomainHostJob.set(wait: 10.second).perform_later registry.url, domain_host
     end
   end
 
