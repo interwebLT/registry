@@ -5,6 +5,7 @@ class DomainHost < ActiveRecord::Base
   validates :name, uniqueness: { scope: [:name, :product] }
 
 #  validate :name_must_match_existing_host
+  validate :check_domain_host_if_possible_glue_record_for_other_partner
 
   after_create :create_add_domain_host_domain_activity
   after_create :create_pdns_domain_and_record_and_update_end_date
@@ -128,6 +129,18 @@ class DomainHost < ActiveRecord::Base
             powerdns_record.save!
           end
         end
+      end
+    end
+  end
+
+  def check_domain_host_if_possible_glue_record_for_other_partner
+    hostname = self.name
+    host = Host.find_by(name: hostname)
+    if host.nil?
+      other_partner_domains = Domain.where.not(partner_id: self.product.domain.partner.id)
+      invalid_domain_host = other_partner_domains.map{|d| hostname.include?(d.name)}.include?(true)
+      if invalid_domain_host
+        errors.add(:name, "You are not authorized to register this Nameserver.")
       end
     end
   end
