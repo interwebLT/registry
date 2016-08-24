@@ -42,6 +42,29 @@ class DomainsController < SecureController
     end
   end
 
+  def check_nameserver_authorization
+    unless params[:domain].nil? && params[:partner].nil? && params[:host].nil?
+      domain  = Domain.find_by_name params[:domain]
+      partner = params[:partner]
+
+      unless domain.nil?
+        if domain.partner.name != partner
+          host = Host.find_by_name params[:host]
+
+          if host.nil?
+            render json: !host.nil?.to_json
+          else
+            render json: !host.nil?.to_json
+          end
+        else
+          render json: "true"
+        end
+      else
+        render json: "true"
+      end
+    end
+  end
+
   private
 
   def update_domain

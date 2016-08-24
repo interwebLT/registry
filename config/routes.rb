@@ -18,8 +18,9 @@ Rails.application.routes.draw do
     resources :domains
   end
 
-  get '/whois/:id',     to: 'whois#show',           as: :whois, id: /.*/
-  get '/availability',  to: 'availabilities#index'
+  get '/whois/:id',               to: 'whois#show',           as: :whois, id: /.*/
+  get '/availability',            to: 'availabilities#index'
+  get '/check_ns_authorization',  to: 'domains#check_nameserver_authorization'
 
   resources :user, only: [:index] do
     collection do
