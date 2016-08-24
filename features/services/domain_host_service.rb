@@ -99,3 +99,11 @@ def assert_domain_status_must_not_be_client_hold
 
   saved_domain.client_hold.must_equal false
 end
+
+def get_host_headers
+  {
+    "Content-Type" => "application/json",
+    "Accept"=>"application/json",
+    "Authorization"=>"Token token=alpha"
+  }
+end

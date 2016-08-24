@@ -58,8 +58,8 @@ class HostAddressesController < SecureController
     host_address = host.host_addresses.find_by address: address
 
     if host_address
+      sync_delete host_address
       render json: host_address
-
       host_address.destroy!
     else
       render not_found
@@ -72,6 +72,16 @@ class HostAddressesController < SecureController
       next if ExcludedPartner.exists? name: current_partner.name
 
       SyncCreateHostAddressJob.perform_later registry.url, host_address
+    end
+  end
+
+  def sync_delete host_address
+    host = host_address.host
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
+
+      SyncDeleteHostAddressJob.perform_later registry.url, host_address.address, host
     end
   end
 end
