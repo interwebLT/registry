@@ -92,11 +92,7 @@ class DomainsController < SecureController
   end
 
   def search_domains
-    unless params[:search] == "all"
-      get_domains.where('name like ?', "%#{params[:search]}%")
-    else
-      Domain.latest
-    end
+    get_domains.where('name like ?', "%#{params[:search]}%")
 #      select do |domain|
 #      domain.name.include? params[:search]
 #    end
