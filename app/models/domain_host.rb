@@ -147,17 +147,22 @@ class DomainHost < ActiveRecord::Base
 
   def generate_host_and_host_address
     unless self.ip_list.nil?
-      base_url = Rails.configuration.api_url
-      token = Authorization.last.token
-      hostname = self.name
       ip_list = JSON.parse(self.ip_list)
+    else
+      ip_list = ""
+    end
 
-      host = Host.find_by(name: hostname)
+    base_url = Rails.configuration.api_url
+    token = Authorization.last.token
+    hostname = self.name
 
-      if host.nil?
-        params = {partner_id: self.product.domain.partner.id, name: hostname , ip_list: ip_list}
-        RegistryCreateHostJob.perform_later base_url, params, token
-      else
+    host = Host.find_by(name: hostname)
+
+    if host.nil?
+      params = {partner_id: self.product.domain.partner.id, name: hostname , ip_list: ip_list}
+      RegistryCreateHostJob.perform_later base_url, params, token
+    else
+      unless ip_list.empty?
         unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
           unless host.host_addresses.empty?
             ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v}
