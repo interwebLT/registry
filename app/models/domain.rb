@@ -61,6 +61,8 @@ class Domain < ActiveRecord::Base
     end
 
     self.expires_at += period.to_i.years
+    self.ok = true
+    self.server_hold = false
     self.save
   end
 
