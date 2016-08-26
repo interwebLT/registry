@@ -1,5 +1,6 @@
 class HostsController < SecureController
   def create
+    raise current_partner.inspect
     host = Host.new host_params
     host.partner = current_partner
 
