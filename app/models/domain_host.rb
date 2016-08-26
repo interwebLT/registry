@@ -15,8 +15,9 @@ class DomainHost < ActiveRecord::Base
   after_destroy :update_powerdns_record_end_dates
 
   skip_callback :create, :after, :create_add_domain_host_domain_activity, if: :troy_migration
+  skip_callback :save, :before, :generate_host_and_host_address, if: :update_ip_list_from_host
 
-  attr_accessor :troy_migration
+  attr_accessor :troy_migration, :update_ip_list_from_host
 
   private
 
@@ -147,22 +148,17 @@ class DomainHost < ActiveRecord::Base
 
   def generate_host_and_host_address
     unless self.ip_list.nil?
+      base_url = Rails.configuration.api_url
+      token = Authorization.first.token
+      hostname = self.name
       ip_list = JSON.parse(self.ip_list)
-    else
-      ip_list = ""
-    end
 
-    base_url = Rails.configuration.api_url
-    token = Authorization.last.token
-    hostname = self.name
+      host = Host.find_by(name: hostname)
 
-    host = Host.find_by(name: hostname)
-
-    if host.nil?
-      params = {partner_id: self.product.domain.partner.id, name: hostname , ip_list: ip_list}
-      RegistryCreateHostJob.perform_later base_url, params, token
-    else
-      unless ip_list.empty?
+      if host.nil?
+        params = {partner_id: self.product.domain.partner.id, name: hostname , ip_list: ip_list}
+        RegistryCreateHostJob.perform_later base_url, params, token
+      else
         unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
           unless host.host_addresses.empty?
             ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v}
