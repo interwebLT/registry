@@ -33,7 +33,7 @@ class Host < ActiveRecord::Base
 
       list = {"ipv4": v4_hash, "ipv6": v6_hash}.to_json
 
-      domain_host.ip_list = domain_host
+      domain_host.ip_list = list
       domain_host.update_ip_list_from_host = true
       domain_host.save(validate: false)
     end
