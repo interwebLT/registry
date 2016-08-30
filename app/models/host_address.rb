@@ -45,7 +45,7 @@ class HostAddress < ActiveRecord::Base
 
         domain_host.ip_list = list
         domain_host.update_ip_list_from_host = true
-        domain_host.save(validate: false)
+        domain_host.save
       end
     end
   end
