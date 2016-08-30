@@ -149,7 +149,8 @@ class DomainHost < ActiveRecord::Base
   def generate_host_and_host_address
     unless self.ip_list.nil?
       base_url = Rails.configuration.api_url
-      token = Authorization.last.token
+      auth = self.product.domain.partner.authorizations.create
+      token = auth.token
       hostname = self.name
       ip_list = JSON.parse(self.ip_list)
 
