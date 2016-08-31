@@ -79,13 +79,16 @@ class DomainHost < ActiveRecord::Base
       end
 
       nameservers.each do |nameserver|
-        Powerdns::Record.create(
-          powerdns_domain_id: powerdns_domain.id,
-          name: powerdns_domain.name,
-          type: "NS",
-          content: nameserver.name,
-          end_date: domain.expires_at
-        )
+        powerdns_record = Powerdns::Record.where(name: powerdns_domain.name, type: "NS", content: nameserver.name).first
+        if powerdns_record.nil?
+          Powerdns::Record.create(
+            powerdns_domain_id: powerdns_domain.id,
+            name: powerdns_domain.name,
+            type: "NS",
+            content: nameserver.name,
+            end_date: domain.expires_at
+          )
+        end
       end
     else
       powerdns_domain = Powerdns::Domain.find_by_domain_id(domain.id)
