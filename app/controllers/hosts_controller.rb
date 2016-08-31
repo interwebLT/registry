@@ -3,21 +3,14 @@ class HostsController < SecureController
     host = Host.new host_params
     host.partner = current_partner
 
-    host_try = Host.find_by_name(host.name)
+    if host.save
+      sync_create host
 
-    if host_try.nil?
-      if host.save
-        sync_create host
-
-        render  json:     host,
-                status:   :created,
-                location: host_url(host.id)
-      else
-        render  validation_failed host
-      end
+      render  json:     host,
+              status:   :created,
+              location: host_url(host.id)
     else
-      render  json:     host_try,
-              location: host_url(host_try.id)
+      render  validation_failed host
     end
   end
 
