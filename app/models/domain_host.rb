@@ -10,6 +10,7 @@ class DomainHost < ActiveRecord::Base
   after_create :create_add_domain_host_domain_activity
   after_create :create_pdns_domain_and_record_and_update_end_date
   before_save :generate_host_and_host_address
+  before_update :delete_external_registry_domain_host
   before_destroy :create_remove_domain_host_domain_activity
   after_destroy :update_domain_status
   after_destroy :update_powerdns_record_end_dates
@@ -191,6 +192,18 @@ class DomainHost < ActiveRecord::Base
           end
         end
       end
+    end
+  end
+
+  def delete_external_registry_domain_host
+    domain_host = DomainHost.find self.id
+    partner = domain_host.product.domain.partner
+
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == partner.client
+      next if ExcludedPartner.exists? name: partner.name
+
+      SyncDeleteDomainHostJob.perform_later registry.url, domain_host
     end
   end
 end
