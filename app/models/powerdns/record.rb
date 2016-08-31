@@ -3,7 +3,7 @@ class Powerdns::Record < ActiveRecord::Base
   belongs_to :powerdns_domain, class_name: Powerdns::Domain, foreign_key: "powerdns_domain_id"
 
   validates :powerdns_domain_id, presence: true
-  validates :name, presence: true
+  # validates :name, presence: true
   validates :type, presence: true
 
   store_accessor :preferences
@@ -53,6 +53,12 @@ class Powerdns::Record < ActiveRecord::Base
     end
   end
 
+  def validate_prio prio, message
+    if prio.nil?
+      errors.add(:prio, message)
+    end
+  end
+
   def validate_srv_content srv_content, message
     if srv_content.nil?
       errors.add(:preferences, message)
@@ -88,29 +94,24 @@ class Powerdns::Record < ActiveRecord::Base
         validate_name name_domain
         validate_content content, "Content should be a valid Domain format."
       when "A"
-        name_domain = self.name =~ valid_domain
         content = self.content =~ valid_ip
 
-        validate_name name_domain
         validate_content content, "Content should be a valid IP address format."
       when "AAAA"
-        name_domain = self.name =~ valid_domain
         content = self.content =~ valid_ipv6
 
-        validate_name name_domain
         validate_content content, "Content should be a valid IPv6 format."
       when "TXT"
-        name_domain = self.name =~ valid_domain
         content = self.content =~ printable_ascii_char
 
-        validate_name name_domain
         validate_content content, "Content should be a printable ASCII Char."
-      # when "MX"
+      when "MX"
+        prio = self.prio
+        validate_prio prio, "Priority should not be blank."
       when "SRV"
-        name_domain = self.name =~ valid_domain
         srv_content = self.preferences["srv_content"] =~ valid_domain
-
-        validate_name name_domain
+        prio = self.prio
+        validate_prio prio, "Priority should not be blank."
         validate_srv_content srv_content, "Content should be a valid Domain format."
     end
   end
