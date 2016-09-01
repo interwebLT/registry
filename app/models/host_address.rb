@@ -12,9 +12,9 @@ class HostAddress < ActiveRecord::Base
   after_destroy :update_domain_host_ip_list_if_any
   after_save :update_domain_host_ip_list_if_any
 
-  # def set_internal_sync internal_sync
-  #   @internal_sync = internal_sync
-  # end
+  def set_internal_sync internal_sync
+    @internal_sync = internal_sync
+  end
 
   private
 
