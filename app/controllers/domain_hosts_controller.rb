@@ -22,7 +22,7 @@ class DomainHostsController < SecureController
     domain_host = DomainHost.find params[:id]
 
     if domain_host.update_attributes! update_params
-      sync_create domain_host
+      # sync_create domain_host
       render  json: domain_host,
               location: domain_host_url(domain.full_name, domain_host.name)
     else
