@@ -17,6 +17,7 @@ class DomainHost < ActiveRecord::Base
 
   skip_callback :create, :after, :create_add_domain_host_domain_activity, if: :troy_migration
   skip_callback :save, :before, :generate_host_and_host_address, if: :update_ip_list_from_host
+  skip_callback :update, :before, :delete_external_registry_domain_host, if: :update_ip_list_from_host
 
   attr_accessor :troy_migration, :update_ip_list_from_host
 
