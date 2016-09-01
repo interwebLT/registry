@@ -23,7 +23,7 @@ class HostAddress < ActiveRecord::Base
   end
 
   def update_domain_host_ip_list_if_any
-    # unless @internal_sync
+    unless @internal_sync
       if @host.nil?
         @host = self.host
       end
@@ -53,6 +53,6 @@ class HostAddress < ActiveRecord::Base
           domain_host.save
         end
       end
-    # end
+    end
   end
 end
