@@ -3,7 +3,7 @@ class RegistryCreateHostAddressJob < ApplicationJob
 
   def perform url, params, token
     host_url          = "#{url}/hosts/#{params[:hostname]}"
-    host_address_url  = "#{host_url}/addresses"
+    host_address_url  = "#{host_url}/addresses?internal_sync=true"
 
     body = {
       address:  params[:address],

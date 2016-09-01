@@ -1,7 +1,6 @@
 class HostAddressesController < SecureController
   def create
     host_id = create_params.delete :host_id
-
     host = Host.find_by name: host_id
 
     if host
@@ -40,6 +39,10 @@ class HostAddressesController < SecureController
 
     host_address = host.host_addresses.build address: address, type: type
 
+    if params[:internal_sync]
+      host_address.set_internal_sync params[:internal_sync]
+    end
+
     if host_address.save
       sync_create host_address
 
@@ -56,6 +59,10 @@ class HostAddressesController < SecureController
     address = destroy_params.delete :id
 
     host_address = host.host_addresses.find_by address: address
+
+    if params[:internal_sync]
+      host_address.set_internal_sync params[:internal_sync]
+    end
 
     if host_address
       sync_delete host_address

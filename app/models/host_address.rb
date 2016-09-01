@@ -12,6 +12,10 @@ class HostAddress < ActiveRecord::Base
   after_destroy :update_domain_host_ip_list_if_any
   after_save :update_domain_host_ip_list_if_any
 
+  def set_internal_sync internal_sync
+    @internal_sync = internal_sync
+  end
+
   private
 
   def get_host_name
@@ -19,33 +23,35 @@ class HostAddress < ActiveRecord::Base
   end
 
   def update_domain_host_ip_list_if_any
-    if @host.nil?
-      @host = self.host
-    end
+    unless @internal_sync
+      if @host.nil?
+        @host = self.host
+      end
 
-    domain_host    = DomainHost.find_by_name(@host.name)
-    host_addresses = @host.host_addresses
+      domain_host    = DomainHost.find_by_name(@host.name)
+      host_addresses = @host.host_addresses
 
-    unless domain_host.nil?
-      unless host_addresses.empty?
-        ipv4 = []
-        ipv6 = []
-        host_addresses.map{ |host_address|
-          if host_address.address.length > 15
-            ipv6 << host_address.address
-          else
-            ipv4 << host_address.address
-          end
-        }
+      unless domain_host.nil?
+        unless host_addresses.empty?
+          ipv4 = []
+          ipv6 = []
+          host_addresses.map{ |host_address|
+            if host_address.address.length > 15
+              ipv6 << host_address.address
+            else
+              ipv4 << host_address.address
+            end
+          }
 
-        v4_hash = Hash[(0...ipv4.size).zip ipv4]
-        v6_hash = Hash[(0...ipv6.size).zip ipv6]
+          v4_hash = Hash[(0...ipv4.size).zip ipv4]
+          v6_hash = Hash[(0...ipv6.size).zip ipv6]
 
-        list = {"ipv4": v4_hash, "ipv6": v6_hash}.to_json
+          list = {"ipv4": v4_hash, "ipv6": v6_hash}.to_json
 
-        domain_host.ip_list = list
-        domain_host.update_ip_list_from_host = true
-        domain_host.save
+          domain_host.ip_list = list
+          domain_host.update_ip_list_from_host = true
+          domain_host.save
+        end
       end
     end
   end

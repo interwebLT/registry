@@ -5,7 +5,7 @@ class RegistryDeleteHostAddressJob < ApplicationJob
     host = host_address.host
 
     host_url          = "#{url}/hosts/#{host.name}"
-    host_address_url  = "#{host_url}/addresses/#{host_address.address}"
+    host_address_url  = "#{host_url}/addresses/#{host_address.address}?internal_sync=true"
 
     delete host_address_url, token: token
   end
