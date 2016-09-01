@@ -67,7 +67,7 @@ class Powerdns::Record < ActiveRecord::Base
 
   def check_field_formats_per_type
     record_type = self.type
-    valid_domain = /^(([a-zA-Z0-9\-_\.]{1})|([a-zA-Z0-9\-_\.]{1}[a-zA-Z0-9\-_\.]{1})|([a-zA-Z0-9\-_\.]{1}[0-9]{1})|([0-9]{1}[a-zA-Z0-9\-_\.]{1})|([a-zA-Z0-9\-_\.][a-zA-Z0-9\-_\.]{1,61}[a-zA-Z0-9\-\.]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9\-]{2,30}\.[a-zA-Z]{2,3})$/
+    valid_domain = /^(([a-zA-Z0-9\-_\.\-]{1})|([a-zA-Z0-9\-_\.\-]{1}[a-zA-Z0-9\-_\.\-]{1})|([a-zA-Z0-9\-_\.\-]{1}[0-9]{1})|([0-9]{1}[a-zA-Z0-9\-_\.\-]{1})|([a-zA-Z0-9\-_\.\-][a-zA-Z0-9\-_\.]{1,61}[a-zA-Z0-9\-\.\-]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9\-]{2,30}\.[a-zA-Z]{2,3})$/
     valid_ip = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
     valid_ipv6 = /(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$)/
     has_atleast_one_subdomain = /.*\..*\../
@@ -81,10 +81,10 @@ class Powerdns::Record < ActiveRecord::Base
 
         validate_name name_domain
 
-        unless nameservers.include? self.content
-          name_subdomain = self.name =~ has_atleast_one_subdomain
-          validate_subdomain name_subdomain
-        end
+        # unless nameservers.include? self.content
+        #   name_subdomain = self.name =~ has_atleast_one_subdomain
+        #   validate_subdomain name_subdomain
+        # end
 
         validate_content content, "Content should be a valid Domain format."
       when "CNAME"
