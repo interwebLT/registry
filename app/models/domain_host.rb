@@ -169,7 +169,7 @@ class DomainHost < ActiveRecord::Base
           unless host.host_addresses.empty?
             ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v}
             host_address_array = host.host_addresses.map{|host| host.address}
-
+            raise ip_array.inspect
             address_for_add    = ip_array - host_address_array
             address_for_remove = host_address_array - ip_array
 
