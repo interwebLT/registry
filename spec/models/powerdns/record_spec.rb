@@ -25,10 +25,10 @@ RSpec.describe Powerdns::Record, type: :model do
       expect(record).not_to be_valid
     end
 
-    it 'should have a SUBDOMAIN name for NS type' do
-      record = FactoryGirl.build(:powerdns_record, name: 'sample.com', type: 'NS')
-      expect(record).not_to be_valid
-    end
+    # it 'should have a SUBDOMAIN name for NS type' do
+    #   record = FactoryGirl.build(:powerdns_record, name: 'sample.com', type: 'NS')
+    #   expect(record).not_to be_valid
+    # end
 
     it 'should have a DOMAIN format content for NS type' do
       record = FactoryGirl.build(:powerdns_record, content: 'sample', type: 'NS')
