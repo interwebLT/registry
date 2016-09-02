@@ -15,6 +15,14 @@ class SecureController < ApplicationController
     current_partner
   end
 
+  def headers
+    {
+      'Content-Type'  => 'application/json',
+      'Accept'        => 'application/json',
+      'Authorization' => "Token token=#{current_partner.token}"
+    }
+  end
+
   private
 
   def authenticate

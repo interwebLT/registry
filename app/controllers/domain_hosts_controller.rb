@@ -1,4 +1,7 @@
 class DomainHostsController < SecureController
+  before_action :create_host, only: [:create, :update]
+  before_action :delete_external_domain_host, only: [:update]
+
   def show
     domain_host = DomainHost.find params[:id]
 
@@ -22,7 +25,7 @@ class DomainHostsController < SecureController
     domain_host = DomainHost.find params[:id]
 
     if domain_host.update_attributes! update_params
-      # sync_create domain_host
+      sync_create domain_host
       render  json: domain_host,
               location: domain_host_url(domain.full_name, domain_host.name)
     else
@@ -103,5 +106,27 @@ class DomainHostsController < SecureController
 
       SyncDeleteDomainHostJob.perform_later registry.url, domain_host
     end
+  end
+
+  def create_host
+    base_url = Rails.configuration.api_url
+    body = {
+      name:    create_params["name"],
+      ip_list: create_params["ip_list"]
+    }
+    request = {
+      headers:  headers,
+      body:     body.to_json
+    }
+    process_response HTTParty.post "#{base_url}/hosts", request
+  end
+
+  def delete_external_domain_host
+    domain_host = DomainHost.find params[:id]
+    sync_delete domain_host
+  end
+
+  def process_response response
+    JSON.parse response.body, symbolize_names: true
   end
 end
