@@ -23,9 +23,10 @@ class DomainHostsController < SecureController
   def update
     domain = Domain.find params[:domain_id]
     domain_host = DomainHost.find params[:id]
-
     if domain_host.update_attributes! update_params
-      sync_create domain_host
+      if @delete_sync
+        sync_create domain_host
+      end
       render  json: domain_host,
               location: domain_host_url(domain.full_name, domain_host.name)
     else
@@ -123,7 +124,11 @@ class DomainHostsController < SecureController
 
   def delete_external_domain_host
     domain_host = DomainHost.find params[:id]
-    sync_delete domain_host
+    new_name = params["name"]
+    unless domain_host.name == new_name
+      @delete_sync = true
+      sync_delete domain_host
+    end
   end
 
   def process_response response

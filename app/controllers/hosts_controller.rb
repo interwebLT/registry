@@ -6,8 +6,8 @@ class HostsController < SecureController
     host.partner = current_partner
 
     if host.save
-      create_host_address host, params[:ip_list]
       sync_create host
+      create_host_address host, params[:ip_list]
 
       render  json:     host,
               status:   :created,
