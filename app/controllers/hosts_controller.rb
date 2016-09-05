@@ -7,7 +7,9 @@ class HostsController < SecureController
 
     if host.save
       sync_create host
-      create_host_address host, params[:ip_list]
+      unless params[:ip_list].nil?
+        create_host_address host, params[:ip_list]
+      end
 
       render  json:     host,
               status:   :created,
@@ -58,21 +60,16 @@ class HostsController < SecureController
     ip_list = JSON.parse ip_list
 
     unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
-      ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v}
+      ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
 
-      ip_array.map {|address|
-        unless address.empty?
-          base_url         = Rails.configuration.api_url
-          host_url         = "#{base_url}/hosts/#{host.name}"
-          host_address_url = "#{host_url}/addresses"
-          address_type     = if address.length > 15 then "v6" else "v4" end
+      base_url         = Rails.configuration.api_url
+      host_url         = "#{base_url}/hosts/#{host.name}"
+      host_address_url = "#{host_url}/addresses"
 
-          body    = {address: address, type: address_type}
-          request = {headers: headers, body: body.to_json}
+      body    = {address: "", type:"" ,ip_list: ip_array}
+      request = {headers: headers, body: body.to_json}
 
-          process_response HTTParty.post host_address_url, request
-        end
-      }
+      process_response HTTParty.post host_address_url, request
     end
   end
 
@@ -85,32 +82,23 @@ class HostsController < SecureController
       host_url         = "#{base_url}/hosts/#{host.name}"
 
       unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
-        ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v}
+        ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
 
         host_address_array = host.host_addresses.map{|host| host.address}
         address_for_add    = ip_array - host_address_array
         address_for_remove = host_address_array - ip_array
 
         unless address_for_remove.empty?
-          host.host_addresses.map{|host_address|
-            if address_for_remove.include?(host_address.address)
-              host_address_url = "#{host_url}/addresses/#{host_address.address}"
-              request = {headers:  headers}
-              process_response HTTParty.delete host_address_url, request
-            end
-          }
+          host_address_url = "#{host_url}/addresses/#{address_for_remove.first}?ip_list=#{address_for_remove.join(",")}"
+          request = {headers:  headers}
+          process_response HTTParty.delete host_address_url, request
         end
 
         unless address_for_add.empty?
-          address_for_add.map{ |address|
-            unless address.empty?
-              host_address_url = "#{host_url}/addresses"
-              address_type     = if address.length > 15 then "v6" else "v4" end
-              body    = {address: address, type: address_type}
-              request = {headers: headers, body: body.to_json}
-              process_response HTTParty.post host_address_url, request
-            end
-          }
+          host_address_url = "#{host_url}/addresses"
+          body    = {address: "", type:"" ,ip_list: address_for_add}
+          request = {headers: headers, body: body.to_json}
+          process_response HTTParty.post host_address_url, request
         end
       end
     end
