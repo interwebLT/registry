@@ -1,6 +1,6 @@
 class DomainHostsController < SecureController
-  # before_action :create_host, only: [:create, :update]
-  # before_action :delete_external_domain_host, only: [:update]
+  before_action :create_host, only: [:create, :update]
+  before_action :delete_external_domain_host, only: [:update]
 
   def show
     domain_host = DomainHost.find params[:id]
@@ -111,8 +111,9 @@ class DomainHostsController < SecureController
 
   def create_host
     base_url = Rails.configuration.api_url
-    default_ip_list = {"ipv4":[],"ipv6":{"0":[]}}
+    default_ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
     ip_list = if create_params["ip_list"].nil? then default_ip_list else create_params["ip_list"] end
+
     body = {
       name:    create_params["name"],
       ip_list: ip_list
