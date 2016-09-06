@@ -127,56 +127,60 @@ class Order < ActiveRecord::Base
   end
 
   def check_credit_balance
-    if self.status == COMPLETE_ORDER
-      balance_before_transaction = @current_balance
-      current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
-      if balance_before_transaction > Rails.configuration.cl_notice_threshold.to_i
-        if current_balance < Rails.configuration.cl_notice_threshold.to_i
-          PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_balance_below_threshold(self)
+    if Rails.configuration.activate_credit_validation
+      if self.status == COMPLETE_ORDER
+        balance_before_transaction = @current_balance
+        current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
+        if balance_before_transaction > Rails.configuration.cl_notice_threshold.to_i
+          if current_balance < Rails.configuration.cl_notice_threshold.to_i
+            PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_balance_below_threshold(self)
+          end
         end
-      end
-      if balance_before_transaction > 0
-        if current_balance < 0
-          PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_balance_notification(self)
+        if balance_before_transaction > 0
+          if current_balance < 0
+            PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_balance_notification(self)
+          end
         end
       end
     end
   end
 
   def check_credit_limit_percentage
-    if self.status == COMPLETE_ORDER && Rails.configuration.cl_notice_active
-      current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
-      if current_balance < 0
-        current_credit_limit = current_balance + @credit_limit
+    if Rails.configuration.activate_credit_validation
+      if self.status == COMPLETE_ORDER && Rails.configuration.cl_notice_active
+        current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(',','').to_i
+        if current_balance < 0
+          current_credit_limit = current_balance + @credit_limit
 
-        credit_limit_first_boundary  = @credit_limit * Rails.configuration.first_notice.to_f
-        credit_limit_second_boundary = @credit_limit * Rails.configuration.second_notice.to_f
-        credit_limit_third_boundary  = @credit_limit * Rails.configuration.third_notice.to_f
+          credit_limit_first_boundary  = @credit_limit * Rails.configuration.first_notice.to_f
+          credit_limit_second_boundary = @credit_limit * Rails.configuration.second_notice.to_f
+          credit_limit_third_boundary  = @credit_limit * Rails.configuration.third_notice.to_f
 
-        if credit_limit_first_boundary > current_credit_limit
-          if self.partner.preferences.nil?
-            self.partner.preferences = {cl_first_notice: "true" }
-            self.partner.save!
-            PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_limit_notice(self, "first")
-          end
-        end
-
-        if credit_limit_second_boundary > current_credit_limit
-          unless self.partner.preferences.nil?
-            if self.partner.preferences["cl_second_notice"].nil?
-              self.partner.preferences["cl_second_notice"] = true
+          if credit_limit_first_boundary > current_credit_limit
+            if self.partner.preferences.nil?
+              self.partner.preferences = {cl_first_notice: "true" }
               self.partner.save!
-              PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_limit_notice(self, "second")
+              PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_limit_notice(self, "first")
             end
           end
-        end
 
-        if credit_limit_third_boundary > current_credit_limit
-          unless self.partner.preferences.nil?
-            if self.partner.preferences["cl_third_notice"].nil?
-              self.partner.preferences["cl_third_notice"] = true
-              self.partner.save!
-              PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_limit_notice(self, "third")
+          if credit_limit_second_boundary > current_credit_limit
+            unless self.partner.preferences.nil?
+              if self.partner.preferences["cl_second_notice"].nil?
+                self.partner.preferences["cl_second_notice"] = true
+                self.partner.save!
+                PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_limit_notice(self, "second")
+              end
+            end
+          end
+
+          if credit_limit_third_boundary > current_credit_limit
+            unless self.partner.preferences.nil?
+              if self.partner.preferences["cl_third_notice"].nil?
+                self.partner.preferences["cl_third_notice"] = true
+                self.partner.save!
+                PartnerCreditMailer.delay_for(5.minute, queue: "registry_mailer").credit_limit_notice(self, "third")
+              end
             end
           end
         end
@@ -185,23 +189,27 @@ class Order < ActiveRecord::Base
   end
 
   def get_credit_before_create
-    unless partner.nil?
-      @current_balance = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(/,/,'').to_i
-      @credit_limit    = self.partner.credit_limit.to_i
+    if Rails.configuration.activate_credit_validation
+      unless partner.nil?
+        @current_balance = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(/,/,'').to_i
+        @credit_limit    = self.partner.credit_limit.to_i
+      end
     end
   end
 
   def validate_credit_sufficiency
-    unless partner.nil?
-      sufficient_credit = true
-      @credit_limit      = self.partner.credit_limit.to_i
-      current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(/,/,'').to_i
-      total_credit      = @credit_limit + current_balance
-      order_price       = self.total_price_cents / 100
-      sufficient_credit = total_credit >= order_price
+    if Rails.configuration.activate_credit_validation
+      unless partner.nil?
+        sufficient_credit = true
+        @credit_limit      = self.partner.credit_limit.to_i
+        current_balance   = ActionController::Base.helpers.humanized_money(self.partner.current_balance).gsub(/,/,'').to_i
+        total_credit      = @credit_limit + current_balance
+        order_price       = self.total_price_cents / 100
+        sufficient_credit = total_credit >= order_price
 
-      unless sufficient_credit
-        errors.add(:total_price_cents, "You don't have enough credit balance to complete this order.")
+        unless sufficient_credit
+          errors.add(:total_price_cents, "You don't have enough credit balance to complete this order.")
+        end
       end
     end
   end
