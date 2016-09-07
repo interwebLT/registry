@@ -113,13 +113,13 @@ class DomainHostsController < SecureController
           ipv4 = if domain_host[1]["addresses"][ipv4].nil? then "" else domain_host[1]["addresses"][ipv6] end
           ipv6 = if domain_host[1]["addresses"][ipv6].nil? then "" else domain_host[1]["addresses"][ipv6] end
           ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}
-          save_host domain_host[0], ip_list
+          save_host domain_host[0], ip_list, base_url
         end
       }
     else
       default_ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
       ip_list = if create_params["ip_list"].nil? then default_ip_list else create_params["ip_list"] end
-      save_host create_params["name"], ip_list
+      save_host create_params["name"], ip_list, base_url
     end
   end
 
@@ -190,7 +190,7 @@ class DomainHostsController < SecureController
     @existing_domain_hosts = domain.product.domain_hosts.map{|domain_host| domain_host.name}
   end
 
-  def save_host name, ip_list
+  def save_host name, ip_list, base_url
     body = {
       name:    name,
       ip_list: ip_list
