@@ -1,22 +1,26 @@
 class DomainHostsController < SecureController
+  before_action :get_existing_domain_hosts, only: [:create]
   before_action :create_host, only: [:create, :update]
   before_action :delete_external_domain_host, only: [:update]
 
   def show
     domain_host = DomainHost.find params[:id]
-
     render json: domain_host
   end
 
   def create
     domain_id = create_params.delete :domain_id
-
     domain = Domain.named(domain_id)
 
-    if domain
-      create_domain_host domain
+    unless params[:troy_domain_hosts].nil?
+      troy_domain_hosts = params[:troy_domain_hosts]
+      bulk_create_domain_host troy_domain_hosts, domain
     else
-      render not_found
+      if domain
+        create_domain_host domain
+      else
+        render not_found
+      end
     end
   end
 
@@ -91,6 +95,59 @@ class DomainHostsController < SecureController
     end
   end
 
+  def delete_external_domain_host
+    domain_host = DomainHost.find params[:id]
+    new_name = params["name"]
+    unless domain_host.name == new_name
+      @old_domain_host_name = domain_host.name
+      @delete_sync = true
+    end
+  end
+
+  def create_host
+    base_url = Rails.configuration.api_url
+
+    unless params[:troy_domain_hosts].nil?
+      params[:troy_domain_hosts].map{|domain_host|
+        unless @existing_domain_hosts.include? domain_host[0]
+          ipv4 = if domain_host[1]["addresses"][ipv4].nil? then "" else domain_host[1]["addresses"][ipv6] end
+          ipv6 = if domain_host[1]["addresses"][ipv6].nil? then "" else domain_host[1]["addresses"][ipv6] end
+          ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}
+          save_host domain_host[0], ip_list
+        end
+      }
+    else
+      default_ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
+      ip_list = if create_params["ip_list"].nil? then default_ip_list else create_params["ip_list"] end
+      save_host create_params["name"], ip_list
+    end
+  end
+
+# Parameters: {"troy_domain_hosts"=>{"ns-de.1and1-dns.de"=>{"addresses"=>{"ipv4"=>"217.160.80.1", "ipv6"=>nil}},"ns-de.1and1-dns.biz"=>{"addresses"=>{"ipv4"=>"217.160.81.1", "ipv6"=>nil}},"ns-de.1and1-dns.com"=>{"addresses"=>{"ipv4"=>"217.160.82.1", "ipv6"=>nil}}}, "domain_id"=>"cdhelpers.ph"}
+  def bulk_create_domain_host troy_domain_hosts, domain
+    domain_host_for_delete = []
+    domain_host_for_add    = []
+    domain.product.domain_hosts.map{|domain_host|
+      unless troy_domain_hosts.map{|domain_host| domain_host[0]}.include? domain_host.name
+        domain_host_for_delete << domain_host.name
+        domain_host.destroy!
+      end
+    }
+
+    troy_domain_hosts.map{|domain_host|
+      unless @existing_domain_hosts.include? domain_host[0]
+        ipv4 = if domain_host[1]["addresses"][ipv4].nil? then "" else domain_host[1]["addresses"][ipv6] end
+        ipv6 = if domain_host[1]["addresses"][ipv6].nil? then "" else domain_host[1]["addresses"][ipv6] end
+        ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}
+        domain_host_for_add << domain_host[0]
+        domain_host = DomainHost.new name: domain_host[0], product: domain.product, ip_list: ip_list
+        domain_host.save!
+      end
+    }
+    sync_create_delete_bulk domain, domain_host_for_delete, domain_host_for_add
+    render  json: domain
+  end
+
   def sync_create domain_host
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
@@ -118,13 +175,22 @@ class DomainHostsController < SecureController
     end
   end
 
-  def create_host
-    base_url = Rails.configuration.api_url
-    default_ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
-    ip_list = if create_params["ip_list"].nil? then default_ip_list else create_params["ip_list"] end
+  def sync_create_delete_bulk domain, domain_host_for_delete, domain_host_for_add
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
 
+      SyncCreateDeleteBulkDomainHostJob.perform_later registry.url, domain, domain_host_for_delete, domain_host_for_add
+    end
+  end
+
+  def get_existing_domain_hosts
+    @existing_domain_hosts = domain.product.domain_hosts.map{|domain_host| domain_host.name}
+  end
+
+  def save_host name, ip_list
     body = {
-      name:    create_params["name"],
+      name:    name,
       ip_list: ip_list
     }
     request = {
@@ -132,15 +198,6 @@ class DomainHostsController < SecureController
       body:     body.to_json
     }
     process_response HTTParty.post "#{base_url}/hosts", request
-  end
-
-  def delete_external_domain_host
-    domain_host = DomainHost.find params[:id]
-    new_name = params["name"]
-    unless domain_host.name == new_name
-      @old_domain_host_name = domain_host.name
-      @delete_sync = true
-    end
   end
 
   def process_response response
