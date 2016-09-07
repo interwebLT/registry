@@ -110,9 +110,9 @@ class DomainHostsController < SecureController
     unless params[:troy_domain_hosts].nil?
       params[:troy_domain_hosts].map{|domain_host|
         unless @existing_domain_hosts.include? domain_host[0]
-          ipv4 = if domain_host[1]["addresses"][ipv4].nil? then "" else domain_host[1]["addresses"][ipv6] end
-          ipv6 = if domain_host[1]["addresses"][ipv6].nil? then "" else domain_host[1]["addresses"][ipv6] end
-          ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}
+          ipv4 = if domain_host[1]["addresses"]["ipv4"].nil? then "" else domain_host[1]["addresses"]["ipv4"] end
+          ipv6 = if domain_host[1]["addresses"]["ipv6"].nil? then "" else domain_host[1]["addresses"]["ipv6"] end
+          ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}.to_json
           save_host domain_host[0], ip_list, base_url
         end
       }
@@ -123,7 +123,6 @@ class DomainHostsController < SecureController
     end
   end
 
-# Parameters: {"troy_domain_hosts"=>{"ns-de.1and1-dns.de"=>{"addresses"=>{"ipv4"=>"217.160.80.1", "ipv6"=>nil}},"ns-de.1and1-dns.biz"=>{"addresses"=>{"ipv4"=>"217.160.81.1", "ipv6"=>nil}},"ns-de.1and1-dns.com"=>{"addresses"=>{"ipv4"=>"217.160.82.1", "ipv6"=>nil}}}, "domain_id"=>"cdhelpers.ph"}
   def bulk_create_domain_host troy_domain_hosts, domain
     domain_host_for_delete = []
     domain_host_for_add    = []
@@ -144,7 +143,9 @@ class DomainHostsController < SecureController
         domain_host.save!
       end
     }
-    sync_create_delete_bulk domain, domain_host_for_delete, domain_host_for_add
+    if !domain_host_for_add.empty? and !domain_host_for_delete.empty?
+      sync_create_delete_bulk domain, domain_host_for_delete, domain_host_for_add
+    end
     render  json: domain
   end
 
