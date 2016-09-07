@@ -185,6 +185,8 @@ class DomainHostsController < SecureController
   end
 
   def get_existing_domain_hosts
+    domain_id = create_params.delete :domain_id
+    domain = Domain.named(domain_id)
     @existing_domain_hosts = domain.product.domain_hosts.map{|domain_host| domain_host.name}
   end
 
