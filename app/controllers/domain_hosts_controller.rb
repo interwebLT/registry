@@ -25,7 +25,7 @@ class DomainHostsController < SecureController
     domain_host = DomainHost.find params[:id]
     if domain_host.update_attributes! update_params
       if @delete_sync
-        sync_create domain_host
+        sync_update domain_host, @old_domain_host_name
       end
       render  json: domain_host,
               location: domain_host_url(domain.full_name, domain_host.name)
@@ -100,6 +100,15 @@ class DomainHostsController < SecureController
     end
   end
 
+  def sync_update domain_host, old_domain_host_name
+    ExternalRegistry.all.each do |registry|
+      next if registry.name == current_partner.client
+      next if ExcludedPartner.exists? name: current_partner.name
+
+      SyncUpdateDomainHostJob.perform_later registry.url, domain_host, old_domain_host_name
+    end
+  end
+
   def sync_delete domain_host
     ExternalRegistry.all.each do |registry|
       next if registry.name == current_partner.client
@@ -129,8 +138,8 @@ class DomainHostsController < SecureController
     domain_host = DomainHost.find params[:id]
     new_name = params["name"]
     unless domain_host.name == new_name
+      @old_domain_host_name = domain_host.name
       @delete_sync = true
-      sync_delete domain_host
     end
   end
 
