@@ -109,11 +109,13 @@ class DomainHostsController < SecureController
 
     unless params[:troy_domain_hosts].nil?
       params[:troy_domain_hosts].map{|domain_host|
-        unless @existing_domain_hosts.include? domain_host[0]
-          ipv4 = if domain_host[1]["addresses"]["ipv4"].nil? then "" else domain_host[1]["addresses"]["ipv4"] end
-          ipv6 = if domain_host[1]["addresses"]["ipv6"].nil? then "" else domain_host[1]["addresses"]["ipv6"] end
-          ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}.to_json
-          save_host domain_host[0], ip_list, base_url
+        unless domain_host.empty?
+          unless @existing_domain_hosts.include? domain_host[0]
+            ipv4 = if domain_host[1]["addresses"]["ipv4"].nil? then "" else domain_host[1]["addresses"]["ipv4"] end
+            ipv6 = if domain_host[1]["addresses"]["ipv6"].nil? then "" else domain_host[1]["addresses"]["ipv6"] end
+            ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}.to_json
+            save_host domain_host[0], ip_list, base_url
+          end
         end
       }
     else
@@ -134,13 +136,15 @@ class DomainHostsController < SecureController
     }
 
     troy_domain_hosts.map{|domain_host|
-      unless @existing_domain_hosts.include? domain_host[0]
-        ipv4 = if domain_host[1]["addresses"][ipv4].nil? then "" else domain_host[1]["addresses"][ipv6] end
-        ipv6 = if domain_host[1]["addresses"][ipv6].nil? then "" else domain_host[1]["addresses"][ipv6] end
-        ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}
-        domain_host_for_add << domain_host[0]
-        domain_host = DomainHost.new name: domain_host[0], product: domain.product, ip_list: ip_list
-        domain_host.save!
+      unless domain_host.empty?
+        unless @existing_domain_hosts.include? domain_host[0]
+          ipv4 = if domain_host[1]["addresses"]["ipv4"].nil? then "" else domain_host[1]["addresses"]["ipv4"] end
+          ipv6 = if domain_host[1]["addresses"]["ipv6"].nil? then "" else domain_host[1]["addresses"]["ipv6"] end
+          ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}.to_json
+          domain_host_for_add << domain_host[0]
+          domain_host = DomainHost.new name: domain_host[0], product: domain.product, ip_list: ip_list
+          domain_host.save!
+        end
       end
     }
     if !domain_host_for_add.empty? and !domain_host_for_delete.empty?

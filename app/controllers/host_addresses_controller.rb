@@ -59,7 +59,7 @@ class HostAddressesController < SecureController
         host_address.save
       }
       sync_create_multiple host, ip_array
-      render  json: host
+      render  json: host_address
     end
   end
 
