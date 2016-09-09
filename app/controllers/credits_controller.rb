@@ -1,4 +1,7 @@
 class CreditsController < SecureController
+  
+  skip_before_action :authenticate, :only => [:update]
+  
   def index
     render  json: current_partner.credit_history,
             each_serializer: CreditSerializer
@@ -12,6 +15,31 @@ class CreditsController < SecureController
     else
       create_credit
     end
+  end
+  
+  def update
+    credit_number = params[:id]
+    credit = Credit.find_by_credit_number(credit_number)
+    unless credit
+      render not_found and return
+    end
+    if credit.complete?
+      render bad_request and return
+    end
+    if params[:status].downcase == 's'
+      credit.verification_code = params[:refno]
+      credit.remarks = 'Replenish Credits'
+      if credit.save!
+        unless credit.complete!
+          puts "validation failed"
+          render validation_failed credits
+          return
+        end
+      end
+    else
+      head :ok and return
+    end
+    render json: credit
   end
 
   def show
@@ -31,7 +59,7 @@ class CreditsController < SecureController
 
 
   private
-
+  
   def credit_params
     params.permit(:partner, :type, :amount, :amount_currency, :fee, :fee_currency, :verification_code, :credited_at, :remarks)
   end
@@ -40,12 +68,13 @@ class CreditsController < SecureController
     credit = Credit.build credit_params, credit_partner
 
     if credit.save
+      unless credit.is_a? Credit::DragonPayReplenish
 #      if current_partner.admin?
         unless credit.complete!
           render validation_failed credits
           return
         end
-#      end
+      end
 
       render  json: credit,
               status: :created,
