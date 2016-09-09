@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :welcome,         only: [:index]
   resources :authorizations,  only: [:create, :show]
   resources :orders,          only: [:index, :create, :show]
-  resources :credits,         only: [:index, :create, :show]
+  resources :credits,         only: [:index, :create, :show, :update]
   resources :activities,      only: [:index]
   resources :migrations,      only: [:create]
   resources :contacts,        only: [:index, :create, :show, :update, :destroy], id: /.*/

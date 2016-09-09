@@ -24,7 +24,10 @@ class Credit < ActiveRecord::Base
 
   CREDIT_TYPES = {
     bank_credit: Credit::BankReplenish,
-    card_credit: Credit::CardReplenish
+    card_credit: Credit::CardReplenish,
+    paypal_credit: Credit::PaypalReplenish,
+    checkout_credit: Credit::CheckoutReplenish,
+    dragon_pay_credit: Credit::DragonPayReplenish
   }
 
   def self.build params, partner
@@ -91,11 +94,13 @@ class Credit < ActiveRecord::Base
   end
 
   def sync_external_registry
-    ExternalRegistry.all.each do |registry|
-      next if registry.name == self.partner.client
-      next if ExcludedPartner.exists? name: self.partner.name
+    if complete?
+      ExternalRegistry.all.each do |registry|
+        next if registry.name == self.partner.client
+        next if ExcludedPartner.exists? name: self.partner.name
 
-      SyncCreateCreditJob.perform_later registry.url, self
+        SyncCreateCreditJob.perform_later registry.url, self
+      end
     end
   end
 end
