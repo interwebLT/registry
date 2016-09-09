@@ -116,6 +116,26 @@ class Powerdns::Record < ActiveRecord::Base
     end
   end
 
+  def update_soa_record
+    soa_record =  self.powerdns_domain.powerdns_records.where(type: "SOA").first
+    unless soa_record.nil?
+      soa_record_array = soa_record.content.split(" ")
+      current_soa_date = soa_record_array[2][0..7]   || soa_record_array[2]
+      current_count    = soa_record_array[2][-2..-1] || soa_record_array[2]
+
+      if current_count == "99"
+        current_soa_date = Date.today.+(1).strftime("%Y%m%d")
+        current_count    = "00"
+        soa_record_array[2] = current_soa_date + current_count
+      else
+        soa_record_array[2] = soa_record_array[2].to_i + 1
+      end
+
+      soa_record.content = soa_record_array.join(" ")
+      soa_record.save!
+    end
+  end
+
   private
   def create_content_for_srv_type
     if self.type == "SRV"

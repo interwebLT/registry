@@ -17,6 +17,7 @@ class Powerdns::RecordsController < SecureController
     powerdns_record.powerdns_domain_id = pdns_domain.id
 
     if powerdns_record.save
+      powerdns_record.update_soa_record
       render  json: powerdns_record,
               status: :created
     else
@@ -24,9 +25,10 @@ class Powerdns::RecordsController < SecureController
   end
 
   def update
-    pdns_record = Powerdns::Record.find params[:id]
+    powerdns_record = Powerdns::Record.find params[:id]
 
-    if pdns_record.update_attributes pdns_record_params
+    if powerdns_record.update_attributes pdns_record_params
+      powerdns_record.update_soa_record
       render  json: powerdns_record
     else
     end
@@ -34,6 +36,7 @@ class Powerdns::RecordsController < SecureController
 
   def destroy
     powerdns_record = Powerdns::Record.find params[:id]
+    powerdns_record.update_soa_record
     if powerdns_record.destroy
       render  json: powerdns_record
     else
