@@ -20,6 +20,8 @@ set :bundle_env_variables, { nokogiri_use_system_libraries: 1 }
 # set :sidekiq_queue, ['sync_registry_changes', 'registry_mailer']
 # set :sidekiq_concurrency, 5
 
+set :whenever_roles, ->{ :app }
+
 after 'deploy:publishing', 'deploy:restart'
 
 namespace :deploy do
