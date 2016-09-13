@@ -10,6 +10,23 @@ class HostAddressesController < SecureController
     end
   end
 
+  def show
+    id = params[:id]
+    host_id = params[:host_id]
+
+    host = Host.find_by name: host_id
+    host ||= Host.find_by id: host_id if host_id.numeric?
+
+    host_address = HostAddress.find_by_address_and_host_id(id, host.id)
+    host_address ||= HostAddress.find_by id: id if id.numeric?
+
+    if host_address
+      render json: host_address
+    else
+      render not_found
+    end
+  end
+
   def destroy
     host_id = destroy_params.delete :host_id
 
