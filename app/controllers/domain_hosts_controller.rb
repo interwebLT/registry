@@ -109,7 +109,7 @@ class DomainHostsController < SecureController
 
     unless params[:troy_domain_hosts].nil?
       params[:troy_domain_hosts].map{|domain_host|
-        unless domain_host.empty?
+        unless domain_host[0].blank?
           unless @existing_domain_hosts.include? domain_host[0]
             ipv4 = if domain_host[1]["addresses"]["ipv4"].nil? then "" else domain_host[1]["addresses"]["ipv4"] end
             ipv6 = if domain_host[1]["addresses"]["ipv6"].nil? then "" else domain_host[1]["addresses"]["ipv6"] end
@@ -136,7 +136,7 @@ class DomainHostsController < SecureController
     }
 
     troy_domain_hosts.map{|domain_host|
-      unless domain_host.empty?
+      unless domain_host[0].blank?
         unless @existing_domain_hosts.include? domain_host[0]
           ipv4 = if domain_host[1]["addresses"]["ipv4"].nil? then "" else domain_host[1]["addresses"]["ipv4"] end
           ipv6 = if domain_host[1]["addresses"]["ipv6"].nil? then "" else domain_host[1]["addresses"]["ipv6"] end
