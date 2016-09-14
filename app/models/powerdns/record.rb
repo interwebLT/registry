@@ -76,22 +76,16 @@ class Powerdns::Record < ActiveRecord::Base
     case record_type
       when "NS"
         nameservers = Nameserver.all.map{|ns| ns.name}
-        name_domain = self.name =~ valid_domain
+        # name_domain = self.name =~ valid_domain
         content = self.content =~ valid_domain
 
-        validate_name name_domain
-
-        # unless nameservers.include? self.content
-        #   name_subdomain = self.name =~ has_atleast_one_subdomain
-        #   validate_subdomain name_subdomain
-        # end
-
+        # validate_name name_domain
         validate_content content, "Content should be a valid Domain format."
       when "CNAME"
-        name_domain = self.name =~ valid_domain
+        # name_domain = self.name =~ valid_domain
         content = self.content =~ valid_domain
 
-        validate_name name_domain
+        # validate_name name_domain
         validate_content content, "Content should be a valid Domain format."
       when "A"
         content = self.content =~ valid_ip
@@ -125,10 +119,16 @@ class Powerdns::Record < ActiveRecord::Base
 
       if current_count == "99"
         current_soa_date = Date.today.+(1).strftime("%Y%m%d")
-        current_count    = "00"
+        current_count    = "01"
         soa_record_array[2] = current_soa_date + current_count
       else
-        soa_record_array[2] = soa_record_array[2].to_i + 1
+        if current_soa_date.to_date == Date.today
+          soa_record_array[2] = soa_record_array[2].to_i + 1
+        else
+          current_soa_date = Date.today.strftime("%Y%m%d")
+          current_count    = "01"
+          soa_record_array[2] = current_soa_date + current_count.to_s.rjust(2, '0')
+        end
       end
 
       soa_record.content = soa_record_array.join(" ")
