@@ -9,6 +9,7 @@ class DomainHost < ActiveRecord::Base
 
   after_create :create_add_domain_host_domain_activity
   after_create :create_pdns_domain_and_record_and_update_end_date
+  before_create :check_if_host_address_available
   before_destroy :create_remove_domain_host_domain_activity
   after_destroy :update_domain_status
   after_destroy :update_powerdns_record_end_dates
@@ -143,6 +144,33 @@ class DomainHost < ActiveRecord::Base
       invalid_domain_host = other_partner_domains.map{|d| hostname.include?(d.name)}.include?(true)
       if invalid_domain_host
         errors.add(:name, "You are not authorized to register this Nameserver.")
+      end
+    end
+  end
+
+  def check_if_host_address_available
+    if self.ip_list.nil?
+      hostname = self.name
+      host = Host.find_by(name: hostname)
+      unless host.nil?
+        if self.product.domain.partner_id == host.partner_id
+          host_addresses = host.host_addresses
+          unless host_addresses.empty?
+            ipv4 = []
+            ipv6 = []
+            host_addresses.map{ |host_address|
+              if host_address.address.length > 15
+                ipv6 << host_address.address
+              else
+                ipv4 << host_address.address
+              end
+            }
+            v4_hash = Hash[(0...ipv4.size).zip ipv4]
+            v6_hash = Hash[(0...ipv6.size).zip ipv6]
+            list = {"ipv4": v4_hash, "ipv6": v6_hash}.to_json
+            self.ip_list = list
+          end
+        end
       end
     end
   end
