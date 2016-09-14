@@ -1,0 +1,21 @@
+<p>Dear <%= @partner.name %>,</p>
+
+<p>
+Your current balance for your partner account <%= @partner.name %> is: USD 
+<%= ActionController::Base.helpers.humanized_money(@partner.current_balance).gsub(',','').to_i %>
+</p>
+
+<p>Our records indicate that your are or near your credit limit of USD <%= @partner.credit_limit %>.</p>
+
+<p>
+Please replenish your account by logging into your Partner Console at 
+<a href="https://partner.dot.ph"> https://partner.dot.ph</a>.
+</p>
+
+<p>Should you have any concerns, please feel free to let us know.</p>
+
+<p>
+Kind regards,<br><br>
+Customer Support<br>
+<a href="www.dot.ph">www.dot.ph</a><br>
+</p>

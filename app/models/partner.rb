@@ -19,6 +19,8 @@ class Partner < ActiveRecord::Base
 
   attr_accessor :token, :client
 
+  store_accessor :preferences
+
   def self.named partner
     if self.exists? name: partner
       self.find_by name: partner
@@ -91,6 +93,16 @@ class Partner < ActiveRecord::Base
   def default_nameservers
     self.partner_configurations.where(config_name: 'nameserver').collect do |configuration|
       configuration.value
+    end
+  end
+
+  def credit_limit
+    credit_limit = self.partner_configurations.where(config_name:"credit_limit").first
+
+    if credit_limit
+      credit_limit.value
+    else
+      Rails.configuration.default_credit_limit.to_s
     end
   end
 

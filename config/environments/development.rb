@@ -27,5 +27,8 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   # Do not execute jobs
-  config.active_job.queue_adapter = :test
+  # config.active_job.queue_adapter = :test
+  config.active_job.queue_adapter = :sidekiq
+
+  config.action_mailer.delivery_method = :letter_opener
 end

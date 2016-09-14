@@ -5,7 +5,7 @@ set :rails_env, 'production'
 
 set :deploy_to, '/srv/registry'
 set :log_level, :info
-set :linked_files, %w{config/secrets.yml config/database.yml config/exception_notification.yml config/checkout.yml config/sidekiq.yml}
+set :linked_files, %w{config/secrets.yml config/database.yml config/exception_notification.yml config/checkout.yml config/sidekiq.yml config/credit_limit_notice.yml config/api.yml}
 set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 set :default_env, { path: "$PATH:/usr/pgsql-9.3/bin" }
@@ -17,8 +17,10 @@ set :rbenv_map_bins, %w{rake gem bundle ruby rails unicorn}
 set :bundle_jobs, 4
 set :bundle_env_variables, { nokogiri_use_system_libraries: 1 }
 
-set :sidekiq_queue, 'sync_registry_changes'
-set :sidekiq_concurrency, 5
+# set :sidekiq_queue, ['sync_registry_changes', 'registry_mailer']
+# set :sidekiq_concurrency, 5
+
+set :whenever_roles, ->{ :app }
 
 after 'deploy:publishing', 'deploy:restart'
 

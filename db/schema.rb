@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160628045039) do
+ActiveRecord::Schema.define(version: 20160914010321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "hstore"
 
   create_table "applications", force: :cascade do |t|
     t.integer "partner_id",            null: false
@@ -152,6 +153,7 @@ ActiveRecord::Schema.define(version: 20160628045039) do
     t.string   "name",       limit: 255, null: false
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+    t.text     "ip_list"
   end
 
   create_table "domain_search_logs", force: :cascade do |t|
@@ -375,9 +377,11 @@ ActiveRecord::Schema.define(version: 20160628045039) do
     t.datetime "created_at",                                       null: false
     t.datetime "updated_at",                                       null: false
     t.string   "salt",                limit: 255,                  null: false
+    t.hstore   "preferences"
   end
 
   add_index "partners", ["name"], name: "index_partners_on_name", unique: true, using: :btree
+  add_index "partners", ["preferences"], name: "index_partners_on_preferences", using: :gist
 
   create_table "powerdns_domains", force: :cascade do |t|
     t.integer  "domain_id",                   null: false
@@ -388,21 +392,39 @@ ActiveRecord::Schema.define(version: 20160628045039) do
   end
 
   create_table "powerdns_records", force: :cascade do |t|
-    t.integer  "powerdns_domain_id",             null: false
-    t.string   "name",               limit: 255, null: false
-    t.string   "type",               limit: 10,  null: false
+    t.integer  "powerdns_domain_id",                             null: false
+    t.string   "name",               limit: 255,                 null: false
+    t.string   "type",               limit: 10,                  null: false
     t.text     "content"
-    t.integer  "ttl"
+    t.integer  "ttl",                            default: 14400
     t.integer  "prio"
     t.integer  "change_date"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+    t.hstore   "preferences"
+    t.datetime "end_date"
+    t.boolean  "active"
+    t.datetime "start_date"
   end
 
   add_index "powerdns_records", ["name"], name: "index_powerdns_records_on_name", using: :btree
+  add_index "powerdns_records", ["preferences"], name: "index_powerdns_records_on_preferences", using: :gist
 
   create_table "products", force: :cascade do |t|
     t.string "product_type", limit: 20, null: false
+  end
+
+  create_table "sidekiq_logs", force: :cascade do |t|
+    t.string   "job_name"
+    t.string   "queue"
+    t.string   "external_url"
+    t.string   "endpoint"
+    t.string   "token"
+    t.string   "partner_name"
+    t.string   "parameters_send"
+    t.string   "parameters_received"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
   create_table "users", force: :cascade do |t|

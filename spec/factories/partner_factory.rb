@@ -33,6 +33,7 @@ FactoryGirl.define do
 
       create :nameserver_configuration, partner: partner, value: ns3
       create :nameserver_configuration, partner: partner, value: ns4
+      create :credit_limit_configuration, partner: partner
 
       [
         { partner: partner, action: 'domain_create',  period: 1,  price: 35.money },
@@ -74,6 +75,10 @@ FactoryGirl.define do
     password  'password'
 
     after :create do |partner|
+      partner.partner_configurations.create!(
+        config_name: 'credit_limit',
+        value: '500'
+      )
       [
         { partner: partner, action: 'domain_create',  period: 1,  price: 35.money },
         { partner: partner, action: 'domain_create',  period: 2,  price: 70.money },

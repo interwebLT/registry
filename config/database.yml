@@ -1,7 +1,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: 5
+  pool: 25
   username: registryadmin
   password: registryadmin
 
@@ -17,3 +17,11 @@ production:
   <<: *default
   database: registry
   password: <%= ENV['REGISTRY_DATABASE_PASSWORD'] %>
+
+troy:
+  adapter: postgresql
+  pool: 25
+  username: directuser
+  password: directuser
+  host: 172.16.46.83
+  database: direct

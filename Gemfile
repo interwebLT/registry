@@ -28,6 +28,7 @@ group :development do
   gem 'capistrano-rails'
   gem 'capistrano3-unicorn'
   gem 'capistrano-sidekiq', '0.5.2'
+  gem 'letter_opener'
 end
 
 gem 'active_model_serializers', '~> 0.8.2'

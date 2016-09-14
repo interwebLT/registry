@@ -6,10 +6,10 @@ Rails.application.routes.draw do
   resources :welcome,         only: [:index]
   resources :authorizations,  only: [:create, :show]
   resources :orders,          only: [:index, :create, :show]
-  resources :credits,         only: [:index, :create, :show]
+  resources :credits,         only: [:index, :create, :show, :update]
   resources :activities,      only: [:index]
   resources :migrations,      only: [:create]
-  resources :contacts,        only: [:index, :create, :show, :update], id: /.*/
+  resources :contacts,        only: [:index, :create, :show, :update, :destroy], id: /.*/
   resources :partners,        only: [:index, :show]
   resources :nameservers,     only: [:index]
 
@@ -18,8 +18,9 @@ Rails.application.routes.draw do
     resources :domains
   end
 
-  get '/whois/:id',     to: 'whois#show',           as: :whois, id: /.*/
-  get '/availability',  to: 'availabilities#index'
+  get '/whois/:id',               to: 'whois#show',           as: :whois, id: /.*/
+  get '/availability',            to: 'availabilities#index'
+  get '/check_ns_authorization',  to: 'domains#check_nameserver_authorization'
 
   resources :user, only: [:index] do
     collection do
@@ -28,7 +29,7 @@ Rails.application.routes.draw do
   end
 
   resources :domains, only: [:index, :show, :update, :destroy], id: /.*/ do
-    resources :hosts, controller: :domain_hosts, only: [:create, :show, :destroy]
+    resources :hosts, controller: :domain_hosts, only: [:create, :show, :update, :destroy]
   end
 
   resources :hosts, only: [:index, :create, :show], id: /.*/ do

@@ -10,6 +10,10 @@ class Credit < ActiveRecord::Base
 
   before_create :generate_credit_number
 
+  after_save :replenish_partner_credit_limit
+
+  after_create :sync_external_registry
+
   after_initialize do
     self.status ||= PENDING_CREDIT
   end
@@ -20,7 +24,10 @@ class Credit < ActiveRecord::Base
 
   CREDIT_TYPES = {
     bank_credit: Credit::BankReplenish,
-    card_credit: Credit::CardReplenish
+    card_credit: Credit::CardReplenish,
+    paypal_credit: Credit::PaypalReplenish,
+    checkout_credit: Credit::CheckoutReplenish,
+    dragon_pay_credit: Credit::DragonPayReplenish
   }
 
   def self.build params, partner
@@ -77,6 +84,23 @@ class Credit < ActiveRecord::Base
     self.credit_number = loop do
       credit_number = SecureRandom.hex(5).upcase
       break credit_number unless self.class.exists? credit_number: credit_number
+    end
+  end
+
+  def replenish_partner_credit_limit
+    @partner = self.partner
+    @partner.preferences = nil
+    @partner.save!
+  end
+
+  def sync_external_registry
+    if complete?
+      ExternalRegistry.all.each do |registry|
+        next if registry.name == self.partner.client
+        next if ExcludedPartner.exists? name: self.partner.name
+
+        SyncCreateCreditJob.perform_later registry.url, self
+      end
     end
   end
 end

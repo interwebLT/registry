@@ -25,6 +25,10 @@ Feature: Register Domain
     When  I register a domain where registrant does not exist
     Then  register domain must reach max retries
 
+  Scenario: Register domain which exceeds credit limit
+    When  I register a domain that will exceed credit limit
+    Then  register domain must not be registered
+
   Scenario: Excluded from sync
     Given I am excluded from sync
     When  I register a domain

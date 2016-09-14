@@ -101,3 +101,7 @@ after_fork do |server, worker|
   # between any number of forked children (assuming your kernel
   # correctly implements pread()/pwrite() system calls)
 end
+
+before_exec do |server|
+  ENV["BUNDLE_GEMFILE"] = "#{APP_PATH}/Gemfile"
+end

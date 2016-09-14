@@ -1,10 +1,15 @@
 class HostsController < SecureController
+  before_action :update_host_address, only: [:create]
+
   def create
     host = Host.new host_params
     host.partner = current_partner
 
     if host.save
       sync_create host
+      unless params[:ip_list].nil?
+        create_host_address host, params[:ip_list]
+      end
 
       render  json:     host,
               status:   :created,
@@ -49,5 +54,59 @@ class HostsController < SecureController
 
       SyncCreateHostJob.perform_later registry.url, host
     end
+  end
+
+  def create_host_address host, ip_list
+    ip_list = JSON.parse ip_list
+
+    unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
+      ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
+
+      base_url         = Rails.configuration.api_url
+      host_url         = "#{base_url}/hosts/#{host.name}"
+      host_address_url = "#{host_url}/addresses"
+
+      body    = {address: "", type:"" ,ip_list: ip_array}
+      request = {headers: headers, body: body.to_json}
+
+      process_response HTTParty.post host_address_url, request
+    end
+  end
+
+  def update_host_address
+    host = Host.find_by_name host_params["name"]
+
+    unless host.nil?
+      ip_list  = if params[:ip_list].nil? then "" else JSON.parse params[:ip_list] end
+      base_url = Rails.configuration.api_url
+      host_url = "#{base_url}/hosts/#{host.name}"
+
+      unless ip_list.blank?
+        unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
+          ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
+
+          host_address_array = host.host_addresses.map{|host| host.address}
+          address_for_add    = ip_array - host_address_array
+          address_for_remove = host_address_array - ip_array
+
+          unless address_for_remove.empty?
+            host_address_url = "#{host_url}/addresses/#{address_for_remove.first}?ip_list=#{address_for_remove.join(",")}"
+            request = {headers:  headers}
+            process_response HTTParty.delete host_address_url, request
+          end
+
+          unless address_for_add.empty?
+            host_address_url = "#{host_url}/addresses"
+            body    = {address: "", type:"" ,ip_list: address_for_add}
+            request = {headers: headers, body: body.to_json}
+            process_response HTTParty.post host_address_url, request
+          end
+        end
+      end
+    end
+  end
+
+  def process_response response
+    JSON.parse response.body, symbolize_names: true
   end
 end

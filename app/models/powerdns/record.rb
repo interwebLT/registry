@@ -1,4 +1,179 @@
 class Powerdns::Record < ActiveRecord::Base
-  belongs_to :powerdns_domain, class_name: Powerdns::Domain, foreign_key: "powerdns_domain_id"
   self.inheritance_column = :_type_disabled
+  belongs_to :powerdns_domain, class_name: Powerdns::Domain, foreign_key: "powerdns_domain_id"
+
+  validates :powerdns_domain_id, presence: true
+  # validates :name, presence: true
+  validates :type, presence: true
+
+  store_accessor :preferences
+
+  before_save :create_content_for_srv_type
+
+  after_save :add_powerdns_record_domain_activity
+
+  before_destroy :destroy_powerdns_record_domain_activity
+
+  validate :check_field_formats_per_type
+
+  skip_callback :save, :after, :add_powerdns_record_domain_activity, if: :troy_migration
+
+  attr_accessor :troy_migration
+
+  def self.update_end_dates domain
+    powerdns_domain = Powerdns::Domain.find_by_domain_id(domain.id)
+
+    if powerdns_domain
+      powerdns_records = powerdns_domain.powerdns_records
+
+      if powerdns_records
+        powerdns_records.each do |powerdns_record|
+          powerdns_record.end_date = domain.expires_at
+          powerdns_record.save!
+        end
+      end
+    end
+  end
+
+  def validate_name name
+    if name.nil?
+      errors.add(:name, "Name should be a valid Domain format.")
+    end
+  end
+
+  def validate_subdomain name
+    if name.nil?
+      errors.add(:name, "Name should have a subdomain.")
+    end
+  end
+
+  def validate_content content, message
+    if content.nil?
+      errors.add(:content, message)
+    end
+  end
+
+  def validate_prio prio, message
+    if prio.nil?
+      errors.add(:prio, message)
+    end
+  end
+
+  def validate_srv_content srv_content, message
+    if srv_content.nil?
+      errors.add(:preferences, message)
+    end
+  end
+
+  def check_field_formats_per_type
+    record_type = self.type
+    valid_domain = /^(([a-zA-Z0-9\-_\.\-]{1})|([a-zA-Z0-9\-_\.\-]{1}[a-zA-Z0-9\-_\.\-]{1})|([a-zA-Z0-9\-_\.\-]{1}[0-9]{1})|([0-9]{1}[a-zA-Z0-9\-_\.\-]{1})|([a-zA-Z0-9\-_\.\-][a-zA-Z0-9\-_\.]{1,61}[a-zA-Z0-9\-\.\-]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9\-]{2,30}\.[a-zA-Z]{2,3})$/
+    valid_ip = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+    valid_ipv6 = /(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$)/
+    has_atleast_one_subdomain = /.*\..*\../
+    printable_ascii_char = /^[ -~]*$/
+
+    case record_type
+      when "NS"
+        nameservers = Nameserver.all.map{|ns| ns.name}
+        # name_domain = self.name =~ valid_domain
+        content = self.content =~ valid_domain
+
+        # validate_name name_domain
+        validate_content content, "Content should be a valid Domain format."
+      when "CNAME"
+        # name_domain = self.name =~ valid_domain
+        content = self.content =~ valid_domain
+
+        # validate_name name_domain
+        validate_content content, "Content should be a valid Domain format."
+      when "A"
+        content = self.content =~ valid_ip
+
+        validate_content content, "Content should be a valid IP address format."
+      when "AAAA"
+        content = self.content =~ valid_ipv6
+
+        validate_content content, "Content should be a valid IPv6 format."
+      when "TXT"
+        content = self.content =~ printable_ascii_char
+
+        validate_content content, "Content should be a printable ASCII Char."
+      when "MX"
+        prio = self.prio
+        validate_prio prio, "Priority should not be blank."
+      when "SRV"
+        srv_content = self.preferences["srv_content"] =~ valid_domain
+        prio = self.prio
+        validate_prio prio, "Priority should not be blank."
+        validate_srv_content srv_content, "Content should be a valid Domain format."
+    end
+  end
+
+  def update_soa_record
+    soa_record =  self.powerdns_domain.powerdns_records.where(type: "SOA").first
+    unless soa_record.nil?
+      soa_record_array = soa_record.content.split(" ")
+      current_soa_date = soa_record_array[2][0..7]   || soa_record_array[2]
+      current_count    = soa_record_array[2][-2..-1] || soa_record_array[2]
+
+      if current_count == "99"
+        current_soa_date = Date.today.+(1).strftime("%Y%m%d")
+        current_count    = "01"
+        soa_record_array[2] = current_soa_date + current_count
+      else
+        if current_soa_date.to_date == Date.today
+          soa_record_array[2] = soa_record_array[2].to_i + 1
+        else
+          current_soa_date = Date.today.strftime("%Y%m%d")
+          current_count    = "01"
+          soa_record_array[2] = current_soa_date + current_count.to_s.rjust(2, '0')
+        end
+      end
+
+      soa_record.content = soa_record_array.join(" ")
+      soa_record.save!
+    end
+  end
+
+  private
+  def create_content_for_srv_type
+    if self.type == "SRV"
+      self.content = "#{self.preferences["weight"]} #{self.preferences["port"]} #{self.preferences["srv_content"]}"
+    end
+  end
+
+  def add_powerdns_record_domain_activity
+    pdns_domain = self.powerdns_domain.domain_id
+    domain = Domain.find pdns_domain
+
+    if self.id_changed?
+      unless self.type == "SOA"
+        ObjectActivity::Update.create activity_at: Time.now,
+                                      partner: domain.partner,
+                                      product: domain.product,
+                                      property_changed: "powerdns_record",
+                                      value: self.name
+      end
+    else
+      ObjectActivity::Update.create activity_at: Time.now,
+                                    partner: domain.partner,
+                                    product: domain.product,
+                                    property_changed: "powerdns_record",
+                                    value: self.name,
+                                    old_value: ""
+    end
+  end
+
+  def destroy_powerdns_record_domain_activity
+    pdns_domain = self.powerdns_domain.domain_id
+    domain = Domain.find pdns_domain
+
+    ObjectActivity::Update.create activity_at: Time.now,
+                                  partner: domain.partner,
+                                  product: domain.product,
+                                  property_changed: "powerdns_record",
+                                  old_value: self.name,
+                                  value: nil
+  end
 end

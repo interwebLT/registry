@@ -52,6 +52,21 @@ When /^I register a domain with no registrant handle$/ do
   post orders_path, 'orders/post_register_domain_with_no_registrant_handle_request'.json
 end
 
+When /^I register a domain that will exceed credit limit$/ do
+  FactoryGirl.create :contact
+  credit_limit = @current_partner.partner_configurations.where(config_name:"credit_limit").first
+  credit_limit.value = "0"
+  credit_limit.save!
+
+  stub_request(:get, 'http://localhost:9001/contacts/contact')
+    .to_return status: 200, body: 'contacts/contact/get_response'.body
+
+  stub_request(:post, 'http://localhost:9001/orders')
+    .to_return status: 201, body: 'orders/post_register_domain_response'.body
+
+  post orders_path, 'orders/post_register_domain_request'.json
+end
+
 Then /^domain must be registered$/ do
   expect(last_response.status).to eq 201
   expect(json_response).to eq 'orders/post_register_domain_response'.json
@@ -91,4 +106,8 @@ Then /^register domain must reach max retries$/ do
   rescue Exception => e
     expect(e).to be_an_instance_of RuntimeError
   end
+end
+
+Then /^register domain must not be registered$/ do
+  expect(last_response.status).to eq 422
 end

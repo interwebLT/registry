@@ -64,6 +64,8 @@ class Domain < ActiveRecord::Base
     self.ok = true
     self.server_hold = false
     self.save
+
+    Powerdns::Record.update_end_dates self
   end
 
   def zone
@@ -130,6 +132,10 @@ class Domain < ActiveRecord::Base
 
   def update_status
     self.save
+  end
+
+  def migrate_records
+    TroyMigrationWorker.perform_async self.id
   end
 
   private

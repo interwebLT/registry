@@ -31,7 +31,7 @@ NOKOGIRI_USE_SYSTEM_LIBRARIES=1 bundle install --quiet
 echo "  + Running migrations..."
 rake db:drop
 dropuser --if-exists $DB_USER
-createuser $DB_USER -d
+createuser $DB_USER -s
 rake db:create
 rake db:migrate
 
