@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160913072009) do
+ActiveRecord::Schema.define(version: 20160914010321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -392,15 +392,15 @@ ActiveRecord::Schema.define(version: 20160913072009) do
   end
 
   create_table "powerdns_records", force: :cascade do |t|
-    t.integer  "powerdns_domain_id",             null: false
-    t.string   "name",               limit: 255, null: false
-    t.string   "type",               limit: 10,  null: false
+    t.integer  "powerdns_domain_id",                             null: false
+    t.string   "name",               limit: 255,                 null: false
+    t.string   "type",               limit: 10,                  null: false
     t.text     "content"
-    t.integer  "ttl"
+    t.integer  "ttl",                            default: 14400
     t.integer  "prio"
     t.integer  "change_date"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
     t.hstore   "preferences"
     t.datetime "end_date"
     t.boolean  "active"
