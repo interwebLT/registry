@@ -20,8 +20,11 @@ def assert_credits_displayed
     credited_at: '2015-02-27T14:30:00Z',
     created_at: '2015-01-01T00:00:00Z',
     updated_at: '2015-01-01T00:00:00Z',
+    verification_code: nil,
+    type: "Credit::BankReplenish",
+    status: "complete"
   }]
-  
+
   json_response.must_match_json_expression expected_response
 end
 

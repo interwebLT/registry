@@ -8,10 +8,10 @@ RSpec.describe Powerdns::Record, type: :model do
       expect(pdns_record).to be_valid
     end
 
-    it 'is invalid without name' do
-      record = FactoryGirl.build(:powerdns_record, name: nil)
-      expect(record).not_to be_valid
-    end
+    # it 'is invalid without name' do
+    #   record = FactoryGirl.build(:powerdns_record, name: nil)
+    #   expect(record).not_to be_valid
+    # end
 
     it 'is invalid without type' do
       record = FactoryGirl.build(:powerdns_record, type: nil)
@@ -20,10 +20,10 @@ RSpec.describe Powerdns::Record, type: :model do
   end
 
   describe 'when validating name and content' do
-    it 'should have a DOMAIN Format name for all types' do
-      record = FactoryGirl.build(:powerdns_record, name: 'samplecom')
-      expect(record).not_to be_valid
-    end
+    # it 'should have a DOMAIN Format name for all types' do
+    #   record = FactoryGirl.build(:powerdns_record, name: 'samplecom')
+    #   expect(record).not_to be_valid
+    # end
 
     # it 'should have a SUBDOMAIN name for NS type' do
     #   record = FactoryGirl.build(:powerdns_record, name: 'sample.com', type: 'NS')
