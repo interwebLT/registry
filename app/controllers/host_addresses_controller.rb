@@ -51,32 +51,33 @@ class HostAddressesController < SecureController
 
   def add_host_address to:
     host = to
+    if host.name.include?(".ph")
+      if params[:ip_list].nil?
+        address = create_params.delete :address
+        type    = create_params.delete :type
 
-    if params[:ip_list].nil?
-      address = create_params.delete :address
-      type    = create_params.delete :type
-
-      host_address = host.host_addresses.build address: address, type: type
-
-      if host_address.save
-        sync_create host_address
-
-        render  json:     host_address,
-                status:   :created,
-                location: host_address_url(host.name, host_address.address)
-      else
-        render validation_failed host_address
-      end
-    else
-      ip_array = params[:ip_list]
-
-      ip_array.map {|address|
-        type         = if address.length > 15 then "v6" else "v4" end
         host_address = host.host_addresses.build address: address, type: type
-        host_address.save
-      }
-      sync_create_multiple host, ip_array
-      render  json: host_address
+
+        if host_address.save
+          sync_create host_address
+
+          render  json:     host_address,
+                  status:   :created,
+                  location: host_address_url(host.name, host_address.address)
+        else
+          render validation_failed host_address
+        end
+      else
+        ip_array = params[:ip_list]
+
+        ip_array.map {|address|
+          type         = if address.length > 15 then "v6" else "v4" end
+          host_address = host.host_addresses.build address: address, type: type
+          host_address.save
+        }
+        sync_create_multiple host, ip_array
+        render  json: host_address
+      end
     end
   end
 

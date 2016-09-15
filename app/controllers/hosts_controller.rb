@@ -57,19 +57,21 @@ class HostsController < SecureController
   end
 
   def create_host_address host, ip_list
-    ip_list = JSON.parse ip_list
+    if host.name.include?(".ph")
+      ip_list = JSON.parse ip_list
 
-    unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
-      ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
+      unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
+        ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
 
-      base_url         = Rails.configuration.api_url
-      host_url         = "#{base_url}/hosts/#{host.name}"
-      host_address_url = "#{host_url}/addresses"
+        base_url         = Rails.configuration.api_url
+        host_url         = "#{base_url}/hosts/#{host.name}"
+        host_address_url = "#{host_url}/addresses"
 
-      body    = {address: "", type:"" ,ip_list: ip_array}
-      request = {headers: headers, body: body.to_json}
+        body    = {address: "", type:"" ,ip_list: ip_array}
+        request = {headers: headers, body: body.to_json}
 
-      process_response HTTParty.post host_address_url, request
+        process_response HTTParty.post host_address_url, request
+      end
     end
   end
 
@@ -77,7 +79,7 @@ class HostsController < SecureController
     host = Host.find_by_name host_params["name"]
 
     unless host.nil?
-      unless host.name.include?(".ph")
+      if host.name.include?(".ph")
         ip_list  = if params[:ip_list].nil? then "" else JSON.parse params[:ip_list] end
         base_url = Rails.configuration.api_url
         host_url = "#{base_url}/hosts/#{host.name}"
