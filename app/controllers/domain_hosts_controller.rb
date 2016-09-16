@@ -130,8 +130,9 @@ class DomainHostsController < SecureController
     domain_host_for_add    = []
     domain.product.domain_hosts.map{|domain_host|
       unless troy_domain_hosts.map{|domain_host| domain_host[0]}.include? domain_host.name
-        domain_host_for_delete << domain_host.name
-        domain_host.destroy!
+        if domain_host.destroy!
+          domain_host_for_delete << domain_host.name
+        end
       end
     }
 
@@ -141,9 +142,10 @@ class DomainHostsController < SecureController
           ipv4 = if domain_host[1]["addresses"]["ipv4"].nil? then "" else domain_host[1]["addresses"]["ipv4"] end
           ipv6 = if domain_host[1]["addresses"]["ipv6"].nil? then "" else domain_host[1]["addresses"]["ipv6"] end
           ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}.to_json
-          domain_host_for_add << domain_host[0]
           domain_host = DomainHost.new name: domain_host[0], product: domain.product, ip_list: ip_list
-          domain_host.save!
+          if domain_host.save!
+            domain_host_for_add << domain_host[0]
+          end
         end
       end
     }
