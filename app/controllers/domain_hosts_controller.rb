@@ -131,7 +131,7 @@ class DomainHostsController < SecureController
     domain.product.domain_hosts.map{|domain_host|
       unless troy_domain_hosts.map{|domain_host| domain_host[0]}.include? domain_host.name
         if domain_host.destroy!
-          domain_host_for_delete << domain_host.name
+          domain_host_for_delete << domain_host[0]
         end
       end
     }
