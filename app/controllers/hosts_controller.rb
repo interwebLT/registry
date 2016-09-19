@@ -80,7 +80,7 @@ class HostsController < SecureController
 
     unless host.nil?
       if host.name.include?(".ph")
-        ip_list  = if params[:ip_list].nil? then "" else JSON.parse params[:ip_list] end
+        ip_list  = params[:ip_list] ? JSON.parse(params[:ip_list]) : ""
         base_url = Rails.configuration.api_url
         host_url = "#{base_url}/hosts/#{host.name}"
 
