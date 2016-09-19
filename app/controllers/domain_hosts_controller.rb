@@ -111,8 +111,8 @@ class DomainHostsController < SecureController
       params[:troy_domain_hosts].map{|domain_host|
         unless domain_host[0].blank?
           unless @existing_domain_hosts.include? domain_host[0]
-            ipv4 = if domain_host[1]["addresses"]["ipv4"].nil? then "" else domain_host[1]["addresses"]["ipv4"] end
-            ipv6 = if domain_host[1]["addresses"]["ipv6"].nil? then "" else domain_host[1]["addresses"]["ipv6"] end
+            ipv4 = domain_host[1]["addresses"]["ipv4"] ? domain_host[1]["addresses"]["ipv4"] : ""
+            ipv6 = domain_host[1]["addresses"]["ipv6"] ? domain_host[1]["addresses"]["ipv6"] : ""
             ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}.to_json
             save_host domain_host[0], ip_list, base_url
           end
@@ -139,8 +139,8 @@ class DomainHostsController < SecureController
     troy_domain_hosts.map{|domain_host|
       unless domain_host[0].blank?
         unless @existing_domain_hosts.include? domain_host[0]
-          ipv4 = if domain_host[1]["addresses"]["ipv4"].nil? then "" else domain_host[1]["addresses"]["ipv4"] end
-          ipv6 = if domain_host[1]["addresses"]["ipv6"].nil? then "" else domain_host[1]["addresses"]["ipv6"] end
+          ipv4 = domain_host[1]["addresses"]["ipv4"] ? domain_host[1]["addresses"]["ipv4"] : ""
+          ipv6 = domain_host[1]["addresses"]["ipv6"] ? domain_host[1]["addresses"]["ipv6"] : ""
           ip_list = {"ipv4":{"0": ipv4},"ipv6":{"0": ipv6}}.to_json
           domain_host = DomainHost.new name: domain_host[0], product: domain.product, ip_list: ip_list
           if domain_host.save!

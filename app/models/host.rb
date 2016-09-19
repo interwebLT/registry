@@ -23,7 +23,7 @@ class Host < ActiveRecord::Base
   end
 
   def set_host_partner
-    host_name       = self.name
+    host_name = self.name
     unless host_name.nil?
       unless Host.exists?(name: host_name)
         host_array = host_name.split(".")
