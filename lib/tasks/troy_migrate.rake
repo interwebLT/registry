@@ -26,7 +26,7 @@ namespace :db do
     hosts.map{|host|
       if host.name.include?(".ph")
         host_array = host.name.split(".")
-        if ["com", "net", "org"].map{|ext| host.name.include?(ext)}.include?(true)
+        if [".com", ".net", ".org"].map{|ext| host.name.include?(ext)}.include?(true)
           has_two_valid_extensions = true
         end
 
