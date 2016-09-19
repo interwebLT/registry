@@ -18,4 +18,34 @@ namespace :db do
       end
     end
   end
+
+  desc "Fix Host Ownership"
+  task clean_up_host_table: :environment do
+    hosts = Host.all
+
+    hosts.map{|host|
+      if host.name.include?(".ph")
+        host_array = host.name.split(".")
+        if ["com", "net", "org"].map{|ext| host.name.include?(ext)}.include?(true)
+          has_two_valid_extensions = true
+        end
+
+        if has_two_valid_extensions
+          domain_name = host_array[host_array.length - 3] + "." + host_array[host_array.length - 2] + "." + host_array[host_array.length - 1]
+        else
+          domain_name = host_array[host_array.length - 2] + "." + host_array[host_array.length - 1]
+        end
+        domain  = Domain.find_by_name domain_name
+
+        unless domain.nil?
+          if domain.partner != host.partner
+            host.partner = domain.partner
+            if host.save
+              host.host_addresses.delete_all
+            end
+          end
+        end
+      end
+    }
+  end
 end
