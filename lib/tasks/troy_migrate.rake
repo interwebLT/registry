@@ -24,9 +24,9 @@ namespace :db do
     hosts = Host.all
 
     hosts.map{|host|
-      if host.name.include?(".ph")
+      if host.top_level_domain == "ph"
         host_array = host.name.split(".")
-        if [".com", ".net", ".org"].map{|ext| host.name.include?(ext)}.include?(true)
+        if host.has_valid_second_level_domain
           has_two_valid_extensions = true
         end
 

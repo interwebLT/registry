@@ -57,7 +57,7 @@ class HostsController < SecureController
   end
 
   def create_host_address host, ip_list
-    if host.name.include?(".ph")
+    if host.name.split(".").last == "ph"
       if host.partner.name == current_partner.name
         ip_list = JSON.parse ip_list
 
@@ -81,7 +81,7 @@ class HostsController < SecureController
     host = Host.find_by_name host_params["name"]
 
     unless host.nil?
-      if host.name.include?(".ph")
+      if host.name.split(".").last == "ph"
         if host.partner.name == current_partner.name
           ip_list  = params[:ip_list] ? JSON.parse(params[:ip_list]) : ""
           base_url = Rails.configuration.api_url

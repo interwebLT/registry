@@ -9,6 +9,18 @@ class Host < ActiveRecord::Base
 
   before_save :set_host_partner
 
+  def top_level_domain
+    host_zone = self.name.split(".").last
+    host_zone
+  end
+
+  def has_valid_second_level_domain
+    host_array = self.name.split(".")
+    second_level_domain = host_array[host_array.length - 2]
+
+    ["com", "net", "org"].include?(second_level_domain)
+  end
+
   def get_root_domain
     host_name = self.name
     domain_name = ""
@@ -16,8 +28,8 @@ class Host < ActiveRecord::Base
       unless Host.exists?(name: host_name)
         host_array = host_name.split(".")
 
-        if host_name.include?(".ph")
-          if [".com", ".net", ".org"].map{|ext| host_name.include?(ext)}.include?(true)
+        if self.top_level_domain == "ph"
+          if self.has_valid_second_level_domain
             has_two_valid_extensions = true
           end
 
