@@ -1,7 +1,7 @@
 class PartnerInvoiceMailer < ApplicationMailer
-  def invoice_letter partner, credits, orders
+  def invoice_letter partner, orders
     @partner = partner
-    @credit  = credits
+    # @credit  = credits
     @orders  = orders
     mail to: partner.email, subject: "Monthly Invoice"
   end

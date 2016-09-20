@@ -3,12 +3,15 @@ namespace :db do
   task generate_partner_invoice_statement: :environment do
     from = Date.today - 1.month
     to   = Date.today
-    # @partners = Partner.all
-    partner = Partner.last
-    credits = partner.credits.where("credited_at > ? and credited_at <= ?", from, to)
-    orders  = partner.orders.where("completed_at > ? and completed_at <= ?", from, to)
-    PartnerInvoiceMailer.delay_for(5.second, queue: "registry_mailer").invoice_letter(partner, credits, orders)
-    ##TODO##
+    @partners = Partner.all
+
+    @partners.each do |partner|
+      # credits = partner.credits.where("credited_at > ? and credited_at <= ?", from, to)
+      orders  = partner.orders.where("completed_at > ? and completed_at <= ?", from, to)
+      unless orders.empty?
+        PartnerInvoiceMailer.delay_for(5.second, queue: "registry_mailer").invoice_letter(partner, orders)
+      end
+    end
     puts "done"
   end
 
