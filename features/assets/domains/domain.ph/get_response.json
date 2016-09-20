@@ -40,6 +40,7 @@
   "admin_contact": null,
   "billing_contact": null,
   "tech_contact": null,
+  "inactive": true,
   "client_delete_prohibited": false,
   "client_hold": false,
   "client_renew_prohibited": false,

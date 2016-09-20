@@ -25,17 +25,7 @@ namespace :db do
 
     hosts.map{|host|
       if host.top_level_domain == "ph"
-        host_array = host.name.split(".")
-        if host.has_valid_second_level_domain
-          has_two_valid_extensions = true
-        end
-
-        if has_two_valid_extensions
-          domain_name = host_array[host_array.length - 3] + "." + host_array[host_array.length - 2] + "." + host_array[host_array.length - 1]
-        else
-          domain_name = host_array[host_array.length - 2] + "." + host_array[host_array.length - 1]
-        end
-        domain  = Domain.find_by_name domain_name
+        domain  = Domain.find_by_name host.get_root_domain
 
         unless domain.nil?
           if domain.partner != host.partner
