@@ -1,0 +1,42 @@
+<p>Dear <%= @partner.name %>,</p>
+
+<p>Invoice Period: <%= Date.today %> to <%= Date.today - 1.month %></p>
+
+<p>Transaction</p>
+<table width="100%" style="border-style: double;">
+  <thead style="background-color: #FBB03B; color: #fff;">
+    <tr align="center">
+      <th>Date</th>
+      <th>Domain Name</th>
+      <th>Type</th>
+      <th>Term</th>
+      <th>Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @orders.each do |order| %>
+      <tr align="center">
+        <td><%= order.completed_at.strftime("%m-%d-%Y") %></td>
+        <td><%= order.order_details.first.domain %></td>
+        <td><%= order_detail_type order.order_details.collect{|od|od.as_json}[0][:type] %></td>
+        <td><%= order.order_details.first.period %> year(s)</td>
+        <td><%= number_to_currency(humanized_money order.order_details.first.price_cents) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<p>
+  To settle payment, please replenish your account by paying online using credit card.
+  Just login to the new Partner Console,
+  <a href="https://partner.dot.ph"> https://partner.dot.ph</a>,
+  then click on "Replenish Account" and follow the steps online.
+</p>
+
+<p>For details on how to pay via wire transfer, please e-mail us at helpdesk@dot.ph.</p>
+
+<p>
+Thank you,<br><br>
+dotPH<br>
+<a href="www.dot.ph">www.dot.ph</a><br>
+</p>
