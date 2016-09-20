@@ -2,29 +2,54 @@
 
 <p>Invoice Period: <%= Date.today %> to <%= Date.today - 1.month %></p>
 
-<p>Transaction</p>
-<table width="100%" style="border-style: double;">
-  <thead style="background-color: #FBB03B; color: #fff;">
-    <tr align="center">
-      <th>Date</th>
-      <th>Domain Name</th>
-      <th>Type</th>
-      <th>Term</th>
-      <th>Amount</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @orders.each do |order| %>
+<% unless @credits.nil? %>
+  <p>Credit Transaction</p>
+  <table width="100%" style="border-style: double;">
+    <thead style="background-color: #FBB03B; color: #fff;">
       <tr align="center">
-        <td><%= order.completed_at.strftime("%m-%d-%Y") %></td>
-        <td><%= order.order_details.first.domain %></td>
-        <td><%= order_detail_type order.order_details.collect{|od|od.as_json}[0][:type] %></td>
-        <td><%= order.order_details.first.period %> year(s)</td>
-        <td><%= number_to_currency(humanized_money order.order_details.first.price_cents) %></td>
+        <th>Date</th>
+        <th>Invoice No.</th>
+        <th>Type</th>
+        <th>Amount ($)</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @credits.each do |credit| %>
+        <tr align="center">
+          <td><%= credit.credited_at.strftime("%m-%d-%Y") %></td>
+          <td><%= credit.credit_number %></td>
+          <td><%= credit.gateway %></td>
+          <td><%= number_to_currency(credit.amount.to_f, unit: '') %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+<% unless @orders.nil? %>
+<p>Order Transaction</p>
+  <table width="100%" style="border-style: double;">
+    <thead style="background-color: #FBB03B; color: #fff;">
+      <tr align="center">
+        <th>Date</th>
+        <th>Domain Name</th>
+        <th>Type</th>
+        <th>Term</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+        <tr align="center">
+          <td><%= order.completed_at.strftime("%m-%d-%Y") %></td>
+          <td><%= order.order_details.first.domain %></td>
+          <td><%= order_detail_type order.order_details.collect{|od|od.as_json}[0][:type] %></td>
+          <td><%= order.order_details.first.period %> year(s)</td>
+          <td><%= number_to_currency(humanized_money order.order_details.first.price_cents) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
 
 <p>
   To settle payment, please replenish your account by paying online using credit card.

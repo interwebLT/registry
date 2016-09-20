@@ -18,6 +18,9 @@ class Credit < ActiveRecord::Base
     self.status ||= PENDING_CREDIT
   end
 
+  PAYPAL_CODE = 'EC'
+  CHECKOUT_CODE = 'pay_tok'
+
   PENDING_CREDIT  = 'pending'
   COMPLETE_CREDIT = 'complete'
   ERROR_CREDIT    = 'error'
@@ -76,6 +79,18 @@ class Credit < ActiveRecord::Base
 
   def error?
     status == ERROR_CREDIT
+  end
+
+  def gateway
+    if self.verification_code.blank?
+      'Manual'
+    elsif self.verification_code.starts_with? Credit::CHECKOUT_CODE
+      'Checkout'
+    elsif self.verification_code.starts_with? Credit::PAYPAL_CODE
+      'Paypal'
+    else
+      'DragonPay'
+    end
   end
 
   private
