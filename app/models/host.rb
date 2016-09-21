@@ -25,19 +25,17 @@ class Host < ActiveRecord::Base
     host_name = self.name
     domain_name = ""
     unless host_name.nil?
-      unless Host.exists?(name: host_name)
-        host_array = host_name.split(".")
+      host_array = host_name.split(".")
 
-        if self.top_level_domain == "ph"
-          if self.has_valid_second_level_domain
-            has_two_valid_extensions = true
-          end
+      if self.top_level_domain == "ph"
+        if self.has_valid_second_level_domain
+          has_two_valid_extensions = true
+        end
 
-          if has_two_valid_extensions
-            domain_name = host_array[host_array.length - 3] + "." + host_array[host_array.length - 2] + "." + host_array[host_array.length - 1]
-          else
-            domain_name = host_array[host_array.length - 2] + "." + host_array[host_array.length - 1]
-          end
+        if has_two_valid_extensions
+          domain_name = host_array[host_array.length - 3] + "." + host_array[host_array.length - 2] + "." + host_array[host_array.length - 1]
+        else
+          domain_name = host_array[host_array.length - 2] + "." + host_array[host_array.length - 1]
         end
       end
     end
@@ -59,8 +57,10 @@ class Host < ActiveRecord::Base
 
   def set_host_partner
     host_name   = self.name
-    domain_name = self.get_root_domain
-    current_partner = self.partner
-    assign_partner_to_host domain_name, current_partner, host_name
+    unless Host.exists?(name: host_name)
+      domain_name = self.get_root_domain
+      current_partner = self.partner
+      assign_partner_to_host domain_name, current_partner, host_name
+    end
   end
 end
