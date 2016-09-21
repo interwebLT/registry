@@ -414,19 +414,6 @@ ActiveRecord::Schema.define(version: 20160914010321) do
     t.string "product_type", limit: 20, null: false
   end
 
-  create_table "sidekiq_logs", force: :cascade do |t|
-    t.string   "job_name"
-    t.string   "queue"
-    t.string   "external_url"
-    t.string   "endpoint"
-    t.string   "token"
-    t.string   "partner_name"
-    t.string   "parameters_send"
-    t.string   "parameters_received"
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
-  end
-
   create_table "users", force: :cascade do |t|
     t.string  "email",              limit: 255, null: false
     t.string  "name",               limit: 64,  null: false

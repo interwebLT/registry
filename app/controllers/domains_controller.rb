@@ -52,9 +52,9 @@ class DomainsController < SecureController
           host = Host.find_by_name params[:host]
 
           if host.nil?
-            render json: !host.nil?.to_json
+            render json: "false"
           else
-            render json: !host.nil?.to_json
+            render json: "true"
           end
         else
           render json: "true"

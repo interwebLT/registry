@@ -51,7 +51,7 @@ class HostAddressesController < SecureController
 
   def add_host_address to:
     host = to
-    if host.name.include?(".ph")
+    if host.top_level_domain == "ph"
       if params[:ip_list].nil?
         address = create_params.delete :address
         type    = create_params.delete :type

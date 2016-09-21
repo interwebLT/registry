@@ -1,6 +1,6 @@
 class DomainSerializer < ActiveModel::Serializer
   attributes  :id, :zone, :name, :partner, :registered_at, :expires_at,
-              :registrant_handle, :admin_handle, :billing_handle, :tech_handle,
+              :registrant_handle, :admin_handle, :billing_handle, :tech_handle, :inactive,
               :client_hold, :client_delete_prohibited, :client_renew_prohibited,
               :client_transfer_prohibited, :client_update_prohibited,
               :server_hold, :server_delete_prohibited, :server_renew_prohibited,

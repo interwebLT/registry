@@ -1,13 +1,18 @@
 namespace :db do
   desc "Generate Billing statement for partner"
-  task generate_partner_billing_statement: :environment do
-    # @partners = Partner.all
-    # partner = Partner.find(4)
-    # credits = partner.credits
-    # orders  = partner.orders
-    # PartnerBillingMailer.delay_for(5.second, queue: "registry_mailer").billing_statement(partner, credits, orders)
-    # puts "Billing statment generated."
-    ##TODO##
+  task generate_partner_invoice_statement: :environment do
+    from = Date.today - 1.month
+    to   = Date.today
+    @partners = Partner.all
+
+    @partners.each do |partner|
+      # credits = partner.credits.where("credited_at > ? and credited_at <= ?", from, to)
+      orders  = partner.orders.where("completed_at > ? and completed_at <= ?", from, to)
+      unless orders.empty?
+        PartnerInvoiceMailer.delay_for(5.second, queue: "registry_mailer").invoice_letter(partner, orders)
+      end
+    end
+    puts "done"
   end
 
   desc "Generate Domain Renewal Notices for partner"

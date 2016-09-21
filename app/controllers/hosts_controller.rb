@@ -57,20 +57,22 @@ class HostsController < SecureController
   end
 
   def create_host_address host, ip_list
-    if host.name.include?(".ph")
-      ip_list = JSON.parse ip_list
+    if host.top_level_domaint == "ph"
+      if host.partner.name == current_partner.name
+        ip_list = JSON.parse ip_list
 
-      unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
-        ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
+        unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
+          ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
 
-        base_url         = Rails.configuration.api_url
-        host_url         = "#{base_url}/hosts/#{host.name}"
-        host_address_url = "#{host_url}/addresses"
+          base_url         = Rails.configuration.api_url
+          host_url         = "#{base_url}/hosts/#{host.name}"
+          host_address_url = "#{host_url}/addresses"
 
-        body    = {address: "", type:"" ,ip_list: ip_array}
-        request = {headers: headers, body: body.to_json}
+          body    = {address: "", type:"" ,ip_list: ip_array}
+          request = {headers: headers, body: body.to_json}
 
-        process_response HTTParty.post host_address_url, request
+          process_response HTTParty.post host_address_url, request
+        end
       end
     end
   end
@@ -79,30 +81,32 @@ class HostsController < SecureController
     host = Host.find_by_name host_params["name"]
 
     unless host.nil?
-      if host.name.include?(".ph")
-        ip_list  = params[:ip_list] ? JSON.parse(params[:ip_list]) : ""
-        base_url = Rails.configuration.api_url
-        host_url = "#{base_url}/hosts/#{host.name}"
+      if host.top_level_domain == "ph"
+        if host.partner.name == current_partner.name
+          ip_list  = params[:ip_list] ? JSON.parse(params[:ip_list]) : ""
+          base_url = Rails.configuration.api_url
+          host_url = "#{base_url}/hosts/#{host.name}"
 
-        unless ip_list.blank?
-          unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
-            ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
+          unless ip_list.blank?
+            unless ip_list["ipv4"]["0"].empty? && ip_list["ipv6"]["0"].empty?
+              ip_array = ip_list["ipv4"].map{|k,v|v} +  ip_list["ipv6"].map{|k,v|v} - [""]
 
-            host_address_array = host.host_addresses.map{|host| host.address}
-            address_for_add    = ip_array - host_address_array
-            address_for_remove = host_address_array - ip_array
+              host_address_array = host.host_addresses.map{|host| host.address}
+              address_for_add    = ip_array - host_address_array
+              address_for_remove = host_address_array - ip_array
 
-            unless address_for_remove.empty?
-              host_address_url = "#{host_url}/addresses/#{address_for_remove.first}?ip_list=#{address_for_remove.join(",")}"
-              request = {headers:  headers}
-              process_response HTTParty.delete host_address_url, request
-            end
+              unless address_for_remove.empty?
+                host_address_url = "#{host_url}/addresses/#{address_for_remove.first}?ip_list=#{address_for_remove.join(",")}"
+                request = {headers:  headers}
+                process_response HTTParty.delete host_address_url, request
+              end
 
-            unless address_for_add.empty?
-              host_address_url = "#{host_url}/addresses"
-              body    = {address: "", type:"" ,ip_list: address_for_add}
-              request = {headers: headers, body: body.to_json}
-              process_response HTTParty.post host_address_url, request
+              unless address_for_add.empty?
+                host_address_url = "#{host_url}/addresses"
+                body    = {address: "", type:"" ,ip_list: address_for_add}
+                request = {headers: headers, body: body.to_json}
+                process_response HTTParty.post host_address_url, request
+              end
             end
           end
         end

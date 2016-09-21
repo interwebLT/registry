@@ -17,6 +17,7 @@ describe DomainSerializer do
       admin_handle: domain.admin_handle,
       billing_handle: domain.billing_handle,
       tech_handle:  domain.tech_handle,
+      inactive: false,
       client_hold:  false,
       client_delete_prohibited: false,
       client_renew_prohibited:  false,
