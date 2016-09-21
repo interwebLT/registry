@@ -6,8 +6,8 @@
 #   rake "db:generate_partner_billing_statement" , environment: "development"
 # end
 
-# every 1.day, at: "9:00 am" do
-#   rake "db:generate_partner_renewal_notices" , environment: "development"
+# every '0 10 20 * *' do
+#   rake "db:generate_partner_invoice_statement" , environment: "development"
 # end
 
 ## COMMENT FOR NOW##
