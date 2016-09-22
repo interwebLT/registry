@@ -57,7 +57,7 @@ class HostsController < SecureController
   end
 
   def create_host_address host, ip_list
-    if host.top_level_domaint == "ph"
+    if host.top_level_domain == "ph"
       if host.partner.name == current_partner.name
         ip_list = JSON.parse ip_list
 
