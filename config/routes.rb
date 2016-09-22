@@ -12,15 +12,16 @@ Rails.application.routes.draw do
   resources :contacts,        only: [:index, :create, :show, :update, :destroy], id: /.*/
   resources :partners,        only: [:index, :show]
   resources :nameservers,     only: [:index]
+  resources :partner_configurations, only: [:create]
 
   namespace :powerdns do
     resources :records
     resources :domains
   end
 
-  get '/whois/:id',               to: 'whois#show',           as: :whois, id: /.*/
-  get '/availability',            to: 'availabilities#index'
-  get '/check_ns_authorization',  to: 'domains#check_nameserver_authorization'
+  get '/whois/:id',                          to: 'whois#show',           as: :whois, id: /.*/
+  get '/availability',                       to: 'availabilities#index'
+  get '/check_ns_authorization',             to: 'domains#check_nameserver_authorization'
 
   resources :user, only: [:index] do
     collection do
