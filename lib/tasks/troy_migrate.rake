@@ -46,8 +46,28 @@ namespace :db do
     url   = ExternalRegistry.find_by_name("cocca").url
 
     hosts.each do |host|
-      SyncCreateHostJob.perform_later url, host
-      puts "#{host.name} re-sync to cocca started."
+      url      = ExternalRegistry.find_by_name("cocca").url
+      host_url = "#{url}/hosts/#{host.name}"
+      header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=host.partner.name"}
+      headers  = {headers: header}
+
+      host_already_in_cocca = process_response HTTParty.get(host_url, headers)
+
+      if host_already_in_cocca
+        puts "#{host.name} already exist in cocca."
+      else
+        SyncCreateHostJob.perform_later url, host
+        puts "#{host.name} re-sync to cocca started."
+      end
+      sleep 0.20
+    end
+  end
+
+  def process_response response
+    if (400..599).include? response.code
+      false
+    else
+      true
     end
   end
 end
