@@ -59,7 +59,7 @@ namespace :db do
         SyncCreateHostJob.perform_later url, host
         puts "#{host.name} re-sync to cocca started."
       end
-      sleep 1
+      sleep 0.20
     end
   end
 
