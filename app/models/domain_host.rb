@@ -72,7 +72,6 @@ class DomainHost < ActiveRecord::Base
       Powerdns::Record.find_or_create_by(powerdns_domain_id: powerdns_domain.id) do |powerdns_record|
         powerdns_record.name = powerdns_domain.name
         powerdns_record.type = "SOA"
-        powerdns_record.prio = 0
         powerdns_record.content = "ns5.domains.ph root.ns5.domains.ph #{date_today}01 28800 7200 864000 14400"
         powerdns_record.end_date = domain.expires_at
       end
