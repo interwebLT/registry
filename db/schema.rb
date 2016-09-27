@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160914010321) do
+ActiveRecord::Schema.define(version: 20160927052646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -188,6 +188,7 @@ ActiveRecord::Schema.define(version: 20160914010321) do
     t.boolean  "server_renew_prohibited",                default: false, null: false
     t.boolean  "server_transfer_prohibited",             default: false, null: false
     t.boolean  "server_update_prohibited",               default: false, null: false
+    t.string   "status_pending_transfer"
   end
 
   create_table "excluded_partners", force: :cascade do |t|
