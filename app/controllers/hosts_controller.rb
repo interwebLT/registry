@@ -40,11 +40,52 @@ class HostsController < SecureController
       render not_found
     end
   end
+  
+  def update
+    unless host_params.empty?
+      update_host
+    else
+      render bad_request
+    end
+  end
 
   private
 
   def host_params
     params.permit :name
+  end
+  
+  def update_host
+    id = params[:id]
+
+    host = Host.find_by name: id
+    host ||= Host.find_by id: id if id.numeric?
+    if host
+      update_existing_domain host
+    else
+      render not_found
+    end
+  end
+  
+  def update_existing_host host
+    host_attributes = host_params
+
+    partner = get_partner
+    if partner
+      host_attributes[:partner_id] = partner.id
+      if host.update(host_attributes)
+        render json: host
+      else
+        render validation_failed host
+      end
+    else
+      render bad_request
+    end
+  end
+  
+  def get_partner
+    partner_name = params[:partner_name]
+    Partner.find_by_name partner_name
   end
 
   def sync_create host
