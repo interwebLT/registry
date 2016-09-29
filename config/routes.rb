@@ -33,7 +33,7 @@ Rails.application.routes.draw do
     resources :hosts, controller: :domain_hosts, only: [:create, :show, :update, :destroy]
   end
 
-  resources :hosts, only: [:index, :create, :show], id: /.*/ do
+  resources :hosts, only: [:index, :create, :show, :update], id: /.*/ do
     resources :addresses, controller: :host_addresses, only: [:create, :show, :destroy]
   end
 

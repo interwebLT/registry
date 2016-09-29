@@ -12,7 +12,7 @@ class Credit < ActiveRecord::Base
 
   after_save :replenish_partner_credit_limit
 
-  after_create :sync_external_registry
+  after_save :sync_external_registry
 
   after_initialize do
     self.status ||= PENDING_CREDIT

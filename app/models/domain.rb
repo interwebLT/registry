@@ -93,6 +93,7 @@ class Domain < ActiveRecord::Base
     old_handle = self.registrant_handle
     self.partner = to
     self.registrant_handle = handle
+    self.status_pending_transfer = nil
 
     result = self.save
 

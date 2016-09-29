@@ -63,6 +63,32 @@ namespace :db do
     end
   end
 
+  desc "Migrate Partner Credits from view tables"
+  task migrate_partner_credits: :environment do
+    partners = Partner.all
+    sinag_partners = SinagPartner.all.pluck(:name)
+
+    partners.each do |partner|
+      unless sinag_partners.include?(partner.name)
+        troy_user = Troy::User.find_by_userid(partner.name)
+        unless troy_user.nil?
+          partner_credit_available = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
+          partner_credit_used      = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
+
+          credit_for_top_up = partner_credit_available - partner_credit_used
+
+          if credit_for_top_up > 0
+            Credit::BankReplenish.execute partner: partner.name,
+                                          credit: credit_for_top_up,
+                                          remarks: 'Top up from credit migration',
+                                          at: Date.today.in_time_zone
+            puts "Credit migration for #{partner.name} successfully done."
+          end
+        end
+      end
+    end
+  end
+
   def process_response response
     if (400..599).include? response.code
       false
