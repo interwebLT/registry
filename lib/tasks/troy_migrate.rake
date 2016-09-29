@@ -72,8 +72,14 @@ namespace :db do
       unless sinag_partners.include?(partner.name)
         troy_user = Troy::User.find_by_userid(partner.name)
         unless troy_user.nil?
-          partner_credit_available = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
-          partner_credit_used      = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
+          partner_credit_available = 0
+          partner_credit_used      = 0
+          unless Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).first.nil?
+            partner_credit_available = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
+          end
+          unless Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).first.nil?
+            partner_credit_used      = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
+          end
 
           credit_for_top_up = partner_credit_available - partner_credit_used
 
