@@ -61,6 +61,7 @@ namespace :db do
       end
       sleep 0.20
     end
+    puts "Host re-sync to cocca done."
   end
 
   desc "Migrate Partner Credits from view tables"
