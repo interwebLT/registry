@@ -135,6 +135,17 @@ class Partner < ActiveRecord::Base
     unless sinag_partners.include?(self.name)
       troy_user = Troy::User.find_by_userid(self.name)
       unless troy_user.nil?
+
+        current_balance = self.current_balance.to_f
+
+        if current_balance > 0
+          Credit::BankReplenish.execute partner: self.name,
+                                        credit: current_balance,
+                                        remarks: 'Top up current sinag credits',
+                                        at: Date.today.in_time_zone
+          puts "Sinag current credit migration for #{partner.name} successfully done."
+        end
+
         partner_credit_available = 0
         partner_credit_used      = 0
         unless Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).first.nil?
@@ -147,11 +158,11 @@ class Partner < ActiveRecord::Base
         credit_for_top_up = partner_credit_available - partner_credit_used
 
         if credit_for_top_up > 0
-          Credit::BankReplenish.execute partner: partner.name,
+          Credit::BankReplenish.execute partner: self.name,
                                         credit: credit_for_top_up,
-                                        remarks: 'Top up from credit migration',
+                                        remarks: 'Top up from troy credits',
                                         at: Date.today.in_time_zone
-          puts "Credit migration for #{partner.name} successfully done."
+          puts "Troy credit migration for #{partner.name} successfully done."
         end
       end
     end
