@@ -38,6 +38,7 @@ namespace :db do
         end
       end
     }
+    puts "Host ownership cleanup done."
   end
 
   desc "Re-Sync all existing Hosts to Cocca"
@@ -51,7 +52,7 @@ namespace :db do
       unless Domain.find_by_name(host_domain).nil?
         url      = ExternalRegistry.find_by_name("cocca").url
         host_url = "#{url}/hosts/#{host.name}"
-        header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=host.partner.name"}
+        header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{host.partner.name}"}
         headers  = {headers: header}
 
         host_already_in_cocca = process_response HTTParty.get(host_url, headers)
