@@ -5,6 +5,7 @@ class DomainSerializer < ActiveModel::Serializer
               :client_transfer_prohibited, :client_update_prohibited,
               :server_hold, :server_delete_prohibited, :server_renew_prohibited,
               :server_transfer_prohibited, :server_update_prohibited,
+              :status_pending_transfer,
               :expired?, :expiring?
 
   def name
