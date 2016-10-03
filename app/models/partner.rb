@@ -129,6 +129,34 @@ class Partner < ActiveRecord::Base
     object_activities.destroy_all
   end
 
+  def migrate_credits
+    sinag_partners = SinagPartner.all.pluck(:name)
+
+    unless sinag_partners.include?(self.name)
+      troy_user = Troy::User.find_by_userid(self.name)
+      unless troy_user.nil?
+        partner_credit_available = 0
+        partner_credit_used      = 0
+        unless Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).first.nil?
+          partner_credit_available = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
+        end
+        unless Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).first.nil?
+          partner_credit_used      = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
+        end
+
+        credit_for_top_up = partner_credit_available - partner_credit_used
+
+        if credit_for_top_up > 0
+          Credit::BankReplenish.execute partner: partner.name,
+                                        credit: credit_for_top_up,
+                                        remarks: 'Top up from credit migration',
+                                        at: Date.today.in_time_zone
+          puts "Credit migration for #{partner.name} successfully done."
+        end
+      end
+    end
+  end
+
   private
 
   def quick_orders
