@@ -76,6 +76,7 @@ namespace :db do
     partners.each do |partner|
       partner.migrate_credits
     end
+    puts "Partner credit sync done."
   end
 
   def process_response response
