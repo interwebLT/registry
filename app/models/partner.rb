@@ -145,20 +145,19 @@ class Partner < ActiveRecord::Base
 
     unless sinag_partners.include?(self.name)
       troy_user = Troy::User.find_by_userid(self.name)
+
       unless troy_user.nil?
+        url    = ExternalRegistry.find_by_name("cocca").url
+        header = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{self.name}"}
 
         current_cocca_balance = self.current_cocca_balance
         if current_cocca_balance > 0
-          self.reset_cocca_balance current_cocca_balance
+          self.reset_cocca_balance current_cocca_balance, url, header
         end
 
         current_balance = self.current_balance.to_f
         if current_balance > 0
-          Credit::BankReplenish.execute partner: self.name,
-                                        credit: current_balance,
-                                        remarks: 'Top up current sinag credits',
-                                        at: Date.today.in_time_zone
-          puts "Sinag current credit migration for #{self.name} successfully done."
+          self.update_cocca_balance current_balance, url, header
         end
 
         partner_credit_available = 0
@@ -184,10 +183,7 @@ class Partner < ActiveRecord::Base
     end
   end
 
-  def reset_cocca_balance current_cocca_balance
-    url    = ExternalRegistry.find_by_name("cocca").url
-    header = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{self.name}"}
-
+  def reset_cocca_balance current_cocca_balance, url, header
     body = {
       partner:         self.name,
       type:            "Adjustment",
@@ -207,6 +203,28 @@ class Partner < ActiveRecord::Base
 
     HTTParty.post "#{url}/credits", request
     puts "Current cocca balance for #{self.name} was reset."
+  end
+
+  def update_cocca_balance current_balance, url, header
+    body = {
+      partner:         self.name,
+      type:            "Adjustment",
+      status:          "",
+      amount_cents:    current_balance,
+      amount_currency: "USD",
+      remarks:         "Top up current sinag credits",
+      credit_number:   "",
+      fee_cents:       0,
+      fee_currency:    "USD"
+    }
+
+    request = {
+      headers:  header,
+      body:     body.to_json
+    }
+
+    HTTParty.post "#{url}/credits", request
+    puts "Sinag current credit migration for #{self.name} successfully done."
   end
 
   private
