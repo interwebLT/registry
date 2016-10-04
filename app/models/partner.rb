@@ -149,11 +149,7 @@ class Partner < ActiveRecord::Base
 
         current_cocca_balance = self.current_cocca_balance
         if current_cocca_balance > 0
-          Credit::BankReplenish.execute partner: self.name,
-                                        credit: current_cocca_balance * -1,
-                                        remarks: 'Reset Balance For Migration',
-                                        at: Date.today.in_time_zone
-          puts "Current cocca balance for #{self.name} was reset."
+          self.reset_cocca_balance current_cocca_balance
         end
 
         current_balance = self.current_balance.to_f
@@ -186,6 +182,31 @@ class Partner < ActiveRecord::Base
         end
       end
     end
+  end
+
+  def reset_cocca_balance current_cocca_balance
+    url    = ExternalRegistry.find_by_name("cocca").url
+    header = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{self.name}"}
+
+    body = {
+      partner:         self.name,
+      type:            "Adjustment",
+      status:          "",
+      amount_cents:    current_cocca_balance * -1,
+      amount_currency: "USD",
+      remarks:         "Reset Balance For Migration",
+      credit_number:   "",
+      fee_cents:       0,
+      fee_currency:    "USD"
+    }
+
+    request = {
+      headers:  header,
+      body:     body.to_json
+    }
+
+    HTTParty.post "#{url}/credits", request
+    puts "Current cocca balance for #{self.name} was reset."
   end
 
   private
