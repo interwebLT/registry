@@ -143,7 +143,7 @@ class Partner < ActiveRecord::Base
                                         credit: current_balance,
                                         remarks: 'Top up current sinag credits',
                                         at: Date.today.in_time_zone
-          puts "Sinag current credit migration for #{partner.name} successfully done."
+          puts "Sinag current credit migration for #{self.name} successfully done."
         end
 
         partner_credit_available = 0
@@ -162,7 +162,7 @@ class Partner < ActiveRecord::Base
                                         credit: credit_for_top_up,
                                         remarks: 'Top up from troy credits',
                                         at: Date.today.in_time_zone
-          puts "Troy credit migration for #{partner.name} successfully done."
+          puts "Troy credit migration for #{self.name} successfully done."
         end
       end
     end
