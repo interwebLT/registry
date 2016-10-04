@@ -164,11 +164,13 @@ class Partner < ActiveRecord::Base
         partner_credit_used      = 0
 
         unless Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).first.nil?
-          partner_credit_available = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
+          credits = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).map{|credit| credit.numcredits} - [nil]
+          partner_credit_available = credits.sum.to_f
         end
 
         unless Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).first.nil?
-          partner_credit_used      = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
+          used = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).map{|credit| credit.numcredits} - [nil]
+          partner_credit_used = used.sum.to_f
         end
 
         credit_for_top_up = partner_credit_available - partner_credit_used
