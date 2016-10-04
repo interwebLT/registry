@@ -129,6 +129,17 @@ class Partner < ActiveRecord::Base
     object_activities.destroy_all
   end
 
+  def current_cocca_balance
+    url      = ExternalRegistry.find_by_name("cocca").url
+    host_url = "#{url}/credits/#{self.name}"
+    header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{self.name}"}
+    headers  = {headers: header}
+
+    current_balance = HTTParty.get(host_url, headers).to_json
+
+    return current_balance.to_f
+  end
+
   def migrate_credits
     sinag_partners = SinagPartner.all.pluck(:name)
 
@@ -136,8 +147,16 @@ class Partner < ActiveRecord::Base
       troy_user = Troy::User.find_by_userid(self.name)
       unless troy_user.nil?
 
-        current_balance = self.current_balance.to_f
+        current_cocca_balance = self.current_cocca_balance
+        if current_cocca_balance > 0
+          Credit::BankReplenish.execute partner: self.name,
+                                        credit: current_cocca_balance * -1,
+                                        remarks: 'Reset Balance For Migration',
+                                        at: Date.today.in_time_zone
+          puts "Current cocca balance for #{self.name} was reset."
+        end
 
+        current_balance = self.current_balance.to_f
         if current_balance > 0
           Credit::BankReplenish.execute partner: self.name,
                                         credit: current_balance,
@@ -148,15 +167,16 @@ class Partner < ActiveRecord::Base
 
         partner_credit_available = 0
         partner_credit_used      = 0
+
         unless Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).first.nil?
           partner_credit_available = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
         end
+
         unless Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).first.nil?
           partner_credit_used      = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
         end
 
         credit_for_top_up = partner_credit_available - partner_credit_used
-
         if credit_for_top_up > 0
           Credit::BankReplenish.execute partner: self.name,
                                         credit: credit_for_top_up,
