@@ -8,6 +8,16 @@ namespace :db do
     end
   end
 
+  desc "Migrate Partner Credits from view tables"
+  task migrate_partner_credits: :environment do
+    partners = Partner.all
+
+    partners.each do |partner|
+      partner.migrate_credits
+    end
+    puts "Partner credit sync done."
+  end
+
   desc "Fix Host Ownership"
   task reset_host_partner: :environment do
     hosts = Host.all
@@ -30,42 +40,54 @@ namespace :db do
     puts "Host ownership cleanup done."
   end
 
+  desc "Delete all unused host"
+  task delete_orp_hosts: :environment do
+    hosts = Host.all
+
+    hosts.each do |host|
+      if !DomainHost.exists?(name: host.name)
+        host.destoy!
+        puts "#{host.name} destroyed."
+      end
+      sleep 0.10
+    end
+    puts "Deletion of unused Hosts done."
+  end
+
   desc "Re-Sync all existing Hosts to Cocca"
   task sync_all_hosts_to_cocca: :environment do
     hosts = Host.all
-    url   = ExternalRegistry.find_by_name("cocca").url
 
     hosts.each do |host|
-      host_domain = host.get_root_domain
-
-      unless Domain.find_by_name(host_domain).nil?
-        url      = ExternalRegistry.find_by_name("cocca").url
-        host_url = "#{url}/hosts/#{host.name}"
-        header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{host.partner.name}"}
-        headers  = {headers: header}
-
-        host_already_in_cocca = process_response HTTParty.get(host_url, headers)
-
-        if host_already_in_cocca
-          puts "#{host.name} already exist in cocca."
+      if DomainHost.exists?(name: host.name)
+        if host.top_level_domain == "ph"
+          host_domain = host.get_root_domain
+          unless Domain.find_by_name(host_domain).nil?
+            remigrate_host host
+          end
         else
-          SyncCreateHostJob.perform_later url, host
-          puts "#{host.name} re-sync to cocca started."
+          remigrate_host host
         end
       end
-      sleep 0.20
+      sleep 0.10
     end
     puts "Host re-sync to cocca done."
   end
 
-  desc "Migrate Partner Credits from view tables"
-  task migrate_partner_credits: :environment do
-    partners = Partner.all
+  def remigrate_host host
+    url   = ExternalRegistry.find_by_name("cocca").url
+    host_url = "#{url}/hosts/#{host.name}"
+    header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{host.partner.name}"}
+    headers  = {headers: header}
 
-    partners.each do |partner|
-      partner.migrate_credits
+    host_already_in_cocca = process_response HTTParty.get(host_url, headers)
+
+    if host_already_in_cocca
+      puts "#{host.name} already exist in cocca."
+    else
+      SyncCreateHostJob.perform_later url, host
+      puts "#{host.name} re-sync to cocca started."
     end
-    puts "Partner credit sync done."
   end
 
   def process_response response
