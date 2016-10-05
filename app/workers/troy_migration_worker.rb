@@ -136,6 +136,23 @@ class TroyMigrationWorker
                                         property_changed: :domain_host,
                                         value: nameserver.name
         end
+
+        troy_domain.reach_records.each do |record|
+          if record.type == "SOA"
+            # SOA record will be created in domain host callbak
+            next
+          elsif record.type == "NS"
+            if !old_default_nameservers.include?(record.content)
+              create_dns_record record, pdns_domain, nil
+            end
+          elsif record.type == "SRV"
+            srv_values = record.content.split(' ')
+            preferences = {:weight => "#{srv_values[0]}", :port => "#{srv_values[1]}", :srv_content => "#{srv_values[2].to_s}"}
+            create_dns_record record, pdns_domain, preferences
+          else
+            create_dns_record record, pdns_domain, nil
+          end
+        end
       else
         if !troy_nameservers.empty?
           troy_nameservers.each do |nameserver|
@@ -155,26 +172,6 @@ class TroyMigrationWorker
                                             value: nameserver
             end
           end
-        end
-      end
-
-      troy_domain.reach_records.each do |record|
-        if record.type == "SOA"
-          # if has_default_nameservers
-          #   create_dns_record record, pdns_domain, nil
-          # end
-        elsif record.type == "NS"
-          if has_default_nameservers
-            create_new_ns_records record, pdns_domain, new_default_nameservers
-          else
-            create_dns_record record, pdns_domain, nil
-          end
-        elsif record.type == "SRV"
-          srv_values = record.content.split(' ')
-          preferences = {:weight => "#{srv_values[0]}", :port => "#{srv_values[1]}", :srv_content => "#{srv_values[2].to_s}"}
-          create_dns_record record, pdns_domain, preferences
-        else
-          create_dns_record record, pdns_domain, nil
         end
       end
     end
