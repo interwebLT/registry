@@ -137,7 +137,7 @@ class TroyMigrationWorker
                                         value: nameserver.name
         end
       else
-        if troy_nameservers
+        if !troy_nameservers.empty?
           troy_nameservers.each do |nameserver|
             if !domain.product.domain_hosts.map{|ns| ns.name.downcase}.include? nameserver.downcase
               domain.product.domain_hosts.create(
@@ -160,9 +160,9 @@ class TroyMigrationWorker
 
       troy_domain.reach_records.each do |record|
         if record.type == "SOA"
-          if has_default_nameservers
-            create_dns_record record, pdns_domain, nil
-          end
+          # if has_default_nameservers
+          #   create_dns_record record, pdns_domain, nil
+          # end
         elsif record.type == "NS"
           if has_default_nameservers
             create_new_ns_records record, pdns_domain, new_default_nameservers
