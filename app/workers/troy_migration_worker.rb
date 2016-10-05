@@ -1,6 +1,6 @@
 class TroyMigrationWorker
   include Sidekiq::Worker
-  sidekiq_options retry: false
+  sidekiq_options queue: :migrate_troy_dns, retry: false
 
   def create_object_activity record, pdns_domain
     unless record.type == "SOA"
