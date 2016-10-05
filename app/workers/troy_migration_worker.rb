@@ -104,7 +104,7 @@ class TroyMigrationWorker
 
     troy_domain = Troy::Domain.find_by_name_and_extension(domain_name, domain_ext)
 
-    if troy_domain
+    if !troy_domain.nil?
       has_default_nameservers = true
       old_default_nameservers = ["nsfwd.domains.ph", "ns2.domains.ph"]
       new_default_nameservers = Nameserver.all
@@ -114,16 +114,8 @@ class TroyMigrationWorker
         pdns_domain.name = domain.name
       end
 
-      if troy_nameservers
-        unless troy_nameservers.count > 2
-          troy_nameservers.each do |nameserver|
-            if !old_default_nameservers.include? nameserver.downcase
-              has_default_nameservers = false
-            end
-          end
-        else
-          has_default_nameservers = false
-        end
+      if old_default_nameservers.sort != troy_nameservers.sort
+        has_default_nameservers = false
       end
 
       if has_default_nameservers
