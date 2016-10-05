@@ -12,10 +12,8 @@ namespace :db do
     @partners = Partner.all
 
     @partners.each do |partner|
-      puts partner.name
-      partner.domains.each do |domain|
-        domain.migrate_records
-      end
+      partner.migrate_domain_dns
+      sleep 0.10
     end
   end
 

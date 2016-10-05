@@ -129,6 +129,13 @@ class Partner < ActiveRecord::Base
     object_activities.destroy_all
   end
 
+  def migrate_domain_dns
+    self.domains.each do |domain|
+      domain.migrate_records
+      sleep 0.10
+    end
+  end
+
   def current_cocca_balance
     url      = ExternalRegistry.find_by_name("cocca").url
     host_url = "#{url}/credits/#{self.name}"
