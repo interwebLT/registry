@@ -1,6 +1,6 @@
 class TroyMigrationWorker
   include Sidekiq::Worker
-  sidekiq_options retry: false
+  sidekiq_options queue: :migrate_troy_dns, retry: 5
 
   def create_object_activity record, pdns_domain
     unless record.type == "SOA"
@@ -95,6 +95,44 @@ class TroyMigrationWorker
     end
   end
 
+  def save_host nameserver, domain
+    base_url      = Rails.configuration.api_url
+    partner_token = Application.where("partner_id=? and client=?", domain.partner.id, "cocca" ).first.token
+    header        = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{partner_token}"}
+    ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
+
+    body = {
+      name:    nameserver,
+      ip_list: ip_list
+    }
+    request = {
+      headers:  header,
+      body:     body.to_json
+    }
+    process_response HTTParty.post "#{base_url}/hosts", request
+  end
+
+  def create_external_domain_host nameserver, domain
+    url             = ExternalRegistry.find_by_name("cocca").url
+    header          = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{domain.partner.name}"}
+    domain_url      = "#{url}/domains/#{domain.name}"
+    domain_host_url = "#{domain_url}/hosts"
+
+    body = {
+      name: nameserver
+    }
+    request = {
+      headers:  header,
+      body:     body.to_json
+    }
+
+    process_response HTTParty.post domain_host_url, request
+  end
+
+  def process_response response
+    JSON.parse response.body, symbolize_names: true
+  end
+
   def perform domain_id
     domain = Domain.find domain_id
     domain_name       = domain.name.split('.').first
@@ -104,7 +142,7 @@ class TroyMigrationWorker
 
     troy_domain = Troy::Domain.find_by_name_and_extension(domain_name, domain_ext)
 
-    if troy_domain
+    if !troy_domain.nil?
       has_default_nameservers = true
       old_default_nameservers = ["nsfwd.domains.ph", "ns2.domains.ph"]
       new_default_nameservers = Nameserver.all
@@ -114,22 +152,16 @@ class TroyMigrationWorker
         pdns_domain.name = domain.name
       end
 
-      if troy_nameservers
-        unless troy_nameservers.count > 2
-          troy_nameservers.each do |nameserver|
-            if !old_default_nameservers.include? nameserver.downcase
-              has_default_nameservers = false
-            end
-          end
-        else
-          has_default_nameservers = false
-        end
+      if old_default_nameservers.sort != troy_nameservers.sort
+        has_default_nameservers = false
       end
 
       if has_default_nameservers
         domain.product.domain_hosts.map{|nameserver| nameserver.delete}
 
         new_default_nameservers.each do |nameserver|
+          save_host nameserver.name, domain
+
           domain.product.domain_hosts.create(
             product_id: domain.product_id,
             name: nameserver.name,
@@ -143,11 +175,32 @@ class TroyMigrationWorker
                                         product: domain.product,
                                         property_changed: :domain_host,
                                         value: nameserver.name
+
+          create_external_domain_host nameserver.name, domain
+        end
+
+        troy_domain.reach_records.each do |record|
+          if record.type == "SOA"
+            # SOA record will be created in domain host callbak
+            next
+          elsif record.type == "NS"
+            if !old_default_nameservers.include?(record.content)
+              create_dns_record record, pdns_domain, nil
+            end
+          elsif record.type == "SRV"
+            srv_values = record.content.split(' ')
+            preferences = {:weight => "#{srv_values[0]}", :port => "#{srv_values[1]}", :srv_content => "#{srv_values[2].to_s}"}
+            create_dns_record record, pdns_domain, preferences
+          else
+            create_dns_record record, pdns_domain, nil
+          end
         end
       else
-        if troy_nameservers
+        if !troy_nameservers.empty?
           troy_nameservers.each do |nameserver|
             if !domain.product.domain_hosts.map{|ns| ns.name.downcase}.include? nameserver.downcase
+              save_host nameserver, domain
+
               domain.product.domain_hosts.create(
                 product_id: domain.product_id,
                 name: nameserver,
@@ -161,28 +214,10 @@ class TroyMigrationWorker
                                             product: domain.product,
                                             property_changed: :domain_host,
                                             value: nameserver
+
+              create_external_domain_host nameserver, domain
             end
           end
-        end
-      end
-
-      troy_domain.reach_records.each do |record|
-        if record.type == "SOA"
-          if has_default_nameservers
-            create_dns_record record, pdns_domain, nil
-          end
-        elsif record.type == "NS"
-          if has_default_nameservers
-            create_new_ns_records record, pdns_domain, new_default_nameservers
-          else
-            create_dns_record record, pdns_domain, nil
-          end
-        elsif record.type == "SRV"
-          srv_values = record.content.split(' ')
-          preferences = {:weight => "#{srv_values[0]}", :port => "#{srv_values[1]}", :srv_content => "#{srv_values[2].to_s}"}
-          create_dns_record record, pdns_domain, preferences
-        else
-          create_dns_record record, pdns_domain, nil
         end
       end
     end

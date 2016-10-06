@@ -15,7 +15,7 @@ class Troy::Domain < ActiveRecord::Base
   end
 
   def nameservers
-    "#{self.ns1} #{self.ns2} #{self.ns3}".split(' ')
+    "#{self.ns1.try(:downcase)} #{self.ns2.try(:downcase)} #{self.ns3.try(:downcase)}".split(' ')
   end
 
   # def to_hash

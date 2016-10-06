@@ -109,12 +109,15 @@ class Credit < ActiveRecord::Base
   end
 
   def sync_external_registry
-    if complete?
+    if self.complete?
       ExternalRegistry.all.each do |registry|
-        next if registry.name == self.partner.client
-        next if ExcludedPartner.exists? name: self.partner.name
+        unless registry.name == "troy"
+          next if ExcludedPartner.exists? name: self.partner.name
 
-        SyncCreateCreditJob.perform_later registry.url, self
+          if self.status == COMPLETE_CREDIT
+            SyncCreateCreditJob.perform_later registry.url, self
+          end
+        end
       end
     end
   end

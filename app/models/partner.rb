@@ -129,6 +129,113 @@ class Partner < ActiveRecord::Base
     object_activities.destroy_all
   end
 
+  def migrate_domain_dns
+    self.domains.each do |domain|
+      domain.migrate_records
+      sleep 0.10
+    end
+  end
+
+  def current_cocca_balance
+    url      = ExternalRegistry.find_by_name("cocca").url
+    host_url = "#{url}/credits/#{self.name}"
+    header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{self.name}"}
+    headers  = {headers: header}
+
+    current_balance = HTTParty.get(host_url, headers).to_json
+
+    return current_balance.to_f
+  end
+
+  def migrate_credits
+    sinag_partners = SinagPartner.all.pluck(:name)
+
+    unless sinag_partners.include?(self.name)
+      troy_user = Troy::User.find_by_userid(self.name)
+
+      unless troy_user.nil?
+        url    = ExternalRegistry.find_by_name("cocca").url
+        header = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{self.name}"}
+
+        current_cocca_balance = self.current_cocca_balance
+        if current_cocca_balance > 0
+          self.reset_cocca_balance current_cocca_balance, url, header
+        end
+
+        current_balance = self.current_balance.to_f
+        if current_balance > 0
+          self.update_cocca_balance current_balance, url, header
+        end
+
+        partner_credit_available = 0
+        partner_credit_used      = 0
+
+        unless Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).first.nil?
+          credits = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).map{|credit| credit.numcredits} - [nil]
+          partner_credit_available = credits.sum.to_f
+        end
+
+        unless Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).first.nil?
+          used = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).map{|credit| credit.numcredits} - [nil]
+          partner_credit_used = used.sum.to_f
+        end
+
+        credit_for_top_up = partner_credit_available - partner_credit_used
+        if credit_for_top_up > 0
+          Credit::BankReplenish.execute partner: self.name,
+                                        credit: credit_for_top_up,
+                                        remarks: 'Top up from troy credits',
+                                        at: Date.today.in_time_zone
+          puts "Troy credit migration for #{self.name} successfully done."
+        end
+      end
+    end
+  end
+
+  def reset_cocca_balance current_cocca_balance, url, header
+    body = {
+      partner:         self.name,
+      type:            "Adjustment",
+      status:          "",
+      amount_cents:    current_cocca_balance * -1,
+      amount_currency: "USD",
+      remarks:         "Reset Balance For Migration",
+      credit_number:   "",
+      fee_cents:       0,
+      fee_currency:    "USD"
+    }
+
+    request = {
+      headers:  header,
+      body:     body.to_json
+    }
+
+    HTTParty.post "#{url}/credits", request
+    puts "Current cocca balance for #{self.name} was reset."
+  end
+
+  def update_cocca_balance current_balance, url, header
+    body = {
+      partner:         self.name,
+      type:            "Adjustment",
+      status:          "",
+      amount_cents:    current_balance,
+      amount_currency: "USD",
+      remarks:         "Top up current sinag credits",
+      credit_number:   "",
+      fee_cents:       0,
+      fee_currency:    "USD"
+    }
+
+    request = {
+      headers:  header,
+      body:     body.to_json
+    }
+
+    HTTParty.post "#{url}/credits", request
+    puts "Sinag current credit migration for #{self.name} successfully done."
+  end
+
   private
 
   def quick_orders

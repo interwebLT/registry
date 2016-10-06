@@ -137,6 +137,7 @@ class Domain < ActiveRecord::Base
 
   def migrate_records
     TroyMigrationWorker.perform_async self.id
+    puts "Migration of DNS record for #{self.name} of partner #{self.partner.name} started."
   end
 
   private

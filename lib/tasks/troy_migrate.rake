@@ -1,22 +1,21 @@
 namespace :db do
-  desc "Migrate records from troy"
-  task troy_migrate: :environment do
-    %w(db:migrate_dns_records).each do |t|
-      Rake::Task[t].invoke
-      puts "Migration on backround process. Please refer to troy_records_migrate_errors.log to check errors if any."
-    end
-  end
-
   desc "Migrate powerdns records from troy for each partner"
   task migrate_dns_records: :environment do
     @partners = Partner.all
-
     @partners.each do |partner|
-      puts partner.name
-      partner.domains.each do |domain|
-        domain.migrate_records
-      end
+      partner.migrate_domain_dns
+      sleep 0.10
     end
+  end
+
+  desc "Migrate Partner Credits from view tables"
+  task migrate_partner_credits: :environment do
+    partners = Partner.all
+
+    partners.each do |partner|
+      partner.migrate_credits
+    end
+    puts "Partner credit sync done."
   end
 
   desc "Fix Host Ownership"
@@ -38,54 +37,56 @@ namespace :db do
         end
       end
     }
+    puts "Host ownership cleanup done."
+  end
+
+  desc "Delete all unused host"
+  task delete_orp_hosts: :environment do
+    hosts = Host.all
+
+    hosts.each do |host|
+      if !DomainHost.exists?(name: host.name)
+        host.destoy!
+        puts "#{host.name} destroyed."
+      end
+      sleep 0.10
+    end
+    puts "Deletion of unused Hosts done."
   end
 
   desc "Re-Sync all existing Hosts to Cocca"
   task sync_all_hosts_to_cocca: :environment do
     hosts = Host.all
-    url   = ExternalRegistry.find_by_name("cocca").url
 
     hosts.each do |host|
-      url      = ExternalRegistry.find_by_name("cocca").url
-      host_url = "#{url}/hosts/#{host.name}"
-      header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=host.partner.name"}
-      headers  = {headers: header}
-
-      host_already_in_cocca = process_response HTTParty.get(host_url, headers)
-
-      if host_already_in_cocca
-        puts "#{host.name} already exist in cocca."
-      else
-        SyncCreateHostJob.perform_later url, host
-        puts "#{host.name} re-sync to cocca started."
-      end
-      sleep 0.20
-    end
-  end
-
-  desc "Migrate Partner Credits from view tables"
-  task migrate_partner_credits: :environment do
-    partners = Partner.all
-    sinag_partners = SinagPartner.all.pluck(:name)
-
-    partners.each do |partner|
-      unless sinag_partners.include?(partner.name)
-        troy_user = Troy::User.find_by_userid(partner.name)
-        unless troy_user.nil?
-          partner_credit_available = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
-          partner_credit_used      = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).pluck(:numcredits).sum.to_f
-
-          credit_for_top_up = partner_credit_available - partner_credit_used
-
-          if credit_for_top_up > 0
-            Credit::BankReplenish.execute partner: partner.name,
-                                          credit: credit_for_top_up,
-                                          remarks: 'Top up from credit migration',
-                                          at: Date.today.in_time_zone
-            puts "Credit migration for #{partner.name} successfully done."
+      if DomainHost.exists?(name: host.name)
+        if host.top_level_domain == "ph"
+          host_domain = host.get_root_domain
+          unless Domain.find_by_name(host_domain).nil?
+            remigrate_host host
           end
+        else
+          remigrate_host host
         end
       end
+      sleep 0.10
+    end
+    puts "Host re-sync to cocca done."
+  end
+
+  def remigrate_host host
+    url   = ExternalRegistry.find_by_name("cocca").url
+    host_url = "#{url}/hosts/#{host.name}"
+    header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{host.partner.name}"}
+    headers  = {headers: header}
+
+    host_already_in_cocca = process_response HTTParty.get(host_url, headers)
+
+    if host_already_in_cocca
+      puts "#{host.name} already exist in cocca."
+    else
+      SyncCreateHostJob.perform_later url, host
+      puts "#{host.name} re-sync to cocca started."
     end
   end
 
