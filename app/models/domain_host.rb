@@ -140,9 +140,13 @@ class DomainHost < ActiveRecord::Base
     host = Host.find_by(name: hostname)
     if host.nil?
       other_partner_domains = Domain.where.not(partner_id: self.product.domain.partner.id)
-      invalid_domain_host = other_partner_domains.map{|d| hostname.include?(d.name)}.include?(true)
-      if invalid_domain_host
-        errors.add(:name, "You are not authorized to register this Nameserver.")
+
+      if other_partner_domains.nil?
+      else
+        invalid_domain_host = other_partner_domains.map{|d| hostname.include?(d.name)}.include?(true)
+        if invalid_domain_host
+          errors.add(:name, "You are not authorized to register this Nameserver.")
+        end
       end
     end
   end

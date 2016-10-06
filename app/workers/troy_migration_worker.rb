@@ -95,7 +95,10 @@ class TroyMigrationWorker
     end
   end
 
-  def save_host nameserver, domain, base_url, header
+  def save_host nameserver, domain
+    base_url      = Rails.configuration.api_url
+    partner_token = Application.where("partner_id=? and client=?", domain.partner.id, "cocca" ).first.token
+    header        = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{partner_token}"}
     ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
 
     body = {
@@ -109,8 +112,10 @@ class TroyMigrationWorker
     process_response HTTParty.post "#{base_url}/hosts", request
   end
 
-  def create_external_domain_host nameserver, domain, base_url, header
-    domain_url      = "#{base_url}/domains/#{domain.name}"
+  def create_external_domain_host nameserver, domain
+    url             = ExternalRegistry.find_by_name("cocca").url
+    header          = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{domain.partner.name}"}
+    domain_url      = "#{url}/domains/#{domain.name}"
     domain_host_url = "#{domain_url}/hosts"
 
     body = {
@@ -138,9 +143,6 @@ class TroyMigrationWorker
     troy_domain = Troy::Domain.find_by_name_and_extension(domain_name, domain_ext)
 
     if !troy_domain.nil?
-      raise domain.partner.token.inspect
-      base_url = Rails.configuration.api_url
-      header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{domain.partner.token}"}
       has_default_nameservers = true
       old_default_nameservers = ["nsfwd.domains.ph", "ns2.domains.ph"]
       new_default_nameservers = Nameserver.all
@@ -158,7 +160,7 @@ class TroyMigrationWorker
         domain.product.domain_hosts.map{|nameserver| nameserver.delete}
 
         new_default_nameservers.each do |nameserver|
-          save_host nameserver, domain, base_url, header
+          save_host nameserver.name, domain
 
           domain.product.domain_hosts.create(
             product_id: domain.product_id,
@@ -174,7 +176,7 @@ class TroyMigrationWorker
                                         property_changed: :domain_host,
                                         value: nameserver.name
 
-          create_external_domain_host nameserver, domain, base_url, header
+          create_external_domain_host nameserver.name, domain
         end
 
         troy_domain.reach_records.each do |record|
@@ -197,7 +199,7 @@ class TroyMigrationWorker
         if !troy_nameservers.empty?
           troy_nameservers.each do |nameserver|
             if !domain.product.domain_hosts.map{|ns| ns.name.downcase}.include? nameserver.downcase
-              save_host nameserver, domain, base_url, header
+              save_host nameserver, domain
 
               domain.product.domain_hosts.create(
                 product_id: domain.product_id,
@@ -213,7 +215,7 @@ class TroyMigrationWorker
                                             property_changed: :domain_host,
                                             value: nameserver
 
-              create_external_domain_host nameserver, domain, base_url, header
+              create_external_domain_host nameserver, domain
             end
           end
         end
