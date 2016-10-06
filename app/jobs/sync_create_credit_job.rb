@@ -2,7 +2,7 @@ class SyncCreateCreditJob < ApplicationJob
   queue_as :sync_registry_changes
 
   def humanized_money money
-    amount = ActionController::Base.helpers.humanized_money(money).gsub(',','').to_i / 100
+    amount = ActionController::Base.helpers.humanized_money(money).gsub(',','').to_f / 100
 
     amount
   end
