@@ -46,7 +46,7 @@ namespace :db do
 
     hosts.each do |host|
       if !DomainHost.exists?(name: host.name)
-        host.destoy!
+        host.destroy!
         puts "#{host.name} destroyed."
       end
       sleep 0.10
