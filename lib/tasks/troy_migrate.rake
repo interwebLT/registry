@@ -18,6 +18,20 @@ namespace :db do
     puts "Partner credit sync done."
   end
 
+  desc "Migrate Partner epp_partner boolean form SinagPartners"
+  task update_partner_epp_partner_field: :environment do
+    sinag_partners = SinagPartner.all.pluck(:name)
+    partners = Partner.all
+
+    partners.each do |partner|
+      if sinag_partners.include?(partner.name)
+        partner.epp_partner = true
+        partner.save!
+        puts "Partner #{partner.name} epp_partner field updated."
+      end
+    end
+  end
+
   desc "Fix Host Ownership"
   task reset_host_partner: :environment do
     hosts = Host.all
@@ -49,7 +63,6 @@ namespace :db do
         host.destroy!
         puts "#{host.name} destroyed."
       end
-      sleep 0.10
     end
     puts "Deletion of unused Hosts done."
   end
