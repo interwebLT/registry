@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160927052646) do
+ActiveRecord::Schema.define(version: 20161007043312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -379,6 +379,7 @@ ActiveRecord::Schema.define(version: 20160927052646) do
     t.datetime "updated_at",                                       null: false
     t.string   "salt",                limit: 255,                  null: false
     t.hstore   "preferences"
+    t.boolean  "epp_partner",                      default: false
   end
 
   add_index "partners", ["name"], name: "index_partners_on_name", unique: true, using: :btree
