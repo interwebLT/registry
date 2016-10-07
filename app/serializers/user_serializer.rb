@@ -1,5 +1,5 @@
 class UserSerializer < ActiveModel::Serializer
-  attributes :id, :username, :token, :partner_id, :partner_name, :credits, :transactions_allowed, :admin, :staff, :email
+  attributes :id, :username, :token, :partner_id, :partner_name, :credits, :transactions_allowed, :admin, :staff, :email, :epp_partner
 
   def username
     object.name
@@ -27,5 +27,9 @@ class UserSerializer < ActiveModel::Serializer
 
   def staff
     object.staff
+  end
+
+  def epp_partner
+    object.epp_partner
   end
 end
