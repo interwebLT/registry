@@ -162,11 +162,6 @@ class Partner < ActiveRecord::Base
           self.reset_cocca_balance current_cocca_balance, url, header
         end
 
-        current_balance = self.current_balance.to_f
-        if current_balance > 0
-          self.update_cocca_balance current_balance, url, header
-        end
-
         partner_credit_available = 0
         partner_credit_used      = 0
 
@@ -182,11 +177,23 @@ class Partner < ActiveRecord::Base
 
         credit_for_top_up = partner_credit_available - partner_credit_used
         if credit_for_top_up > 0
-          Credit::BankReplenish.execute partner: self.name,
-                                        credit: credit_for_top_up,
-                                        remarks: 'Top up from troy credits',
-                                        at: Date.today.in_time_zone
-          puts "Troy credit migration for #{self.name} successfully done."
+          amount = credit_for_top_up.money
+
+          credit = self.credits.new
+          credit.type           = "Credit::BankReplenish"
+          credit.amount_cents   = amount
+          credit.credited_at    = Time.now
+          credit.remarks        = "migrated from troy"
+          credit.fee_cents      = 0.money
+          credit.troy_migration = true
+
+          credit.complete!
+
+          # Credit::BankReplenish.execute partner: self.name,
+          #                               credit: credit_for_top_up,
+          #                               remarks: 'Top up from troy credits',
+          #                               at: Date.today.in_time_zone
+          # puts "Troy credit migration for #{self.name} successfully done."
         end
       end
     end
