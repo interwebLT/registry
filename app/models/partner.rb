@@ -181,19 +181,21 @@ class Partner < ActiveRecord::Base
 
           credit = self.credits.new
           credit.type           = "Credit::BankReplenish"
-          credit.amount_cents   = amount
+          credit.amount         = amount
           credit.credited_at    = Time.now
           credit.remarks        = "migrated from troy"
-          credit.fee_cents      = 0.money
+          credit.fee            = 0.money
           credit.troy_migration = true
 
           credit.complete!
 
-          # Credit::BankReplenish.execute partner: self.name,
-          #                               credit: credit_for_top_up,
-          #                               remarks: 'Top up from troy credits',
-          #                               at: Date.today.in_time_zone
-          # puts "Troy credit migration for #{self.name} successfully done."
+          puts "Troy credit migration to sinag for #{self.name} successfully done."
+        end
+
+        current_balance = self.current_balance.to_f
+        if current_balance != 0
+          self.update_cocca_balance current_balance, url, header
+          puts "Partner #{self.name} top up sinag credit done."
         end
       end
     end
