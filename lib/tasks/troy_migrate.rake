@@ -18,6 +18,20 @@ namespace :db do
     puts "Partner credit sync done."
   end
 
+  desc "Migrate Partner epp_partner boolean form SinagPartners"
+  task update_partner_epp_partner_field: :environment do
+    sinag_partners = SinagPartner.all.pluck(:name)
+    partners = Partner.all
+
+    partners.each do |partner|
+      if sinag_partners.include?(partner.name)
+        partner.epp_partner = true
+        partner.save!
+        puts "Partner #{partner.name} epp_partner field updated."
+      end
+    end
+  end
+
   desc "Fix Host Ownership"
   task reset_host_partner: :environment do
     hosts = Host.all
@@ -41,15 +55,14 @@ namespace :db do
   end
 
   desc "Delete all unused host"
-  task delete_orp_hosts: :environment do
+  task delete_orphan_hosts: :environment do
     hosts = Host.all
 
     hosts.each do |host|
       if !DomainHost.exists?(name: host.name)
-        host.destoy!
+        host.destroy!
         puts "#{host.name} destroyed."
       end
-      sleep 0.10
     end
     puts "Deletion of unused Hosts done."
   end
@@ -59,14 +72,16 @@ namespace :db do
     hosts = Host.all
 
     hosts.each do |host|
-      if DomainHost.exists?(name: host.name)
-        if host.top_level_domain == "ph"
-          host_domain = host.get_root_domain
-          unless Domain.find_by_name(host_domain).nil?
+      unless ["comlaude", "domrobot", "test-ipmirror", "test-unitedag"].include?(host.partner.name)
+        if DomainHost.exists?(name: host.name)
+          if host.top_level_domain == "ph"
+            host_domain = host.get_root_domain
+            unless Domain.find_by_name(host_domain).nil?
+              remigrate_host host
+            end
+          else
             remigrate_host host
           end
-        else
-          remigrate_host host
         end
       end
       sleep 0.10
