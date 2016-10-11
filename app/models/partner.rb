@@ -268,12 +268,12 @@ class Partner < ActiveRecord::Base
     puts "Sinag current credit migration for #{self.name} successfully done."
   end
 
-  def update_domain_private_registration
-    domains = self.domains
-    domains.each do |domain|
-      domain.migrate_private_registration
-    end
-  end
+  # def update_domain_private_registration
+  #   domains = self.domains
+  #   domains.each do |domain|
+  #     domain.migrate_private_registration
+  #   end
+  # end
 
   private
 
