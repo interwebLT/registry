@@ -14,6 +14,7 @@ class Domain < ActiveRecord::Base
                                 source:     :object_activities
 
   has_one :powerdns_domain, class_name: Powerdns::Domain, dependent: :destroy
+  has_one :domain_private_registration, dependent: :destroy
 
   alias_attribute :domain, :name
 
