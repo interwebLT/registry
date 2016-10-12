@@ -32,6 +32,18 @@ namespace :db do
     end
   end
 
+  desc "create initial large credit limit per partner"
+  task assign_partner_initial_credit_limit: :environment do
+    partners = Partner.all
+    partners.each do |partner|
+      partner.partner_configurations.create!(
+        config_name: 'credit_limit',
+        value: '999999999'
+      )
+      puts "$999,999,999 credit limit was assigned to #{partner.name}"
+    end
+  end
+
   desc "Fix Host Ownership"
   task reset_host_partner: :environment do
     hosts = Host.all
