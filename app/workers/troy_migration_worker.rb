@@ -95,38 +95,39 @@ class TroyMigrationWorker
     end
   end
 
-  def save_host nameserver, domain
-    base_url      = Rails.configuration.api_url
-    partner_token = Application.where("partner_id=? and client=?", domain.partner.id, "cocca" ).first.token
-    header        = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{partner_token}"}
-    ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
+  # def save_host nameserver, domain
+  #   base_url      = Rails.configuration.api_url
+  #   partner_token = Application.where("partner_id=? and client=?", domain.partner.id, "cocca" ).first.token
+  #   header        = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{partner_token}"}
+  #   ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
 
-    body = {
-      name:    nameserver,
-      ip_list: ip_list
-    }
-    request = {
-      headers:  header,
-      body:     body.to_json
-    }
-    process_response HTTParty.post "#{base_url}/hosts", request
+  #   body = {
+  #     name:    nameserver,
+  #     ip_list: ip_list
+  #   }
+  #   request = {
+  #     headers:  header,
+  #     body:     body.to_json
+  #   }
+  #   process_response HTTParty.post "#{base_url}/hosts", request
+  # end
+
+  def delete_existing_external_domain_host old_nameserver, domain
+    url = ExternalRegistry.find_by_name("cocca").url
+
+    old_nameserver.each do |nameserver|
+      domain_host = domain.product.domain_hosts.where(name: nameserver)
+
+      if !domain_host.nil?
+        SyncDeleteDomainHostJob.perform_later url, domain_host
+        domain_host.destroy!
+      end
+    end
   end
 
-  def create_external_domain_host nameserver, domain
-    url             = ExternalRegistry.find_by_name("cocca").url
-    header          = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{domain.partner.name}"}
-    domain_url      = "#{url}/domains/#{domain.name}"
-    domain_host_url = "#{domain_url}/hosts"
-
-    body = {
-      name: nameserver
-    }
-    request = {
-      headers:  header,
-      body:     body.to_json
-    }
-
-    process_response HTTParty.post domain_host_url, request
+  def create_external_domain_host domain_host
+    url = ExternalRegistry.find_by_name("cocca").url
+    SyncCreateDomainHostJob.perform_later url, domain_host
   end
 
   def process_response response
@@ -159,10 +160,12 @@ class TroyMigrationWorker
       if has_default_nameservers
         domain.product.domain_hosts.map{|nameserver| nameserver.delete}
 
-        new_default_nameservers.each do |nameserver|
-          save_host nameserver.name, domain
+        delete_existing_external_domain_host old_default_nameservers, domain
 
-          domain.product.domain_hosts.create(
+        new_default_nameservers.each do |nameserver|
+          # save_host nameserver.name, domain
+
+          domain_host = domain.product.domain_hosts.create(
             product_id: domain.product_id,
             name: nameserver.name,
             created_at: troy_domain.createdate,
@@ -176,7 +179,7 @@ class TroyMigrationWorker
                                         property_changed: :domain_host,
                                         value: nameserver.name
 
-          create_external_domain_host nameserver.name, domain
+          create_external_domain_host domain_host
         end
 
         troy_domain.reach_records.each do |record|
@@ -196,29 +199,30 @@ class TroyMigrationWorker
           end
         end
       else
-        if !troy_nameservers.empty?
-          troy_nameservers.each do |nameserver|
-            if !domain.product.domain_hosts.map{|ns| ns.name.downcase}.include? nameserver.downcase
-              save_host nameserver, domain
+        # Nothing to do if partner is not using dotph NS
+        # if !troy_nameservers.empty?
+        #   troy_nameservers.each do |nameserver|
+        #     if !domain.product.domain_hosts.map{|ns| ns.name.downcase}.include? nameserver.downcase
+        #       save_host nameserver, domain
 
-              domain.product.domain_hosts.create(
-                product_id: domain.product_id,
-                name: nameserver,
-                created_at: troy_domain.createdate,
-                updated_at: troy_domain.lastmodifieddate,
-                troy_migration: true
-              )
+        #       domain.product.domain_hosts.create(
+        #         product_id: domain.product_id,
+        #         name: nameserver,
+        #         created_at: troy_domain.createdate,
+        #         updated_at: troy_domain.lastmodifieddate,
+        #         troy_migration: true
+        #       )
 
-              ObjectActivity::Update.create activity_at: troy_domain.createdate,
-                                            partner: domain.product.domain.partner,
-                                            product: domain.product,
-                                            property_changed: :domain_host,
-                                            value: nameserver
+        #       ObjectActivity::Update.create activity_at: troy_domain.createdate,
+        #                                     partner: domain.product.domain.partner,
+        #                                     product: domain.product,
+        #                                     property_changed: :domain_host,
+        #                                     value: nameserver
 
-              create_external_domain_host nameserver, domain
-            end
-          end
-        end
+        #       create_external_domain_host nameserver, domain
+        #     end
+        #   end
+        # end
       end
     end
   end

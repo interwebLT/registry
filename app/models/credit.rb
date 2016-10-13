@@ -34,7 +34,8 @@ class Credit < ActiveRecord::Base
     card_credit: Credit::CardReplenish,
     paypal_credit: Credit::PaypalReplenish,
     checkout_credit: Credit::CheckoutReplenish,
-    dragon_pay_credit: Credit::DragonPayReplenish
+    dragon_pay_credit: Credit::DragonPayReplenish,
+    balance_reset: Credit::BalanceReset
   }
 
   def self.build params, partner

@@ -14,6 +14,7 @@ class Domain < ActiveRecord::Base
                                 source:     :object_activities
 
   has_one :powerdns_domain, class_name: Powerdns::Domain, dependent: :destroy
+  has_one :domain_private_registration, dependent: :destroy
 
   alias_attribute :domain, :name
 
@@ -139,6 +140,26 @@ class Domain < ActiveRecord::Base
     TroyMigrationWorker.perform_async self.id
     puts "Migration of DNS record for #{self.name} of partner #{self.partner.name} started."
   end
+
+  # def migrate_private_registration
+  #   troy_domain = Troy::DomainRegistry.find_by_name(self.name)
+
+  #   if !troy_domain.nil?
+  #     troy_domaincostistory = Troy::Domaincosthistory.find_by_domainrefkey(troy_domain.id)
+  #     if !troy_domaincostistory.nil? and ["priv", "renewpriv"].include?(troy_domaincostistory.servicetype)
+  #       if troy_domaincostistory.expirydate.to_date > Date.today
+  #         self.domain_private_registration.create{
+  #           partner_id         = self.partner.id,
+  #           registrant_handle  = self.registrant_handle,
+  #           private            = true,
+  #           registered_at      = troy_domaincostistory.startdate.to_date,
+  #           expires_at         = troy_domaincostistory.expirydate.to_date
+  #         }
+  #         puts "Private Registration for #{self.name} done."
+  #       end
+  #     end
+  #   end
+  # end
 
   private
 

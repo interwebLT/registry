@@ -136,6 +136,24 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def reset_current_balance
+    balance = self.current_balance
+
+    if balance != 0
+      amount = balance * -1
+
+      credit = self.credits.new
+      credit.type           = "Credit::BalanceReset"
+      credit.amount         = amount
+      credit.credited_at    = Time.now
+      credit.remarks        = "reset current balance"
+      credit.fee            = 0.money
+      credit.troy_migration = true
+
+      credit.complete!
+    end
+  end
+
   def current_cocca_balance
     url      = ExternalRegistry.find_by_name("cocca").url
     host_url = "#{url}/credits/#{self.name}"
@@ -156,6 +174,11 @@ class Partner < ActiveRecord::Base
       unless troy_user.nil?
         url    = ExternalRegistry.find_by_name("cocca").url
         header = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{self.name}"}
+
+        if self.current_balance < 0
+          self.reset_current_balance
+          puts "Current Balance for #{self.name} was reset."
+        end
 
         current_cocca_balance = self.current_cocca_balance
         if current_cocca_balance > 0
@@ -195,7 +218,7 @@ class Partner < ActiveRecord::Base
         current_balance = self.current_balance.to_f
         if current_balance != 0
           self.update_cocca_balance current_balance, url, header
-          puts "Partner #{self.name} top up sinag credit done."
+          puts "Partner #{self.name} credit migration done."
         end
       end
     end
@@ -244,6 +267,13 @@ class Partner < ActiveRecord::Base
     HTTParty.post "#{url}/credits", request
     puts "Sinag current credit migration for #{self.name} successfully done."
   end
+
+  # def update_domain_private_registration
+  #   domains = self.domains
+  #   domains.each do |domain|
+  #     domain.migrate_private_registration
+  #   end
+  # end
 
   private
 

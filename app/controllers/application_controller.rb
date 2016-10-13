@@ -71,6 +71,13 @@ class ApplicationController < ActionController::API
     }
   end
 
+  def already_deleted
+    {
+      status: 200,
+      json: { message: 'already deleted' }
+    }
+  end
+
   def missing_admin_params
     current_partner.admin and not params.include? :partner
   end

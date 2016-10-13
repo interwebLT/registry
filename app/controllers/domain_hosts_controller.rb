@@ -91,7 +91,7 @@ class DomainHostsController < SecureController
 
       domain_host.destroy!
     else
-      render not_found
+      render already_deleted
     end
   end
 
