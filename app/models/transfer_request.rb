@@ -63,6 +63,7 @@ class TransferRequest
   end
 
   def process_response response
+    puts "response #{response}"
     response.success?
   end
 

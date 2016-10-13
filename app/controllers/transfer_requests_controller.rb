@@ -6,7 +6,7 @@ class TransferRequestsController < SecureController
     if transfer.save
       render json: {message: 'Transfer request sent'}
     else
-      render json: {message: 'Transfer request failed'}
+      render unprocessable_entity, json: {message: 'Transfer request failed'}
     end
     
   rescue Exception => e
@@ -15,14 +15,18 @@ class TransferRequestsController < SecureController
   
   def update
     domain = Domain.find params[:id]
+    puts "domain found #{domain.name}"
     transfer = TransferRequest.new domain: domain.name, partner: cuurent_partner
     
     if transfer.update
+      puts "update"
       render json: {message: 'Transfer approved'}
     else
-      render json: {message: 'Transfer approval failed'}
+      puts "Fail"
+      render unprocessable_entity, json: {message: 'Transfer approval failed'}
     end
   rescue Exception => e
+    puts "exceptions"
     render unprocessable_entity e.message
   end
   
@@ -33,7 +37,7 @@ class TransferRequestsController < SecureController
     if transfer.delete
       render json: {message: 'Transfer rejected'}
     else
-      render json: {message: 'Transfer reject failed'}
+      render unprocessable_entity, json: {message: 'Transfer reject failed'}
     end
     
   rescue Exception => e
