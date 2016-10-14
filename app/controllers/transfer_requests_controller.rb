@@ -49,7 +49,7 @@ class TransferRequestsController < SecureController
   def transfer_request_params
     request_params = params.permit :domain, :period, :auth_code
     request_params[:partner] = current_partner
-    request_params
+    request_params.with_indiferrent_access
   end
   
 end
