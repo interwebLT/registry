@@ -1,6 +1,6 @@
 class TransferRequest
   
-  attr_accessor :domain, :period, :auth_code
+  attr_accessor :domain, :period, :auth_code, :partner
   
   COCCA_HOST = Rails.configuration.cocca_host
   
@@ -50,12 +50,12 @@ class TransferRequest
   end
 
   def client
-    partner = EPP::Partner.find_by name: self.partner
+    epp_partner = Epp::Partner.find_by name: self.partner
 
-    if partner
-      username = partner.username
-      password = partner.password
-      client = EPP::Client.new username, password, COCCA_HOST
+    if epp_partner
+      username = epp_partner.username
+      password = epp_partner.password
+      client = Epp::Client.new username, password, COCCA_HOST
       client
     else
       raise "Message: Partner not found"
