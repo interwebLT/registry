@@ -1,7 +1,8 @@
 class TransferRequestsController < SecureController
   
   def create
-    transfer = TransferRequest.new transfer_request_params
+    params[:partner] = current_partner
+    transfer = TransferRequest.new params
     
     if transfer.save
       render json: {message: 'Transfer request sent'}
@@ -47,8 +48,7 @@ class TransferRequestsController < SecureController
   private
   
   def transfer_request_params
-    request_params[:partner] = current_partner
-    request_params.with_indiferrent_access
+    
   end
   
 end
