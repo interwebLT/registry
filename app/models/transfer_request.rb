@@ -3,7 +3,10 @@ class TransferRequest
   attr_accessor :domain, :period, :auth_code, :partner
   
   COCCA_HOST = Rails.configuration.cocca_host
-  
+  REQUEST = 'request'
+  APPROVE = 'approve'
+  REJECT = 'reject'
+
   def initialize params
     @domain = params[:domain]
     @partner = params[:partner].name
