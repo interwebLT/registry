@@ -55,7 +55,7 @@ class TransferRequest
     if epp_partner
       username = epp_partner.username
       password = epp_partner.password
-      client = Epp::Client.new username, password, COCCA_HOST
+      client = EPP::Client.new username, password, COCCA_HOST
       client
     else
       raise "Message: Partner not found"
