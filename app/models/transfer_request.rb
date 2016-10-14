@@ -50,12 +50,12 @@ class TransferRequest
   end
 
   def client
-    partner = EPP::Partner.find_by name: self.partner
+    partner = Epp::Partner.find_by name: self.partner
 
     if partner
       username = partner.username
       password = partner.password
-      client = EPP::Client.new username, password, COCCA_HOST
+      client = Epp::Client.new username, password, COCCA_HOST
       client
     else
       raise "Message: Partner not found"
