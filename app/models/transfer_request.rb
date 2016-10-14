@@ -41,7 +41,7 @@ class TransferRequest
   private
   
   def request_command
-    EPP::Domain::Transfer.new domain, period, auth_info
+    EPP::Domain::Transfer.new domain, period, auth_code
   end
   
   def update_command
