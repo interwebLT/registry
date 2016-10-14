@@ -16,7 +16,7 @@ class TransferRequestsController < SecureController
   def update
     domain = Domain.find params[:id]
     puts "domain found #{domain.name}"
-    transfer = TransferRequest.new domain: domain.name, partner: cuurent_partner
+    transfer = TransferRequest.new domain: domain.name, partner: current_partner
     
     if transfer.update
       puts "update"
@@ -32,7 +32,7 @@ class TransferRequestsController < SecureController
   
   def destroy
     domain = Domain.find params[:id]
-    transfer = TransferRequest.new domain: domain.name, partner: cuurent_partner
+    transfer = TransferRequest.new domain: domain.name, partner: current_partner
     
     if transfer.delete
       render json: {message: 'Transfer rejected'}
