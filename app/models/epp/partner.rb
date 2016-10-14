@@ -1,5 +1,5 @@
 class Epp::Partner < ActiveRecord::Base
-  self.table_name = 'partner'
+  self.table_name = 'epp_partner'
 
   alias_attribute :username, :name
 
