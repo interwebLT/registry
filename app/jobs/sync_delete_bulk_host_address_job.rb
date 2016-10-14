@@ -6,10 +6,12 @@ class SyncDeleteBulkHostAddressJob < ApplicationJob
     header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{host.partner.name}"}
     headers  = {headers: header}
 
-    ip_array.each do |host_address|
-      host_url = "#{url}/hosts/#{host.name}/#{host_address}"
+    host_url = "#{url}/hosts/#{host.name}"
 
-      host_address_available_in_cocca = process_response HTTParty.get(host_url, headers)
+    ip_array.each do |host_address|
+      host_url_check = "#{host_url}/addresses/#{host_address}"
+
+      host_address_available_in_cocca = process_response HTTParty.get(host_url_check, headers)
 
       if host_address_available_in_cocca
         new_ip_list << host_address
