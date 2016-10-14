@@ -16,7 +16,7 @@ class TransferRequest
   
   def save
     if domain
-      process_response client.transfer(REQUEST, create_command)
+      process_response client.transfer(REQUEST, request_command)
     else
       false
     end
