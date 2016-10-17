@@ -102,7 +102,7 @@ namespace :db do
   end
 
   desc "Update sinag and cocca domain expiration date"
-  task update_domain_expiration_date: :environment do
+  task update_sinag_domain_expiration_date_from_troy: :environment do
     mismatch_domains = Troy::MismatchDomainExpireDate.all
 
     mismatch_domains.each do |mismatch_domain|
@@ -124,6 +124,26 @@ namespace :db do
       end
     end
     puts "Domain Expiration Date update done. Please check your data."
+  end
+
+  task update_cocca_domain_expiration: :environment do
+    mismatch_domains = Cocca::MismatchSinagDomainExdate.all
+
+    mismatch_domains.each do |mismatch_domain|
+      cocca_domain = Cocca::Domain.find_by_name(mismatch_domain.domain)
+
+      if !cocca_domain.nil?
+        cocca_domain.exdate = mismatch_domain.sinag_expires_at
+        cocca_domain.save!
+        puts "Domain #{cocca_domain.name} expiration date in cocca was updated."
+      end
+    end
+    puts "Domain Expiration Date update done. Please check your data."
+  end
+
+  desc "update domain host from sinag to cocca"
+  task update_cocca_domain_host: :environment do
+
   end
 
   def remigrate_host host
