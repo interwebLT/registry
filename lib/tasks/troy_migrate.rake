@@ -143,7 +143,30 @@ namespace :db do
 
   desc "update domain host from sinag to cocca"
   task update_cocca_domain_host: :environment do
+    mismatch_domain_hosts = Cocca::MismatchDomainHost.all
+    sinag_partners = SinagPartner.all.pluck(:name)
+    url = ExternalRegistry.find_by_name("cocca").url
 
+    mismatch_domain_hosts.each do |mismatch_domain_host|
+      if !sinag_partners.include?(mismatch_domain_host.partner)
+        domain = Domain.find_by_name(mismatch_domain_host.domain)
+
+        if !mismatch_domain_host.cocca.nil?
+          cocca_domain_host_for_delete = mismatch_domain_host.cocca.split(",")
+          cocca_domain_host_for_create = mismatch_domain_host.sinag.split(",")
+          SyncCreateDeleteBulkDomainHostJob.perform_later url, domain, domain_host_for_delete, domain_host_for_add
+        else
+          sinag_domain_hosts = mismatch_domain_host.sinag.split(",")
+
+          sinag_domain_hosts.each do |sinag_domain_host|
+            domain_host = domain.product.domain_hosts.where(name: sinag_domain_host)
+            SyncCreateDomainHostJob.perform_later url, domain_host
+          end
+        end
+      end
+      puts "Domain #{mismatch_domain_host.domain} domain_hosts in cocca was updated."
+      sleep 0.10
+    end
   end
 
   def remigrate_host host
