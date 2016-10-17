@@ -103,7 +103,7 @@ namespace :db do
 
   desc "Update sinag and cocca domain expiration date"
   task update_domain_expiration_date: :environment do
-    mismatch_domains = Troy::MismatchDomainExpireDate
+    mismatch_domains = Troy::MismatchDomainExpireDate.all
 
     mismatch_domains.each do |mismatch_domain|
       troy_expire_date = mismatch_domain.troy_expires_at
