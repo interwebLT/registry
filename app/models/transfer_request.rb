@@ -41,7 +41,7 @@ class TransferRequest
   private
   
   def request_command
-    EPP::Domain::Transfer.new domain, period, auth_info
+    EPP::Domain::Transfer.new domain, param_period, auth_info
   end
   
   def update_command
@@ -66,8 +66,15 @@ class TransferRequest
   end
 
   def process_response response
-    puts "response #{response}"
     response.success?
+  end
+  
+  def param_period
+    if period.blank?
+      nil
+    else
+      period
+    end
   end
   
   def auth_info

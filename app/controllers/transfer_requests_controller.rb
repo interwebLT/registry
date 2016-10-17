@@ -1,8 +1,8 @@
 class TransferRequestsController < SecureController
   
   def create
-    params[:partner] = current_partner
-    transfer = TransferRequest.new params
+    tr_params = transfer_request_params
+    transfer = TransferRequest.new tr_params.with_indifferent_access
     
     if transfer.save
       render json: {message: 'Transfer request sent'}
@@ -16,18 +16,14 @@ class TransferRequestsController < SecureController
   
   def update
     domain = Domain.find params[:id]
-    puts "domain found #{domain.name}"
     transfer = TransferRequest.new domain: domain.name, partner: current_partner
     
     if transfer.update
-      puts "update"
       render json: {message: 'Transfer approved'}
     else
-      puts "Fail"
       render unprocessable_entity, json: {message: 'Transfer approval failed'}
     end
   rescue Exception => e
-    puts "exceptions"
     render unprocessable_entity e.message
   end
   
@@ -48,7 +44,9 @@ class TransferRequestsController < SecureController
   private
   
   def transfer_request_params
-    
+    request_params = params.permit :domain, :period, :auth_code
+    request_params[:partner] = current_partner
+    request_params
   end
   
 end
