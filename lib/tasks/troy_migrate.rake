@@ -109,14 +109,19 @@ namespace :db do
       troy_expire_date = mismatch_domain.troy_expires_at
 
       sinag_domain = Domain.find_by_name(mismatch_domain.domain)
-      sinag_domain.expires_at = troy_expire_date
-      sinag_domain.save!
-      puts "Domain #{sinag_domain.name} expiration date in sinag was updated."
+      if !sinag_domain.nil?
+        sinag_domain.expires_at = troy_expire_date
+        sinag_domain.save!
+        puts "Domain #{sinag_domain.name} expiration date in sinag was updated."
+      end
 
       cocca_domain = Cocca::Domain.find_by_name(mismatch_domain.domain)
-      cocca_domain.exdate = troy_expire_date
-      cocca_domain.save!
-      puts "Domain #{cocca_domain.name} expiration date in cocca was updated."
+
+      if !cocca_domain.nil?
+        cocca_domain.exdate = troy_expire_date
+        cocca_domain.save!
+        puts "Domain #{cocca_domain.name} expiration date in cocca was updated."
+      end
     end
     puts "Domain Expiration Date update done. Please check your data."
   end
