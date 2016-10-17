@@ -1,6 +1,6 @@
 class TransferRequest
   
-  attr_accessor :domain, :period, :auth_code, :partner
+  attr_accessor :domain, :period, :auth_code, :partner, :response_message
   
   COCCA_HOST = Rails.configuration.cocca_host
   REQUEST = 'request'
@@ -15,30 +15,50 @@ class TransferRequest
   end
   
   def save
-    if domain
+    if domain_record
       process_response client.transfer(REQUEST, request_command)
     else
+      @response_message = "Domain not found."
       false
     end
+  rescue EPP::ResponseError => e
+    @response_message = 'Transfer cannot be request at this time. If the problem persists, please contact us.'
+    false
   end
   
   def update
-    if domain
+    if domain_record
       process_response client.transfer(APPROVE, update_command)
     else
+      @response_message = "Domain not found."
       false
     end
+  rescue EPP::ResponseError => e
+    @response_message = 'Transfer cannot be request at this time. If the problem persists, please contact us.'
+    false
   end
   
   def delete
-    if domain
+    if domain_record
       process_response client.transfer(REJECT, delete_command)
     else
+      @response_message = "Domain not found."
       false
     end
+  rescue EPP::ResponseError => e
+    @response_message = 'Transfer cannot be request at this time. If the problem persists, please contact us.'
+    false
   end
   
   private
+  
+  def domain_record
+    if domain.blank?
+      false
+    else
+      Domain.find_by_name domain
+    end
+  end
   
   def request_command
     EPP::Domain::Transfer.new domain, param_period, auth_info
@@ -61,12 +81,18 @@ class TransferRequest
       client = EPP::Client.new username, password, COCCA_HOST
       client
     else
+      @response_message = "Partner not found."
       raise "Message: Partner not found"
     end
   end
 
   def process_response response
-    response.success?
+    if response.success?
+      true
+    else
+      @response_message = response.message
+      false
+    end
   end
   
   def param_period

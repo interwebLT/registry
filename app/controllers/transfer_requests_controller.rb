@@ -7,11 +7,11 @@ class TransferRequestsController < SecureController
     if transfer.save
       render json: {message: 'Transfer request sent'}
     else
-      render unprocessable_entity, json: {message: 'Transfer request failed'}
+      render unprocessable_entity transfer.response_message
     end
     
   rescue Exception => e
-    render unprocessable_entity e.message
+    render unprocessable_entity transfer.response_message
   end
   
   def update
@@ -21,10 +21,10 @@ class TransferRequestsController < SecureController
     if transfer.update
       render json: {message: 'Transfer approved'}
     else
-      render unprocessable_entity, json: {message: 'Transfer approval failed'}
+      render unprocessable_entity transfer.response_message
     end
   rescue Exception => e
-    render unprocessable_entity e.message
+    render unprocessable_entity transfer.response_message
   end
   
   def destroy
@@ -34,11 +34,11 @@ class TransferRequestsController < SecureController
     if transfer.delete
       render json: {message: 'Transfer rejected'}
     else
-      render unprocessable_entity, json: {message: 'Transfer reject failed'}
+      render unprocessable_entity transfer.response_message
     end
     
   rescue Exception => e
-    render unprocessable_entity e.message
+    render unprocessable_entity transfer.response_message
   end
   
   private
