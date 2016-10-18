@@ -150,23 +150,30 @@ namespace :db do
     mismatch_domain_hosts.each do |mismatch_domain_host|
       if !sinag_partners.include?(mismatch_domain_host.partner)
         domain = Domain.find_by_name(mismatch_domain_host.domain)
+        domain_url = "#{url}/domains/#{domain.name}"
+        header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{domain.partner.name}"}
+        headers  = {headers: header}
 
-        if !mismatch_domain_host.cocca.nil?
-          cocca_domain_host_for_delete = mismatch_domain_host.cocca.split(",")
-          cocca_domain_host_for_create = mismatch_domain_host.sinag.split(",")
-          SyncCreateDeleteBulkDomainHostJob.perform_later url, domain, cocca_domain_host_for_delete, cocca_domain_host_for_create
-        else
-          sinag_domain_hosts = mismatch_domain_host.sinag.split(",")
+        domain_still_available_in_cocca = process_response HTTParty.get(domain_url, headers)
 
-          sinag_domain_hosts.each do |sinag_domain_host|
-            domain_host = domain.product.domain_hosts.where(name: sinag_domain_host).first
-            if !domain_host.nil?
-              SyncCreateDomainHostJob.perform_later url, domain_host
+        if domain_still_available_in_cocca
+          if !mismatch_domain_host.cocca.nil?
+            cocca_domain_host_for_delete = mismatch_domain_host.cocca.split(",")
+            cocca_domain_host_for_create = mismatch_domain_host.sinag.split(",")
+            SyncCreateDeleteBulkDomainHostJob.perform_later url, domain, cocca_domain_host_for_delete, cocca_domain_host_for_create
+          else
+            sinag_domain_hosts = mismatch_domain_host.sinag.split(",")
+
+            sinag_domain_hosts.each do |sinag_domain_host|
+              domain_host = domain.product.domain_hosts.where(name: sinag_domain_host).first
+              if !domain_host.nil?
+                SyncCreateDomainHostJob.perform_later url, domain_host
+              end
             end
           end
+          puts "Domain #{mismatch_domain_host.domain} domain_hosts in cocca was updated."
         end
       end
-      puts "Domain #{mismatch_domain_host.domain} domain_hosts in cocca was updated."
       sleep 0.10
     end
   end
