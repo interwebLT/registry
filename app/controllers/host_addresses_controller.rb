@@ -97,12 +97,12 @@ class HostAddressesController < SecureController
       end
     else
       ip_array = params[:ip_list].split(",")
+      sync_delete_multiple host, ip_array
       ip_array.map {|address|
         host_address = host.host_addresses.find_by address: address
         host_address.destroy!
       }
-      sync_delete_multiple host, ip_array
-      render  json: host
+      render  json: {}
     end
   end
 
