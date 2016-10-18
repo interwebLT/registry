@@ -21,7 +21,12 @@ class HostsController < SecureController
 
   def index
     unless current_partner.admin?
-      render json: []
+      if params[:search]
+        hosts = search_host
+      else
+        hosts = current_partner.hosts
+      end
+      render json: hosts
       return
     end
 
@@ -152,6 +157,16 @@ class HostsController < SecureController
           end
         end
       end
+    end
+  end
+
+  def search_host
+    host = Host.find_by_name params[:search]
+
+    if !host.nil?
+      host
+    else
+      ""
     end
   end
 
