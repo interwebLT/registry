@@ -20,7 +20,7 @@ class Cocca::Domain < ActiveRecord::Base
     cocca_master.audit_user        = "Rails Rake Task"
     cocca_master.audit_login       = "API"
     cocca_master.audit_time        = Time.now
-    cocca_master.audit_ip          = Rails.configuration.cocca_host
+    cocca_master.audit_ip          = "172.16.47.53"
     cocca_master.save!
   end
 end
