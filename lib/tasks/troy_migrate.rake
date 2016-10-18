@@ -154,13 +154,15 @@ namespace :db do
         if !mismatch_domain_host.cocca.nil?
           cocca_domain_host_for_delete = mismatch_domain_host.cocca.split(",")
           cocca_domain_host_for_create = mismatch_domain_host.sinag.split(",")
-          SyncCreateDeleteBulkDomainHostJob.perform_later url, domain, domain_host_for_delete, domain_host_for_add
+          SyncCreateDeleteBulkDomainHostJob.perform_later url, domain, cocca_domain_host_for_delete, cocca_domain_host_for_create
         else
           sinag_domain_hosts = mismatch_domain_host.sinag.split(",")
 
           sinag_domain_hosts.each do |sinag_domain_host|
-            domain_host = domain.product.domain_hosts.where(name: sinag_domain_host)
-            SyncCreateDomainHostJob.perform_later url, domain_host
+            domain_host = domain.product.domain_hosts.where(name: sinag_domain_host).first
+            if !domain_host.nil?
+              SyncCreateDomainHostJob.perform_later url, domain_host
+            end
           end
         end
       end
