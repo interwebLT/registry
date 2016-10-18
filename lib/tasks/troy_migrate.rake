@@ -126,8 +126,9 @@ namespace :db do
     puts "Domain Expiration Date update done. Please check your data."
   end
 
-  task update_cocca_domain_expiration: :environment do
-    mismatch_domains = Cocca::MismatchSinagDomainExdate.all
+  desc "Update cocca domain expiration from troy partners"
+  task update_cocca_domain_expiration_from_troy_partner: :environment do
+    mismatch_domains = Cocca::MismatchSinagDomainExdateTroyPartner.all
 
     mismatch_domains.each do |mismatch_domain|
       cocca_domain = Cocca::Domain.find_by_name(mismatch_domain.domain)
@@ -148,7 +149,7 @@ namespace :db do
     url = ExternalRegistry.find_by_name("cocca").url
 
     mismatch_domain_hosts.each do |mismatch_domain_host|
-      if !sinag_partners.include?(mismatch_domain_host.partner)
+      if !mismatch_domain_host.partner.nil? and !sinag_partners.include?(mismatch_domain_host.partner)
         domain = Domain.find_by_name(mismatch_domain_host.domain)
         domain_url = "#{url}/domains/#{domain.name}"
         header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{domain.partner.name}"}
