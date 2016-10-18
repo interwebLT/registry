@@ -91,7 +91,11 @@ class TransferRequest
       true
     else
       @response_message = response.message
-      false
+      if @response_message == 'Command completed successfully; action pending'
+        true
+      else
+        false
+      end
     end
   end
   

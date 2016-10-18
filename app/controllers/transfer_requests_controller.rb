@@ -32,7 +32,7 @@ class TransferRequestsController < SecureController
     transfer = TransferRequest.new domain: domain.name, partner: current_partner
     
     if transfer.delete
-      render json: {message: 'Transfer rejected'}
+      render json: {message: transfer.response_message}
     else
       render unprocessable_entity transfer.response_message
     end
