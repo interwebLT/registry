@@ -142,6 +142,24 @@ namespace :db do
     puts "Domain Expiration Date update done. Please check your data."
   end
 
+  desc "Update sinag domain expiration from epp partners"
+  task update_sinag_domain_expiration_date_from_epp_partner: :environment do
+    mismatch_domains = Cocca::MismatchSinagDomainExdateEppPartner.all
+    exclude_domain = ["udic-1-1441877987-a71itz3mn0c4uquzrqwwp9iptkjbaqdw0tkeknzquhrwo.ph", "udic-1-1449070216-gn9s3zlvoajn2gyrjwtbanbi57ma99vc53zr5jdkd2xke.ph"]
+    mismatch_domains.each do |mismatch_domain|
+      if !mismatch_domain.partner.nil? and !mismatch_domain.domain.nil?
+        domain = Domain.find_by_name(mismatch_domain.domain)
+
+        if !domain.nil? and !exclude_domain.include?(domain.name)
+          domain.expires_at = mismatch_domain.cocca_expires_at
+          domain.save!
+          puts "Domain #{domain.name} expiration date in sinag was updated."
+        end
+      end
+    end
+    puts "Domain Expiration Date update done. Please check your data."
+  end
+
   desc "update domain host from sinag to cocca"
   task update_cocca_domain_host: :environment do
     mismatch_domain_hosts = Cocca::MismatchDomainHost.all
