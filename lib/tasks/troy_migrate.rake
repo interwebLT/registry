@@ -127,7 +127,7 @@ namespace :db do
   end
 
   desc "Update cocca domain expiration from troy partners"
-  task update_cocca_domain_expiration_from_troy_partner: :environment do
+  task update_cocca_domain_expiration_of_troy_partners: :environment do
     mismatch_domains = Cocca::MismatchSinagDomainExdateTroyPartner.all
 
     mismatch_domains.each do |mismatch_domain|
@@ -143,7 +143,7 @@ namespace :db do
   end
 
   desc "Update sinag domain expiration from epp partners"
-  task update_sinag_domain_expiration_date_from_epp_partner: :environment do
+  task update_sinag_domain_expiration_date_of_epp_partners: :environment do
     mismatch_domains = Cocca::MismatchSinagDomainExdateEppPartner.all
     exclude_domain = ["udic-1-1441877987-a71itz3mn0c4uquzrqwwp9iptkjbaqdw0tkeknzquhrwo.ph", "udic-1-1449070216-gn9s3zlvoajn2gyrjwtbanbi57ma99vc53zr5jdkd2xke.ph"]
     mismatch_domains.each do |mismatch_domain|
@@ -194,6 +194,48 @@ namespace :db do
         end
       end
       sleep 0.10
+    end
+  end
+
+  desc "resync host address from troy"
+  task sync_all_host_address_to_sinag: :environment do
+    troy_domains = Troy::Domain.troy_partner_domains
+
+    troy_domains.each do |troy_domain|
+      if !troy_domain.with_default_nameservers?
+        if troy_domain.glue_record_nameserver?(troy_domain.ns_1)
+          remigrate_host_address troy_domain.ns_1, troy_domain.ns_1_ip, troy_domain.ns_1_ipv6
+        end
+        if troy_domain.glue_record_nameserver?(troy_domain.ns_2)
+          remigrate_host_address troy_domain.ns_2, troy_domain.ns_2_ip, troy_domain.ns_2_ipv6
+        end
+        if troy_domain.glue_record_nameserver?(troy_domain.ns_3)
+          remigrate_host_address troy_domain.ns_3, troy_domain.ns_3_ip, troy_domain.ns_3_ipv6
+        end
+        puts "Troy Domain #{troy_domain.full_name} host address was resync."
+      end
+    end
+    puts "Troy Domain Re-Sync done."
+  end
+
+  def remigrate_host_address host, ipv4, ipv6
+    if !host.nil?
+      host = Host.find_by_name(troy_domain.ns_1)
+      if host.host_addresses.blank?
+        url   = ExternalRegistry.find_by_name("cocca").url
+        ip_array = []
+        if !ipv4.blank?
+          host.host_addresses.create(address: ipv4, type: "v4")
+          ip_array << ipv4
+        end
+        if !ipv6.blank?
+          host.host_addresses.create(address: ipv6, type: "v6")
+          ip_array << ipv6
+        end
+        if !ip_list.blank?
+          SyncCreateBulkHostAddressJob.perform_later url, host, ip_array
+        end
+      end
     end
   end
 
