@@ -20,17 +20,16 @@ class HostsController < SecureController
   end
 
   def index
-    unless current_partner.admin?
-      if params[:search]
-        hosts = search_host
+    if params[:search]
+      hosts = search_host
+    else
+      if current_partner.admin?
+        hosts = Host.all
       else
         hosts = current_partner.hosts
       end
-      render json: hosts
-      return
     end
-
-    render json: Host.all
+    render json: hosts
   end
 
   def show
@@ -45,7 +44,7 @@ class HostsController < SecureController
       render not_found
     end
   end
-  
+
   def update
     unless host_params.empty?
       update_host
@@ -59,7 +58,7 @@ class HostsController < SecureController
   def host_params
     params.permit :name
   end
-  
+
   def update_host
     id = params[:id]
 
@@ -71,7 +70,7 @@ class HostsController < SecureController
       render not_found
     end
   end
-  
+
   def update_existing_host host
     host_attributes = host_params
 
@@ -87,7 +86,7 @@ class HostsController < SecureController
       render bad_request
     end
   end
-  
+
   def get_partner
     partner_name = params[:partner_name]
     Partner.find_by_name partner_name
