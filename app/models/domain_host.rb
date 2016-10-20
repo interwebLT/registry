@@ -18,6 +18,11 @@ class DomainHost < ActiveRecord::Base
 
   attr_accessor :troy_migration, :update_ip_list_from_host
 
+  def glue_record?
+    domain = self.product.domain.name
+    self.name.include?(domain)
+  end
+
   private
 
   def name_must_match_existing_host
