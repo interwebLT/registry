@@ -6,6 +6,11 @@ class Troy::Domain < ActiveRecord::Base
 
   has_many :reach_records, :foreign_key => 'domain_id'
 
+  def self.troy_partner_domains
+    sinag_partner_troy_ids = SinagPartner.all.pluck(:troy_partner_id).uniq
+    where("partnerrefkey is ? or partnerrefkey not in (?)", nil, sinag_partner_troy_ids)
+  end
+
   def full_name
     "#{self.name}#{self.extension}"
   end
@@ -18,23 +23,52 @@ class Troy::Domain < ActiveRecord::Base
     "#{self.ns1.try(:downcase)} #{self.ns2.try(:downcase)} #{self.ns3.try(:downcase)}".split(' ')
   end
 
-  # def to_hash
-  #   {
-  #     :id => self.domainrefkey,
-  #     :domain => self.full_name,
-  #     :registrant => self.owner_name,
-  #     :registrant_address => self.full_address,
-  #     :registered_on => self.startdate,
-  #     :expiration => self.expirydate,
-  #     :ns1 => self.ns1,
-  #     :ns2 => self.ns2,
-  #     :ns3 => self.ns3,
-  #     :ns1_ip => self.ns1ip.to_s,
-  #     :ns2_ip => self.ns2ip.to_s,
-  #     :ns3_ip => self.ns3ip.to_s,
-  #     :ns1_ipv6 => self.ns1ipv6.to_s,
-  #     :ns2_ipv6 => self.ns2ipv6.to_s,
-  #     :ns3_ipv6 => self.ns3ipv6.to_s
-  #   }
-  # end
+  def ns_1
+    self.ns1.try(:downcase).try(:strip)
+  end
+
+  def ns_1_ip
+    self.ns1ip.to_s.try(:strip)
+  end
+
+  def ns_1_ipv6
+    self.ns1ipv6.to_s.try(:strip)
+  end
+
+  def ns_2
+    self.ns2.try(:downcase).try(:strip)
+  end
+
+  def ns_2_ip
+    self.ns2ip.to_s.try(:strip)
+  end
+
+  def ns_2_ipv6
+    self.ns2ipv6.to_s.try(:strip)
+  end
+
+  def ns_3
+    self.ns3.try(:downcase).try(:strip)
+  end
+
+  def ns_3_ip
+    self.ns3ip.to_s.try(:strip)
+  end
+
+  def ns_3_ipv6
+    self.ns3ipv6.to_s.try(:strip)
+  end
+
+  def glue_record_nameserver? nameserver
+    unless nameserver.nil?
+      nameserver.include?(self.full_name)
+    else
+      return false
+    end
+  end
+
+  def with_default_nameservers?
+    old_default_nameservers = ["nsfwd.domains.ph", "ns2.domains.ph"]
+    old_default_nameservers.sort == self.nameservers.sort
+  end
 end

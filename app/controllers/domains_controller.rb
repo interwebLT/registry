@@ -34,8 +34,13 @@ class DomainsController < SecureController
     domain = Domain.named(params[:id])
 
     if domain
-      domain.destroy
+      domain_name  = domain.name
+      partner_name = domain.partner.name
+      ["reynan@dot.ph", "jm.mendoza@dot.ph", "ca.galamay@dot.ph"].map{|email|
+        DomainDeleteMailer.delay_for(1.minute, queue: "registry_mailer").send_notice(domain_name, partner_name, email)
+      }
 
+      domain.destroy
       render json: domain, serializer: DomainInfoSerializer
     else
       render not_found

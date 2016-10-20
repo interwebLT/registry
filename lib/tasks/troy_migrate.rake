@@ -101,6 +101,164 @@ namespace :db do
     puts "Host re-sync to cocca done."
   end
 
+  desc "Update sinag and cocca domain expiration date"
+  task update_sinag_domain_expiration_date_from_troy: :environment do
+    mismatch_domains = Troy::MismatchDomainExpireDate.all
+
+    mismatch_domains.each do |mismatch_domain|
+      troy_expire_date = mismatch_domain.troy_expires_at
+
+      sinag_domain = Domain.find_by_name(mismatch_domain.domain)
+      if !sinag_domain.nil?
+        sinag_domain.expires_at = troy_expire_date
+        sinag_domain.save!
+        puts "Domain #{sinag_domain.name} expiration date in sinag was updated."
+      end
+
+      cocca_domain = Cocca::Domain.find_by_name(mismatch_domain.domain)
+
+      if !cocca_domain.nil?
+        cocca_domain.exdate = troy_expire_date
+        cocca_domain.save!
+        puts "Domain #{cocca_domain.name} expiration date in cocca was updated."
+      end
+    end
+    puts "Domain Expiration Date update done. Please check your data."
+  end
+
+  desc "Update cocca domain expiration from troy partners"
+  task update_cocca_domain_expiration_of_troy_partners: :environment do
+    mismatch_domains = Cocca::MismatchSinagDomainExdateTroyPartner.all
+
+    mismatch_domains.each do |mismatch_domain|
+      cocca_domain = Cocca::Domain.find_by_name(mismatch_domain.domain)
+
+      if !cocca_domain.nil?
+        cocca_domain.exdate = mismatch_domain.sinag_expires_at
+        cocca_domain.save!
+        puts "Domain #{cocca_domain.name} expiration date in cocca was updated."
+      end
+    end
+    puts "Domain Expiration Date update done. Please check your data."
+  end
+
+  desc "Update sinag domain expiration from epp partners"
+  task update_sinag_domain_expiration_date_of_epp_partners: :environment do
+    mismatch_domains = Cocca::MismatchSinagDomainExdateEppPartner.all
+    exclude_domain = ["udic-1-1441877987-a71itz3mn0c4uquzrqwwp9iptkjbaqdw0tkeknzquhrwo.ph", "udic-1-1449070216-gn9s3zlvoajn2gyrjwtbanbi57ma99vc53zr5jdkd2xke.ph"]
+    mismatch_domains.each do |mismatch_domain|
+      if !mismatch_domain.partner.nil? and !mismatch_domain.domain.nil?
+        domain = Domain.find_by_name(mismatch_domain.domain)
+
+        if !domain.nil? and !exclude_domain.include?(domain.name)
+          domain.expires_at = mismatch_domain.cocca_expires_at
+          domain.save!
+          puts "Domain #{domain.name} expiration date in sinag was updated."
+        end
+      end
+    end
+    puts "Domain Expiration Date update done. Please check your data."
+  end
+
+  desc "update domain host from sinag to cocca"
+  task update_cocca_domain_host: :environment do
+    mismatch_domain_hosts = Cocca::MismatchDomainHost.all
+    sinag_partners = SinagPartner.all.pluck(:name)
+    url = ExternalRegistry.find_by_name("cocca").url
+
+    mismatch_domain_hosts.each do |mismatch_domain_host|
+      if !mismatch_domain_host.partner.nil? and !sinag_partners.include?(mismatch_domain_host.partner)
+        domain = Domain.find_by_name(mismatch_domain_host.domain)
+        domain_url = "#{url}/domains/#{domain.name}"
+        header   = {"Content-Type"=>"application/json", "Accept"=>"application/json", "Authorization"=>"Token token=#{domain.partner.name}"}
+        headers  = {headers: header}
+
+        domain_still_available_in_cocca = process_response HTTParty.get(domain_url, headers)
+
+        if domain_still_available_in_cocca
+          if !mismatch_domain_host.cocca.nil?
+            cocca_domain_host_for_delete = mismatch_domain_host.cocca.split(",")
+            cocca_domain_host_for_create = mismatch_domain_host.sinag.split(",")
+            SyncCreateDeleteBulkDomainHostJob.perform_later url, domain, cocca_domain_host_for_delete, cocca_domain_host_for_create
+          else
+            sinag_domain_hosts = mismatch_domain_host.sinag.split(",")
+
+            sinag_domain_hosts.each do |sinag_domain_host|
+              domain_host = domain.product.domain_hosts.where(name: sinag_domain_host).first
+              if !domain_host.nil?
+                SyncCreateDomainHostJob.perform_later url, domain_host
+              end
+            end
+          end
+          puts "Domain #{mismatch_domain_host.domain} domain_hosts in cocca was updated."
+        end
+      end
+      sleep 0.10
+    end
+  end
+
+  desc "resync host address from troy"
+  task sync_all_host_address_to_sinag: :environment do
+    troy_domains = Troy::Domain.troy_partner_domains.select(:name, :extension, :ns1, :ns2, :ns3, :ns1ip, :ns2ip, :ns3ip, :ns1ipv6, :ns2ipv6, :ns3ipv6)
+
+    troy_domains.each do |troy_domain|
+      if !troy_domain.with_default_nameservers?
+        if troy_domain.glue_record_nameserver?(troy_domain.ns_1)
+          remigrate_host_address troy_domain.ns_1, troy_domain.ns_1_ip, troy_domain.ns_1_ipv6
+        end
+        if troy_domain.glue_record_nameserver?(troy_domain.ns_2)
+          remigrate_host_address troy_domain.ns_2, troy_domain.ns_2_ip, troy_domain.ns_2_ipv6
+        end
+        if troy_domain.glue_record_nameserver?(troy_domain.ns_3)
+          remigrate_host_address troy_domain.ns_3, troy_domain.ns_3_ip, troy_domain.ns_3_ipv6
+        end
+        puts "Troy Domain #{troy_domain.full_name} Done"
+      end
+    end
+    puts "Troy Domain Re-Sync done."
+  end
+
+  def remigrate_host_address hostname, ipv4, ipv6
+    if !host.nil?
+      host = Host.find_by_name(hostname)
+
+      ipv4_host_address = host.host_addresses.where(type: "v4")
+      if !ipv4.blank?
+        if ipv4_host_address.blank?
+          host.host_addresses.create(address: ipv4, type: "v4")
+        else
+          if host.host_addresses.where(type: "v4").count > 1
+            host.host_addresses.where(type: "v4").delete_all
+            host.host_addresses.create(address: ipv4, type: "v4")
+          else
+            if !host.host_addresses.where(type: "v4").first.address == ipv4
+              host.host_addresses.where(type: "v4").delete_all
+              host.host_addresses.create(address: ipv4, type: "v4")
+            end
+          end
+        end
+      end
+
+      ipv6_host_address = host.host_addresses.where(type: "v6")
+      if !ipv6.blank?
+        if ipv6_host_address.blank?
+          host.host_addresses.create(address: ipv6, type: "v6")
+        else
+          if host.host_addresses.where(type: "v6").count > 1
+            host.host_addresses.where(type: "v6").delete_all
+            host.host_addresses.create(address: ipv6, type: "v6")
+          else
+            if !host.host_addresses.where(type: "v6").first.address == ipv6
+              host.host_addresses.where(type: "v6").delete_all
+              host.host_addresses.create(address: ipv6, type: "v6")
+            end
+          end
+        end
+      end
+      puts "Host Address of #{hostname} was resync to cocca."
+    end
+  end
+
   def remigrate_host host
     url   = ExternalRegistry.find_by_name("cocca").url
     host_url = "#{url}/hosts/#{host.name}"

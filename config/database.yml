@@ -25,3 +25,21 @@ troy:
   password: directuser
   host: 172.16.46.83
   database: direct
+
+audit_cocca_db:
+  adapter: postgresql
+  pool: 25
+  username: coccaadmin
+  password: coccaadmin
+  host: cocca-db.staging.local
+  database: registry
+  schema_search_path: "audit"
+
+public_cocca_db:
+  adapter: postgresql
+  pool: 25
+  username: coccaadmin
+  password: coccaadmin
+  host: cocca-db.staging.local
+  database: registry
+  schema_search_path: "public"
