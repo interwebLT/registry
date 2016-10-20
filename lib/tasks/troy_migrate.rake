@@ -215,15 +215,8 @@ namespace :db do
               end
             end
           end
-        else
-          domain_host.ip_list = default_ip_list
-          domain_host.save
-          puts "#{domain_host.name} ip list set to default"
         end
-      else
-        domain_host.ip_list = default_ip_list
-        domain_host.save
-        puts "#{domain_host.name} ip list set to default"
+        puts "#{domain_host.name}"
       end
     end
   end
