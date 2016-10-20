@@ -287,6 +287,7 @@ namespace :db do
           end
         end
       end
+      puts "Host Address of #{hostname} was resync to cocca."
     end
   end
 
