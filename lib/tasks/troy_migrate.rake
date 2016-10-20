@@ -241,6 +241,38 @@ namespace :db do
     puts "Troy Host Address Re-Sync done."
   end
 
+  desc "Update Host Address to Cocca"
+  task delete_troy_partner_host_address_in_cocca: :environment do
+    hosts_mismatch = Cocca::MismatchHostAddressToCocca.all
+
+    hosts_mismatch.each do |host_mismatch|
+      host = Host.find_by_name(host_mismatch.host)
+      cocca_host_address = host_mismatch.cocca_host_address.nil? ? "" : host_mismatch.cocca_host_address.split(",")
+      url   = ExternalRegistry.find_by_name("cocca").url
+
+      if !cocca_host_address.blank?
+        SyncDeleteBulkHostAddressJob.perform_later url, host, cocca_host_address
+      end
+      puts "Host Address of Host #{host_mismatch.host} in cocca was deleted."
+    end
+  end
+
+  desc "Update Host Address to Cocca"
+  task create_troy_partner_host_address_in_cocca: :environment do
+    hosts_mismatch = Cocca::MismatchHostAddressToCocca.all
+
+    hosts_mismatch.each do |host_mismatch|
+      host = Host.find_by_name(host_mismatch.host)
+      sinag_host_address = host_mismatch.sinag_host_address.nil? ? "" : host_mismatch.sinag_host_address.split(",")
+      url   = ExternalRegistry.find_by_name("cocca").url
+
+      if !sinag_host_address.blank?
+        SyncCreateBulkHostAddressJob.perform_later url, host, sinag_host_address
+      end
+      puts "Host Address of Host #{host_mismatch.host} in cocca was created."
+    end
+  end
+
   def remigrate_host_address hostname, ipv4, ipv6
     host = Host.find_by_name(hostname)
     if !host.nil?
