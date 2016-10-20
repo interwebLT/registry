@@ -197,6 +197,30 @@ namespace :db do
     end
   end
 
+  desc "Update IP list field in sinag"
+  task update_domain_host_ip_list_field: :environment do
+    domain_hosts    = DomainHost.all
+    default_ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
+
+    domain_hosts.each do |domain_host|
+      if domain_host.name.split(".").last == "ph"
+        if domain_host.glue_record?
+          host = Host.find_by_name(domain_host.name)
+          if !host.nil?
+            host_addresses = host.host_addresses
+            if !host_addresses.blank?
+              host_addresses.each do |host_address|
+                host_address.save
+                puts "Domain Host IP List field for #{domain_host.name} was updated."
+              end
+            end
+          end
+        end
+        puts "#{domain_host.name}"
+      end
+    end
+  end
+
   desc "resync host address from troy"
   task sync_all_host_address_to_sinag: :environment do
     troy_domains = Troy::Domain.troy_partner_domains.select(:name, :extension, :ns1, :ns2, :ns3, :ns1ip, :ns2ip, :ns3ip, :ns1ipv6, :ns2ipv6, :ns3ipv6)
@@ -212,28 +236,31 @@ namespace :db do
         if troy_domain.glue_record_nameserver?(troy_domain.ns_3)
           remigrate_host_address troy_domain.ns_3, troy_domain.ns_3_ip, troy_domain.ns_3_ipv6
         end
-        puts "Troy Domain #{troy_domain.full_name} Done"
       end
     end
-    puts "Troy Domain Re-Sync done."
+    puts "Troy Host Address Re-Sync done."
   end
 
   def remigrate_host_address hostname, ipv4, ipv6
+    host = Host.find_by_name(hostname)
     if !host.nil?
-      host = Host.find_by_name(hostname)
-
       ipv4_host_address = host.host_addresses.where(type: "v4")
       if !ipv4.blank?
         if ipv4_host_address.blank?
           host.host_addresses.create(address: ipv4, type: "v4")
+          puts "Host Address of #{hostname} was resync to Sinag."
         else
           if host.host_addresses.where(type: "v4").count > 1
             host.host_addresses.where(type: "v4").delete_all
             host.host_addresses.create(address: ipv4, type: "v4")
+            puts "Host Address of #{hostname} was resync to Sinag."
           else
             if !host.host_addresses.where(type: "v4").first.address == ipv4
               host.host_addresses.where(type: "v4").delete_all
               host.host_addresses.create(address: ipv4, type: "v4")
+              puts "Host Address of #{hostname} was resync to Sinag."
+            else
+              puts "Host Address of #{hostname} in Troy already matches in Sinag."
             end
           end
         end
@@ -243,14 +270,19 @@ namespace :db do
       if !ipv6.blank?
         if ipv6_host_address.blank?
           host.host_addresses.create(address: ipv6, type: "v6")
+          puts "Host Address of #{hostname} was resync to Sinag."
         else
           if host.host_addresses.where(type: "v6").count > 1
             host.host_addresses.where(type: "v6").delete_all
             host.host_addresses.create(address: ipv6, type: "v6")
+            puts "Host Address of #{hostname} was resync to Sinag."
           else
             if !host.host_addresses.where(type: "v6").first.address == ipv6
               host.host_addresses.where(type: "v6").delete_all
               host.host_addresses.create(address: ipv6, type: "v6")
+              puts "Host Address of #{hostname} was resync to Sinag."
+            else
+              puts "Host Address of #{hostname} in Troy already matches in Sinag."
             end
           end
         end
