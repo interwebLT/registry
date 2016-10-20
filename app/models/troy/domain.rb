@@ -7,8 +7,8 @@ class Troy::Domain < ActiveRecord::Base
   has_many :reach_records, :foreign_key => 'domain_id'
 
   def self.troy_partner_domains
-    sinag_partner_troy_ids = SinagPartner.all.pluck(:troy_partner_id)
-    where("partnerrefkey not in (?)", sinag_partner_troy_ids)
+    sinag_partner_troy_ids = SinagPartner.all.pluck(:troy_partner_id).uniq
+    where("partnerrefkey is ? or partnerrefkey not in (?)", nil, sinag_partner_troy_ids)
   end
 
   def full_name
