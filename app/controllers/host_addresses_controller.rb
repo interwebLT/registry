@@ -1,4 +1,6 @@
 class HostAddressesController < SecureController
+  before_action :set_ip_regex, only: [:create]
+
   def create
     host_id = create_params.delete :host_id
     host = Host.find_by name: host_id
@@ -71,7 +73,7 @@ class HostAddressesController < SecureController
         ip_array = params[:ip_list]
 
         ip_array.map {|address|
-          type         = if address.length > 15 then "v6" else "v4" end
+          type         = if (address =~ @ipv4) then "v4" else "v6" end
           host_address = host.host_addresses.build address: address, type: type
           host_address.save
         }
@@ -141,5 +143,9 @@ class HostAddressesController < SecureController
 
       SyncDeleteBulkHostAddressJob.perform_later registry.url, host, ip_array
     end
+  end
+
+  def set_ip_regex
+    @ipv4 = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
   end
 end

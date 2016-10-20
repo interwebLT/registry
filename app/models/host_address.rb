@@ -28,13 +28,14 @@ class HostAddress < ActiveRecord::Base
 
     unless domain_host.nil?
       unless host_addresses.empty?
+        ipv4_regEx = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
         ipv4 = []
         ipv6 = []
         host_addresses.map{ |host_address|
-          if host_address.address.length > 15
-            ipv6 << host_address.address
-          else
+          if (host_address.address =~ ipv4_regEx)
             ipv4 << host_address.address
+          else
+            ipv6 << host_address.address
           end
         }
 
