@@ -212,10 +212,14 @@ namespace :db do
         if troy_domain.glue_record_nameserver?(troy_domain.ns_3)
           remigrate_host_address troy_domain.ns_3, troy_domain.ns_3_ip, troy_domain.ns_3_ipv6
         end
-        puts "Troy Domain #{troy_domain.full_name} Done"
       end
     end
-    puts "Troy Domain Re-Sync done."
+    puts "Troy Host Address Re-Sync done."
+    host_addresses = HostAddress.all
+    host_addresses.each do |host_address|
+      host_address.save!
+    end
+    puts "Domain Host IP List field was updated."
   end
 
   def remigrate_host_address hostname, ipv4, ipv6
