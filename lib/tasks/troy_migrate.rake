@@ -212,30 +212,49 @@ namespace :db do
         if troy_domain.glue_record_nameserver?(troy_domain.ns_3)
           remigrate_host_address troy_domain.ns_3, troy_domain.ns_3_ip, troy_domain.ns_3_ipv6
         end
-        puts "Troy Domain #{troy_domain.full_name} host address was resync."
+        puts "Troy Domain #{troy_domain.full_name} Done"
       end
     end
     puts "Troy Domain Re-Sync done."
   end
 
-  def remigrate_host_address host, ipv4, ipv6
+  def remigrate_host_address hostname, ipv4, ipv6
+    host = Host.find_by_name(hostname)
     if !host.nil?
-      host = Host.find_by_name(troy_domain.ns_1)
-      if host.host_addresses.blank?
-        # url   = ExternalRegistry.find_by_name("cocca").url
-        # ip_array = []
-        if !ipv4.blank?
+      ipv4_host_address = host.host_addresses.where(type: "v4")
+      if !ipv4.blank?
+        if ipv4_host_address.blank?
           host.host_addresses.create(address: ipv4, type: "v4")
-          # ip_array << ipv4
+        else
+          if host.host_addresses.where(type: "v4").count > 1
+            host.host_addresses.where(type: "v4").delete_all
+            host.host_addresses.create(address: ipv4, type: "v4")
+          else
+            if !host.host_addresses.where(type: "v4").first.address == ipv4
+              host.host_addresses.where(type: "v4").delete_all
+              host.host_addresses.create(address: ipv4, type: "v4")
+            end
+          end
         end
-        if !ipv6.blank?
-          host.host_addresses.create(address: ipv6, type: "v6")
-          # ip_array << ipv6
-        end
-        # if !ip_array.blank?
-        #   SyncCreateBulkHostAddressJob.perform_later url, host, ip_array
-        # end
       end
+
+      ipv6_host_address = host.host_addresses.where(type: "v6")
+      if !ipv6.blank?
+        if ipv6_host_address.blank?
+          host.host_addresses.create(address: ipv6, type: "v6")
+        else
+          if host.host_addresses.where(type: "v6").count > 1
+            host.host_addresses.where(type: "v6").delete_all
+            host.host_addresses.create(address: ipv6, type: "v6")
+          else
+            if !host.host_addresses.where(type: "v6").first.address == ipv6
+              host.host_addresses.where(type: "v6").delete_all
+              host.host_addresses.create(address: ipv6, type: "v6")
+            end
+          end
+        end
+      end
+      puts "Host Address of #{hostname} was resync to cocca."
     end
   end
 
