@@ -19,8 +19,12 @@ class DomainHost < ActiveRecord::Base
   attr_accessor :troy_migration, :update_ip_list_from_host
 
   def glue_record?
-    domain = self.product.domain.name
-    self.name.include?(domain)
+    domain = self.product.domain
+    if !domain.nil?
+      self.name.include?(domain.name)
+    else
+      false
+    end
   end
 
   private
@@ -111,29 +115,32 @@ class DomainHost < ActiveRecord::Base
 
   def update_powerdns_record_end_dates
     output = true
-    domain = Domain.find_by_product_id self.product_id
-    nameservers = Nameserver.all
-    hosts = domain.product.domain_hosts
+    domain = self.product.domain
 
-    if hosts.count != nameservers.count
-      output = false
-    else
-      hosts.each do |host|
-        output = nameservers.map{|nameserver| nameserver.name}.include?(host.name.strip)
-        break if !output
+    if !domain.nil?
+      nameservers = Nameserver.all
+      hosts = domain.product.domain_hosts
+
+      if hosts.count != nameservers.count
+        output = false
+      else
+        hosts.each do |host|
+          output = nameservers.map{|nameserver| nameserver.name}.include?(host.name.strip)
+          break if !output
+        end
       end
-    end
 
-    if output
-      powerdns_domain = Powerdns::Domain.find_by_domain_id(domain.id)
+      if output
+        powerdns_domain = Powerdns::Domain.find_by_domain_id(domain.id)
 
-      if powerdns_domain
-        powerdns_records = powerdns_domain.powerdns_records
+        if powerdns_domain
+          powerdns_records = powerdns_domain.powerdns_records
 
-        if powerdns_records
-          powerdns_records.each do |powerdns_record|
-            powerdns_record.end_date = domain.expires_at
-            powerdns_record.save!
+          if powerdns_records
+            powerdns_records.each do |powerdns_record|
+              powerdns_record.end_date = domain.expires_at
+              powerdns_record.save!
+            end
           end
         end
       end
