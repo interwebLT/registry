@@ -200,8 +200,6 @@ namespace :db do
   desc "Update IP list field in sinag"
   task update_domain_host_ip_list_field: :environment do
     domain_hosts    = DomainHost.all
-    default_ip_list = {"ipv4":{"0": ""},"ipv6":{"0": ""}}.to_json
-
     domain_hosts.each do |domain_host|
       if domain_host.name.split(".").last == "ph"
         if domain_host.glue_record?
@@ -239,6 +237,43 @@ namespace :db do
       end
     end
     puts "Troy Host Address Re-Sync done."
+  end
+
+  desc "Update Host Address to Cocca"
+  task delete_troy_partner_host_address_in_cocca: :environment do
+    # excluded_hosts = ["au.ns.free.net.ph", "au.ns.leathercollection.ph", "us.ns.free.net.ph", "us.ns.leathercollection.ph"]
+    hosts_mismatch = Cocca::MismatchHostAddressToCocca.all
+
+    hosts_mismatch.each do |host_mismatch|
+      host = Host.find_by_name(host_mismatch.host)
+      cocca_host_address = host_mismatch.cocca_host_address.nil? ? [] : host_mismatch.cocca_host_address.split(",")
+      sinag_host_address = host_mismatch.sinag_host_address.nil? ? [] : host_mismatch.sinag_host_address.split(",")
+      url   = ExternalRegistry.find_by_name("cocca").url
+
+      cocca_host_address_for_delete = cocca_host_address - sinag_host_address
+
+      if !cocca_host_address_for_delete.blank?
+        SyncDeleteBulkHostAddressJob.perform_later url, host, cocca_host_address_for_delete
+      end
+      puts "Host Address of Host #{host_mismatch.host} in cocca was deleted."
+    end
+  end
+
+  desc "Update Host Address to Cocca"
+  task create_troy_partner_host_address_in_cocca: :environment do
+    # excluded_hosts = ["au.ns.free.net.ph", "au.ns.leathercollection.ph", "us.ns.free.net.ph", "us.ns.leathercollection.ph"]
+    hosts_mismatch = Cocca::MismatchHostAddressToCocca.all
+
+    hosts_mismatch.each do |host_mismatch|
+      host = Host.find_by_name(host_mismatch.host)
+      sinag_host_address = host_mismatch.sinag_host_address.nil? ? "" : host_mismatch.sinag_host_address.split(",")
+      url   = ExternalRegistry.find_by_name("cocca").url
+
+      if !sinag_host_address.blank?
+        SyncCreateBulkHostAddressJob.perform_later url, host, sinag_host_address
+      end
+      puts "Host Address of Host #{host_mismatch.host} in cocca was created."
+    end
   end
 
   def remigrate_host_address hostname, ipv4, ipv6
