@@ -78,6 +78,13 @@ class ApplicationController < ActionController::API
     }
   end
 
+  def domain_already_deleted
+    {
+      status: 200,
+      json: { message: 'domain already deleted' }
+    }
+  end
+
   def missing_admin_params
     current_partner.admin and not params.include? :partner
   end

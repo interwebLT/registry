@@ -46,7 +46,7 @@ class DomainHostsController < SecureController
     if domain
       destroy_domain_host domain
     else
-      render not_found
+      render domain_already_deleted
     end
   end
 
