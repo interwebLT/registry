@@ -155,8 +155,8 @@ class DomainHostsController < SecureController
 
   def sync_create domain_host
     ExternalRegistry.all.each do |registry|
-      next if registry.name == current_partner.client
-      next if ExcludedPartner.exists? name: current_partner.name
+      # next if registry.name == current_partner.client
+      # next if ExcludedPartner.exists? name: current_partner.name
 
       SyncCreateDomainHostJob.perform_later registry.url, domain_host
     end
@@ -164,8 +164,8 @@ class DomainHostsController < SecureController
 
   def sync_update domain_host, old_domain_host_name
     ExternalRegistry.all.each do |registry|
-      next if registry.name == current_partner.client
-      next if ExcludedPartner.exists? name: current_partner.name
+      # next if registry.name == current_partner.client
+      # next if ExcludedPartner.exists? name: current_partner.name
 
       SyncUpdateDomainHostJob.perform_later registry.url, domain_host, old_domain_host_name
     end
@@ -173,8 +173,8 @@ class DomainHostsController < SecureController
 
   def sync_delete domain_host
     ExternalRegistry.all.each do |registry|
-      next if registry.name == current_partner.client
-      next if ExcludedPartner.exists? name: current_partner.name
+      # next if registry.name == current_partner.client
+      # next if ExcludedPartner.exists? name: current_partner.name
 
       SyncDeleteDomainHostJob.perform_later registry.url, domain_host
     end
@@ -182,8 +182,8 @@ class DomainHostsController < SecureController
 
   def sync_create_delete_bulk domain, domain_host_for_delete, domain_host_for_add
     ExternalRegistry.all.each do |registry|
-      next if registry.name == current_partner.client
-      next if ExcludedPartner.exists? name: current_partner.name
+      # next if registry.name == current_partner.client
+      # next if ExcludedPartner.exists? name: current_partner.name
 
       SyncCreateDeleteBulkDomainHostJob.perform_later registry.url, domain, domain_host_for_delete, domain_host_for_add
     end
