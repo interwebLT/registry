@@ -112,23 +112,24 @@ class TroyMigrationWorker
   #   process_response HTTParty.post "#{base_url}/hosts", request
   # end
 
-  def delete_existing_external_domain_host old_nameserver, domain
-    url = ExternalRegistry.find_by_name("cocca").url
+  # def delete_existing_external_domain_host old_nameserver, domain
+  #   url = ExternalRegistry.find_by_name("cocca").url
 
-    old_nameserver.each do |nameserver|
-      domain_host = domain.product.domain_hosts.where(name: nameserver)
+  #   old_nameserver.each do |nameserver|
+  #     domain_host = domain.product.domain_hosts.where(name: nameserver).first
 
-      if !domain_host.nil?
-        SyncDeleteDomainHostJob.perform_later url, domain_host
-        domain_host.destroy!
-      end
-    end
-  end
+  #     if !domain_host.nil?
+  #       SyncDeleteDomainHostJob.perform_later url, domain_host
+  #       domain_host.destroy!
+  #       puts "Domain Host #{domain_host} was deleted."
+  #     end
+  #   end
+  # end
 
-  def create_external_domain_host domain_host
-    url = ExternalRegistry.find_by_name("cocca").url
-    SyncCreateDomainHostJob.perform_later url, domain_host
-  end
+  # def create_external_domain_host domain_host
+  #   url = ExternalRegistry.find_by_name("cocca").url
+  #   SyncCreateDomainHostJob.perform_later url, domain_host
+  # end
 
   def process_response response
     JSON.parse response.body, symbolize_names: true
@@ -160,11 +161,7 @@ class TroyMigrationWorker
       if has_default_nameservers
         domain.product.domain_hosts.map{|nameserver| nameserver.delete}
 
-        delete_existing_external_domain_host old_default_nameservers, domain
-
         new_default_nameservers.each do |nameserver|
-          # save_host nameserver.name, domain
-
           domain_host = domain.product.domain_hosts.create(
             product_id: domain.product_id,
             name: nameserver.name,
@@ -178,9 +175,11 @@ class TroyMigrationWorker
                                         product: domain.product,
                                         property_changed: :domain_host,
                                         value: nameserver.name
-
-          create_external_domain_host domain_host
         end
+
+        url = ExternalRegistry.find_by_name("cocca").url
+        new_default_nameservers_for_cocca = Nameserver.all.pluck(:name)
+        SyncCreateDeleteBulkDomainHostJob.perform_later url, domain, old_default_nameservers, new_default_nameservers_for_cocca
 
         troy_domain.reach_records.each do |record|
           if record.type == "SOA"

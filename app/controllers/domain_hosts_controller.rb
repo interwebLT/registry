@@ -147,7 +147,7 @@ class DomainHostsController < SecureController
         end
       end
     }
-    if !domain_host_for_add.empty? and !domain_host_for_delete.empty?
+    if !domain_host_for_add.empty? or !domain_host_for_delete.empty?
       sync_create_delete_bulk domain, domain_host_for_delete, domain_host_for_add
     end
     render  json: domain
@@ -196,15 +196,17 @@ class DomainHostsController < SecureController
   end
 
   def save_host name, ip_list, base_url
-    body = {
-      name:    name,
-      ip_list: ip_list
-    }
-    request = {
-      headers:  headers,
-      body:     body.to_json
-    }
-    process_response HTTParty.post "#{base_url}/hosts", request
+    unless Host.exists? name: name
+      body = {
+        name:    name,
+        ip_list: ip_list
+      }
+      request = {
+        headers:  headers,
+        body:     body.to_json
+      }
+      process_response HTTParty.post "#{base_url}/hosts", request
+    end
   end
 
   def process_response response
