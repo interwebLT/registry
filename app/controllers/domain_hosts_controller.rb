@@ -196,15 +196,17 @@ class DomainHostsController < SecureController
   end
 
   def save_host name, ip_list, base_url
-    body = {
-      name:    name,
-      ip_list: ip_list
-    }
-    request = {
-      headers:  headers,
-      body:     body.to_json
-    }
-    process_response HTTParty.post "#{base_url}/hosts", request
+    unless Host.exists? name: name
+      body = {
+        name:    name,
+        ip_list: ip_list
+      }
+      request = {
+        headers:  headers,
+        body:     body.to_json
+      }
+      process_response HTTParty.post "#{base_url}/hosts", request
+    end
   end
 
   def process_response response
