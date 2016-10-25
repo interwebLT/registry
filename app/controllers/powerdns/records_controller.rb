@@ -1,6 +1,10 @@
 class Powerdns::RecordsController < SecureController
   def index
-    render json: Powerdns::Record.all
+    if !params[:name].nil?
+      get_powerdns_record
+    else
+      render json: Powerdns::Record.all
+    end
   end
 
   def show
@@ -44,6 +48,24 @@ class Powerdns::RecordsController < SecureController
   end
 
   private
+  def get_powerdns_record
+    name        = params[:name]
+    type        = params[:type]
+
+    if type == "SRV"
+      content = "#{params[:srv_weight]} #{params[:srv_port]} #{params[:srv_content]}"
+    else
+      content = params[:content]
+    end
+    record = Powerdns::Record.where("name = ? and type = ? and content = ?", name, type, content).first
+
+    if record.nil?
+      render json: true
+    else
+      render json: false
+    end
+  end
+
   def pdns_record_params
     params.permit :id, :name, :type, :prio, :content, :powerdns_domain_id, :end_date,
                   :change_date, :ttl, preferences: [:weight, :port, :srv_content]
