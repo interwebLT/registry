@@ -27,7 +27,8 @@ class DomainHostsController < SecureController
   def update
     domain = Domain.find params[:domain_id]
     domain_host = DomainHost.find params[:id]
-    if domain_host.update_attributes! update_params
+
+    if domain_host.update_attributes update_params
       if @delete_sync
         sync_update domain_host, @old_domain_host_name
       end
@@ -196,17 +197,15 @@ class DomainHostsController < SecureController
   end
 
   def save_host name, ip_list, base_url
-    unless Host.exists? name: name
-      body = {
-        name:    name,
-        ip_list: ip_list
-      }
-      request = {
-        headers:  headers,
-        body:     body.to_json
-      }
-      process_response HTTParty.post "#{base_url}/hosts", request
-    end
+    body = {
+      name:    name,
+      ip_list: ip_list
+    }
+    request = {
+      headers:  headers,
+      body:     body.to_json
+    }
+    process_response HTTParty.post "#{base_url}/hosts", request
   end
 
   def process_response response
