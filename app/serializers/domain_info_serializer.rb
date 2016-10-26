@@ -25,7 +25,7 @@ class DomainInfoSerializer < DomainSerializer
   end
 
   def hosts
-    object.product.domain_hosts.order(updated_at: :desc).collect do |host|
+    object.product.domain_hosts.order(updated_at: :asc).collect do |host|
       DomainHostSerializer.new(host).serializable_hash
     end
   end
