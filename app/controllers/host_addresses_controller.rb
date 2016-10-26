@@ -75,6 +75,7 @@ class HostAddressesController < SecureController
         ip_array.map {|address|
           type         = if (address =~ @ipv4) then "v4" else "v6" end
           host_address = host.host_addresses.build address: address, type: type
+          host_address.sinag_update = true
           host_address.save
         }
         sync_create_multiple host, ip_array
@@ -102,6 +103,7 @@ class HostAddressesController < SecureController
       sync_delete_multiple host, ip_array
       ip_array.map {|address|
         host_address = host.host_addresses.find_by address: address
+        host_address.sinag_update = true
         host_address.destroy!
       }
       render  json: {}

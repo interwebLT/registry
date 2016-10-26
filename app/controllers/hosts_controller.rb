@@ -2,20 +2,23 @@ class HostsController < SecureController
   before_action :update_host_address, only: [:create]
 
   def create
-    host = Host.new host_params
-    host.partner = current_partner
+    unless Host.exists? name: host_params[:name]
+      host = Host.new host_params
+      host.partner = current_partner
+      if host.save
+        sync_create host
+        unless params[:ip_list].nil?
+          create_host_address host, params[:ip_list]
+        end
 
-    if host.save
-      sync_create host
-      unless params[:ip_list].nil?
-        create_host_address host, params[:ip_list]
+        render  json:     host,
+                status:   :created,
+                location: host_url(host.id)
+      else
+        render  validation_failed host
       end
-
-      render  json:     host,
-              status:   :created,
-              location: host_url(host.id)
     else
-      render  validation_failed host
+      render json: {status: 200, json: {message: 'already exist'}}
     end
   end
 
