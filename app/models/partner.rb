@@ -130,10 +130,12 @@ class Partner < ActiveRecord::Base
   end
 
   def migrate_domain_dns
-    self.domains.each do |domain|
-      domain.migrate_records
+    domains_with_ns = Troy::DomainsDefaultNs.where(partner: self.name).pluck(:name)
+
+    domains_with_ns.map{|domain|
+      Domain.find_by_name(domain).migrate_records
       sleep 0.10
-    end
+    }
   end
 
   def reset_current_balance

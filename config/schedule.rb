@@ -2,10 +2,6 @@
 #   runner "ExpireDomainsJob.perform_now"
 # end
 
-# every 1.minute do
-#   rake "db:generate_partner_billing_statement" , environment: "development"
-# end
-
 # every '0 10 20 * *' do
 #   rake "db:generate_partner_invoice_statement" , environment: "development"
 # end

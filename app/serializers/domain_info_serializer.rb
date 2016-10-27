@@ -1,6 +1,6 @@
 class DomainInfoSerializer < DomainSerializer
   attributes  :registrant, :admin_contact, :billing_contact, :tech_contact,
-              :activities, :hosts, :powerdns_domain, :powerdns_records
+              :hosts, :powerdns_domain, :powerdns_records
 
   def registrant
     ContactSerializer.new(object.registrant).serializable_hash
@@ -18,14 +18,8 @@ class DomainInfoSerializer < DomainSerializer
     ContactSerializer.new(object.tech_contact).serializable_hash if object.tech_contact
   end
 
-  def activities
-    (object.domain_activities.order(activity_at: :asc).collect do |activity|
-      activity.as_json if current_user.admin || activity.partner.name == current_user.name
-    end).compact
-  end
-
   def hosts
-    object.product.domain_hosts.order(name: :asc).collect do |host|
+    object.product.domain_hosts.order(updated_at: :asc).collect do |host|
       DomainHostSerializer.new(host).serializable_hash
     end
   end
