@@ -10,7 +10,7 @@ class PartnerInfoSerializer < PartnerSerializer
   end
 
   def pricing
-    object.partner_pricings.collect do |pricing|
+    object.partner_pricings.sorted_by_transfer_register_renew.collect do |pricing|
       PartnerPricingSerializer.new(pricing).serializable_hash
     end
   end
