@@ -132,8 +132,13 @@ class Partner < ActiveRecord::Base
   def migrate_domain_dns
     domains_with_ns = Troy::DomainsDefaultNs.where(partner: self.name).pluck(:name)
 
-    domains_with_ns.map{|domain|
-      Domain.find_by_name(domain).migrate_records
+    domains_with_ns.map{|domain_with_ns|
+      domain = Domain.find_by_name(domain_with_ns)
+      if !domain.nil?
+        domain.migrate_records
+      else
+        puts "Domain #{domain_with_ns} of partner #{self.name} was not in sinag registry."
+      end
       sleep 0.10
     }
   end
