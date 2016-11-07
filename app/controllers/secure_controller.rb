@@ -12,7 +12,11 @@ class SecureController < ApplicationController
   end
 
   def current_user
-    current_partner
+		user = @authorization.user
+    user.token   = @authorization.token
+#    user.client  = @authorization.client
+
+    user
   end
 
   def headers

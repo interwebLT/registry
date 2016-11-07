@@ -6,6 +6,8 @@ class Domain < ActiveRecord::Base
   belongs_to :admin_contact, foreign_key: :admin_handle, class_name: Contact
   belongs_to :billing_contact, foreign_key: :billing_handle, class_name: Contact
   belongs_to :tech_contact, foreign_key: :tech_handle, class_name: Contact
+	has_one :user, through: :user_domains
+	belongs_to :user_domains, class_name: UserDomain
 
   has_many :domain_statuses
 

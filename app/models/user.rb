@@ -12,6 +12,9 @@ class User < ActiveRecord::Base
   validates :name, presence: true
 
   has_many :authorizations
+	
+	has_many :user_domains
+	has_many :domains, through: :user_domains, class_name: Domain
 
   attr_accessor :token
 

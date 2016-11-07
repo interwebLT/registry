@@ -5,7 +5,7 @@ set :rails_env, 'production'
 
 set :deploy_to, '/srv/registry'
 set :log_level, :info
-set :linked_files, %w{config/secrets.yml config/database.yml config/exception_notification.yml config/checkout.yml config/sidekiq.yml config/credit_limit_notice.yml config/api.yml config/cocca.yml}
+set :linked_files, %w{config/secrets.yml config/database.yml config/exception_notification.yml config/checkout.yml config/sidekiq.yml config/credit_limit_notice.yml config/api.yml config/cocca.yml config/registry.yml}
 set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 set :default_env, { path: "$PATH:/usr/pgsql-9.3/bin" }

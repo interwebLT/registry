@@ -110,10 +110,10 @@ class DomainsController < SecureController
   end
 
   def get_domains
-    if current_partner.admin
-      Domain.latest
-    else
-      current_partner.domains.order(:expires_at, :name)
-    end
+#    if current_partner.admin
+#      Domain.latest
+#    else
+      current_user.domains.order(:expires_at, :name)
+#    end
   end
 end
