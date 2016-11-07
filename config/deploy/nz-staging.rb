@@ -1,4 +1,4 @@
-role :app, %w{deploy@nz-registry.production.local}
-role :db,  %w{deploy@nz-registry-db.production.local}
+role :app, %w{deploy@nz-registry.staging.local}
+role :db,  %w{deploy@nz-registry-db.staging.local}
 
 set :branch, 'nz-api'
