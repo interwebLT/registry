@@ -8,17 +8,4 @@ class CreateExchangeRateTable < ActiveRecord::Migration
       t.timestamps
     end
   end
-
-  if Troy::ExchangeRateTable.table_exists?
-    ExchangeRate.all.delete_all
-
-    Troy::ExchangeRateTable.all.each do |troy_rate|
-      ExchangeRate.create(
-        from_date: troy_rate.fromdate,
-        troy_rate: troy_rate.todate,
-        usd_rate:  troy_rate.usdrate,
-        currency:  troy_rate.currency
-      )
-    end
-  end
 end
