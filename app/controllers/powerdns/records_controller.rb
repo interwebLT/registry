@@ -51,13 +51,14 @@ class Powerdns::RecordsController < SecureController
   def get_powerdns_record
     name        = params[:name]
     type        = params[:type]
+    ttl         = params[:ttl]
 
     if type == "SRV"
       content = "#{params[:srv_weight]} #{params[:srv_port]} #{params[:srv_content]}"
     else
       content = params[:content]
     end
-    record = Powerdns::Record.where("name = ? and type = ? and content = ?", name, type, content).first
+    record = Powerdns::Record.where("name = ? and type = ? and ttl = ? and content = ?", name, type, ttl, content).first
 
     if record.nil?
       render json: true
