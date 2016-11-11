@@ -36,8 +36,10 @@ Rails.application.routes.draw do
   resources :hosts, only: [:index, :create, :show, :update], id: /.*/ do
     resources :addresses, controller: :host_addresses, only: [:create, :show, :destroy]
   end
-  
+
   resources :transfer_requests, only: [:create, :update, :destroy], id: /.*/
+
+  resources :exchange_rates, only: [:index]
 
   match '*unmatched', to: 'application#handle_routing_error', via: :all
 end

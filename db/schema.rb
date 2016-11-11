@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161011061549) do
+ActiveRecord::Schema.define(version: 20161110233944) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -200,6 +200,15 @@ ActiveRecord::Schema.define(version: 20161011061549) do
     t.boolean  "server_transfer_prohibited",             default: false, null: false
     t.boolean  "server_update_prohibited",               default: false, null: false
     t.string   "status_pending_transfer"
+  end
+
+  create_table "exchange_rates", force: :cascade do |t|
+    t.date     "from_date"
+    t.date     "to_date"
+    t.decimal  "usd_rate"
+    t.string   "currency"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "excluded_partners", force: :cascade do |t|
