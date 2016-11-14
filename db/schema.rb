@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161110233944) do
+ActiveRecord::Schema.define(version: 20161114014625) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -447,5 +447,41 @@ ActiveRecord::Schema.define(version: 20161110233944) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+
+  create_table "vas_order_details", force: :cascade do |t|
+    t.integer  "order_id",                                             null: false
+    t.integer  "product_id"
+    t.string   "type",                     limit: 64,                  null: false
+    t.integer  "price_cents",                          default: 0,     null: false
+    t.string   "price_currency",           limit: 3,   default: "USD", null: false
+    t.string   "status",                   limit: 16,                  null: false
+    t.string   "domain",                   limit: 255
+    t.integer  "period"
+    t.string   "registrant_handle",        limit: 16
+    t.datetime "registered_at"
+    t.datetime "renewed_at"
+    t.integer  "credits_cents",                        default: 0
+    t.string   "credits_currency",         limit: 3,   default: "USD"
+    t.datetime "expires_at"
+    t.string   "authcode",                 limit: 64
+    t.integer  "refunded_order_detail_id"
+    t.string   "remarks",                              default: ""
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
+  end
+
+  create_table "vas_orders", force: :cascade do |t|
+    t.integer  "partner_id",                                      null: false
+    t.string   "status",               limit: 16,                 null: false
+    t.integer  "total_price_cents",               default: 0,     null: false
+    t.string   "total_price_currency", limit: 3,  default: "USD", null: false
+    t.integer  "fee_cents",                       default: 0,     null: false
+    t.string   "fee_currency",         limit: 3,  default: "USD", null: false
+    t.datetime "completed_at"
+    t.string   "order_number"
+    t.datetime "ordered_at",                                      null: false
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+  end
 
 end
