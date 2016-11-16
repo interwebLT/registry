@@ -1,6 +1,6 @@
 <p>Dear <%= @partner.name %>,</p>
 
-<p>You entered a non ascii character contact information.</p>
+<p>You entered a non ascii character contact information for contact handle - <b><%= @handle %><b.</p>
 
 <% @contact.each do |key, value|%>
 <p><b><%= key %></b> = <%= value %><p>
