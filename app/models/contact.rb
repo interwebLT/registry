@@ -43,7 +43,7 @@ class Contact < ActiveRecord::Base
     end
 
     if non_ascii_on_attr
-      ContactRegistrationMailer.delay_for(5.minute, queue: "registry_mailer").non_ascii_notification(self.partner, non_ascii_attributes)
+      ContactRegistrationMailer.delay_for(5.minute, queue: "registry_mailer").non_ascii_notification(self.partner, self.handle, non_ascii_attributes)
     end
   end
 end
