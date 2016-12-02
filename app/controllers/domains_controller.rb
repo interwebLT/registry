@@ -1,11 +1,12 @@
 class DomainsController < SecureController
   def index
+    page = params[:page]
     if params[:name]
-      render json: fetch_domain
+      render json: fetch_domain(page)
     elsif params[:search]
-      render json: search_domains
+      render json: search_domains(page)
     else
-      render json: get_domains
+      render json: get_domains(page)
     end
   end
 
@@ -96,24 +97,34 @@ class DomainsController < SecureController
                   :server_hold, :server_delete_prohibited, :server_renew_prohibited, :server_transfer_prohibited, :server_update_prohibited, :status_pending_transfer
   end
 
-  def search_domains
-    get_domains.where('name like ?', "%#{params[:search]}%")
+  def search_domains page
+    get_domains(page).where('name like ?', "%#{params[:search]}%")
 #      select do |domain|
 #      domain.name.include? params[:search]
 #    end
   end
 
-  def fetch_domain
-    Domain.where("name = '#{params[:name]}'")
-
-
+  def fetch_domain page
+    if !page.nil?
+      Domain.where("name = '#{params[:name]}'").paginate page: page, per_page: 20
+    else
+      Domain.where("name = '#{params[:name]}'")
+    end
   end
 
-  def get_domains
-    if current_partner.admin
-      Domain.latest
+  def get_domains page
+    if !page.nil?
+      if current_partner.admin
+        Domain.latest.paginate page: page, per_page: 20
+      else
+        current_partner.domains.order(:expires_at, :name).paginate page: page, per_page: 20
+      end
     else
-      current_partner.domains.order(:expires_at, :name)
+      if current_partner.admin
+        Domain.latest
+      else
+        current_partner.domains.order(:expires_at, :name)
+      end
     end
   end
 end
