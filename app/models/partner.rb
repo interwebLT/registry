@@ -106,16 +106,26 @@ class Partner < ActiveRecord::Base
     end
   end
 
-  def credit_history
-    self.credits.where(status: Credit::COMPLETE_CREDIT).order(:created_at)
+  def credit_history month, year
+    if month.nil? and year.nil?
+      self.credits.where(status: Credit::COMPLETE_CREDIT).order(:created_at)
+    else
+      self.credits.where("extract(month from credited_at) = ? and extract(year from credited_at) = ? and status = ?", month, year,Credit::COMPLETE_CREDIT).order(:created_at)
+    end
 
 #    quick_orders.select do |order|
 #      order.order_details.first.is_a? OrderDetail::ReplenishCredits
 #    end
   end
 
-  def order_history
-    quick_orders.reject do |order|
+  def order_history month, year
+    if month.nil? and year.nil?
+      monthly_order_history = quick_orders
+    else
+      monthly_order_history = quick_orders.where("extract(month from ordered_at) = ? and extract(year from ordered_at) = ?", month, year)
+    end
+
+    monthly_order_history.reject do |order|
       order.order_details.first.is_a? OrderDetail::ReplenishCredits
     end
   end

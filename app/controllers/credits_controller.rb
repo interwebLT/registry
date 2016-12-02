@@ -1,9 +1,9 @@
 class CreditsController < SecureController
-  
+
   skip_before_action :authenticate, :only => [:update]
-  
+
   def index
-    render  json: current_partner.credit_history,
+    render  json: current_partner.credit_history(params[:month], params[:year]),
             each_serializer: CreditSerializer
   end
 
@@ -16,7 +16,7 @@ class CreditsController < SecureController
       create_credit
     end
   end
-  
+
   def update
     credit_number = params[:id]
     credit = Credit.find_by_credit_number(credit_number)
@@ -59,7 +59,7 @@ class CreditsController < SecureController
 
 
   private
-  
+
   def credit_params
     params.permit(:partner, :type, :amount, :amount_currency, :fee, :fee_currency, :verification_code, :credited_at, :remarks)
   end

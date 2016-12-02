@@ -3,7 +3,7 @@ class OrdersController < SecureController
     if current_partner.admin
       render json: Order.latest
     else
-      render json: current_partner.order_history
+      render json: current_partner.order_history(params[:month], params[:year])
     end
   end
 
