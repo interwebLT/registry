@@ -71,6 +71,21 @@ class DomainsController < SecureController
     end
   end
 
+  def valid_partner_domain
+    unless params[:domains].nil?
+      current_partner_domains = current_partner.domains.pluck(:name)
+      invalid_domains = params[:domains] - current_partner_domains
+
+      if invalid_domains.empty?
+        render json: true
+      else
+        render json: "Domains #{invalid_domains.join(', ')} is not your registered domain(s)."
+      end
+    else
+      render json: "Please enter a valid domain."
+    end
+  end
+
   private
 
   def update_domain
