@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get '/whois/:id',                          to: 'whois#show',           as: :whois, id: /.*/
   get '/availability',                       to: 'availabilities#index'
   get '/check_ns_authorization',             to: 'domains#check_nameserver_authorization'
+  get '/valid_partner_domain',               to: 'domains#valid_partner_domain'
 
   resources :user, only: [:index] do
     collection do
