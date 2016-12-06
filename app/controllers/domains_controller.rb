@@ -5,6 +5,8 @@ class DomainsController < SecureController
       render json: fetch_domain(page)
     elsif params[:search]
       render json: search_domains(page)
+    elsif params[:get_count]
+      render json: get_current_user_domains_count
     else
       render json: get_domains(page)
     end
@@ -141,5 +143,9 @@ class DomainsController < SecureController
         current_partner.domains.order(:expires_at, :name)
       end
     end
+  end
+
+  def get_current_user_domains_count 
+    current_partner.domains.count
   end
 end
