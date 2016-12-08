@@ -49,9 +49,10 @@ class Powerdns::RecordsController < SecureController
 
   private
   def get_powerdns_record
-    name        = params[:name]
-    type        = params[:type]
-    ttl         = params[:ttl]
+    name          = params[:name]
+    type          = params[:type]
+    ttl           = params[:ttl]
+    dns_record_id = params[:dns_record_id].to_i
 
     if type == "SRV"
       content = "#{params[:srv_weight]} #{params[:srv_port]} #{params[:srv_content]}"
@@ -63,7 +64,11 @@ class Powerdns::RecordsController < SecureController
     if record.nil?
       render json: true
     else
-      render json: false
+      if record.id == dns_record_id
+        render json: true
+      else
+        render json: false
+      end
     end
   end
 
