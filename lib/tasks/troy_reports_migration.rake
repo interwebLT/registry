@@ -7,6 +7,9 @@ namespace :db do
     # example -- bundle exec rake db:migrate_report_datas[0,2011]
     # for overall migration. dont put any parameters
     # example -- bundle exec rake db:migrate_report_datas
+    special_order_numbers = ["406248"]
+
+
     invoicerefkey_for_remigrate = []
 
     if args.count == 0
@@ -110,6 +113,11 @@ namespace :db do
 
     # begin
       troy_report_datas.each_with_index do |troy_report_data, index|
+        ### Special case. Already in sinag that cause error in migration. As of Dec 15,2016
+        if special_order_numbers.include? troy_report_data.order_number
+          next
+        end
+
         ### SET VARIABLES IF NEW ORDER OR NOT
         if prev_order_number.nil?
           still_current_order_number = false
@@ -279,7 +287,7 @@ namespace :db do
               ).first
 
             if !order_detail.nil?
-              log_desc = "Troy data with invoice number #{troy_report_data.order_number}, exist in Order with order_number #{order.order_number} with domain #{troy_report_data.domain}"
+              log_desc = "Troy data with invoice number #{troy_report_data.order_number}, exist in Order with order_number #{order_detail.order_number} with domain #{troy_report_data.domain}"
               Troy::ReportMigrationError.create(
                 troy_order_number: troy_report_data.order_number,
                 affecting_order_number: order.order_number,
