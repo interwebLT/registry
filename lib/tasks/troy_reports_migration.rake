@@ -21,12 +21,12 @@ namespace :db do
     end
 
     if migration_all_at_once
-      troy_report_datas = Troy::ReportData.all.order(:order_number)
+      troy_report_datas = Troy::ReportData.all.order(:order_number, :domain)
     else
       if month_param == "0"
-        troy_report_datas = Troy::ReportData.where("year = ? and order_number is not null", year_param).order(:order_number)
+        troy_report_datas = Troy::ReportData.where("year = ? and order_number is not null", year_param).order(:order_number, :domain)
       else
-        troy_report_datas = Troy::ReportData.where("month = ? and year = ? and order_number is not null", month_param, year_param).order(:order_number, :type)
+        troy_report_datas = Troy::ReportData.where("month = ? and year = ? and order_number is not null", month_param, year_param).order(:order_number, :type, :domain)
       end
     end
     # troy_report_datas = Troy::ReportData.where(order_number: "358293").order(:order_number)
@@ -71,8 +71,8 @@ namespace :db do
 
       if !transfer_report_data.nil?
         # update transfer transaction date in sinag order and order details
-        order_detail_to_transfer_for_update = OrderDetail.where("type = ? and domain = ? and created_at::date >= ?",
-          "OrderDetail::TransferDomain", transfer_report_data.domain, transfer_report_data.ordered_at.to_date).first
+        order_detail_to_transfer_for_update = OrderDetail.where("type = ? and domain = ? and created_at::date >= ? and created_at::date <= ?",
+          "OrderDetail::TransferDomain", transfer_report_data.domain, transfer_report_data.ordered_at.to_date, transfer_report_data.ordered_at.to_date + 1.month).first
 
         if !order_detail_to_transfer_for_update.nil?
           order_detail_to_transfer_for_update.created_at = transfer_report_data.ordered_at
@@ -89,8 +89,8 @@ namespace :db do
           order_of_transfer_for_update.save
 
           # update first renewal after transfer transaction date in sinag order and order details
-          order_detail_to_renewal_for_update = OrderDetail.where("type = ? and domain = ? and created_at::date > ?",
-            "OrderDetail::RenewDomain", order_detail_to_transfer_for_update.domain, order_detail_to_transfer_for_update.created_at.to_date).first
+          order_detail_to_renewal_for_update = OrderDetail.where("type = ? and domain = ? and created_at::date >= ? and created_at::date <= ?",
+            "OrderDetail::RenewDomain", order_detail_to_transfer_for_update.domain, order_detail_to_transfer_for_update.created_at.to_date, order_detail_to_transfer_for_update.created_at.to_date + 1.month).first
 
           if !order_detail_to_renewal_for_update.nil?
             order_detail_to_renewal_for_update.created_at = transfer_report_data.ordered_at
