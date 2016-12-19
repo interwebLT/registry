@@ -20,6 +20,14 @@ class Order < ActiveRecord::Base
   after_save :check_credit_balance
   after_save :check_credit_limit_percentage
 
+  skip_callback :create, :before, :generate_order_number,         if: :troy_migration
+  skip_callback :create, :before, :get_credit_before_create,      if: :troy_migration
+  skip_callback :save,   :after,  :check_credit_balance,          if: :troy_migration
+  skip_callback :save,   :after,  :check_credit_limit_percentage, if: :troy_migration
+
+  attr_accessor :troy_migration
+
+
   COMPLETE_ORDER  = 'complete'
   PENDING_ORDER   = 'pending'
   ERROR_ORDER     = 'error why'
@@ -208,7 +216,9 @@ class Order < ActiveRecord::Base
         sufficient_credit = total_credit >= order_price
 
         unless sufficient_credit
-          errors.add(:total_price_cents, "You don't have enough credit balance to complete this order.")
+          if !self.troy_migration
+            errors.add(:total_price_cents, "You don't have enough credit balance to complete this order.")
+          end
         end
       end
     end
