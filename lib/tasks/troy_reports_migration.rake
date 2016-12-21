@@ -7,7 +7,7 @@ namespace :db do
     # example -- bundle exec rake db:migrate_report_datas[0,2011]
     # for overall migration. dont put any parameters
     # example -- bundle exec rake db:migrate_report_datas
-    special_order_numbers = ["406248"]
+    special_order_numbers = ["406248", "351552"]
 
 
     invoicerefkey_for_remigrate = []
@@ -115,6 +115,9 @@ namespace :db do
       troy_report_datas.each_with_index do |troy_report_data, index|
         ### Special case. Already in sinag that cause error in migration. As of Dec 15,2016
         if special_order_numbers.include? troy_report_data.order_number
+          if troy_report_data.order_number == "351552"
+            invoicerefkey_for_remigrate << "351552"
+          end
           next
         end
 
@@ -138,8 +141,11 @@ namespace :db do
         end
 
         if troy_report_data.domain.nil? or troy_report_data.domain.blank?
-          check_deleted_domain = Troy::DomainRegistry.find(troy_report_data.domainrefkey.to_s)
-          domain_name = check_deleted_domain.nil? ? "" : check_deleted_domain.domain_name
+          if troy_report_data.domainrefkey == 59237
+            domain_name = "whitewater.ph"
+          end
+          # check_deleted_domain = Troy::DomainRegistry.find(troy_report_data.domainrefkey.to_s)
+          # domain_name = check_deleted_domain.nil? ? "" : check_deleted_domain.domain_name
           domain = Domain.find_by_name(domain_name)
         else
           domain_name = troy_report_data.domain
@@ -246,7 +252,7 @@ namespace :db do
           else
             has_existing_sinag_order = true
             # order exist. will check if order detail exist
-            if !new_order_from_troy_exists_already #if new_order_from_troy_exists_already is true, order object is alreay availbale.
+            if !new_order_from_troy_exists_already #if new_order_from_troy_exists_already is true, order object is already available.
               order = Order.find(order.order_id) # get the correct Order object (SinagViews::Order is not returning correct Order object).
               log_desc = "Troy data with invoice number #{troy_report_data.order_number}, exist in Order with order_number #{order.order_number} with domain #{troy_report_data.domain}"
               Troy::ReportMigrationError.create(
@@ -375,8 +381,10 @@ namespace :db do
     #Next loop is for re migration of valid transactions with same details but succesfully ordered in troy#
 
     invoicerefkey_for_remigrate.uniq.each do |invoicerefkey_remigrate|
-      troy_report_datas = Troy::ReportData.where(order_number: invoicerefkey_remigrate).order(:order_number)
+      troy_report_datas = Troy::ReportData.where(order_number: invoicerefkey_remigrate).order(:order_number, :domain)
       troy_report_data_count = troy_report_datas.count
+
+      prev_order_number = nil
 
       troy_report_datas.each_with_index do |troy_report_data, index|
         ### SET VARIABLES IF NEW ORDER OR NOT
@@ -445,6 +453,14 @@ namespace :db do
           end
         else
           if troy_report_data.type == "prepaid" or troy_report_data.type == "pprenew"
+            if (troy_report_data.domain == order.order_details.last.domain and
+              troy_report_data.period == order.order_details.last.period and
+              ORDER_DETAIL_TYPES[troy_report_data.type.strip.to_sym].to_s == order.order_details.last.type)
+
+              # if the current record is same to prev one, add amount then check if exists in sinag.
+              order.total_price_cents  += troy_report_data.amount_cents
+              order.order_details.last.price_cents += troy_report_data.amount_cents
+            end
             order = create_order_detail troy_report_data, domain, partner, order, has_existing_sinag_order
           end
 
@@ -466,6 +482,12 @@ namespace :db do
           end
         end
       end
+    end
+
+    ####!!!!####
+    od = Order.where(order_number: "351552").first.order_details.where(domain: "makatidiamond.com.ph", price_cents: 1750).first
+    if !od.nil?
+      od.destroy!
     end
   end
 
