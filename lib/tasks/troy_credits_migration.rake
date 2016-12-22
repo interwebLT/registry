@@ -13,14 +13,13 @@ namespace :db do
       bank: Credit::BankReplenish
     }
 
-    partners = Partner.all
+    # partners = Partner.all
+    partners = Partner.where(name: "eastern")
     partners.each do |partner|
       has_migrated_credit = false
-
       if sinag_partners.include?(partner.name)
         next
       end
-
       if parters_with_more_than_one_top_up_convert.include?(partner.name)
         next
       end
@@ -34,8 +33,8 @@ namespace :db do
         troy_credit_availables = Troy::CreditAvailable.where(userrefkey: troy_user.userrefkey).order(:creditavailablerefkey)
 
         troy_credit_availables.each do |credit_available|
-          # dummy credits are not valid
-          puts "1credit_available == #{credit_available.inspect}"
+          credit_amount = 0
+          credit_fee    = 0
           if !credit_available.receiptnum.nil? and credit_available.receiptnum != ''
             if credit_available.receiptnum.try(:strip).start_with?("dummy")
               next
@@ -48,29 +47,48 @@ namespace :db do
             if !topup_convert.nil?
               credit_record_for_migrate  = true
               new_ca_refkey_before_valid = topup_convert.new_ca_id
+              next
             end
           end
 
           if credit_record_for_migrate and credit_available.creditavailablerefkey != new_ca_refkey_before_valid
+
+          puts "****************"
+          puts "Migration starts with credit avaialable refkey #{credit_available.creditavailablerefkey} for partner #{partner.name} -- #{credit_available.userrefkey} "
+          puts "****************"
             # all credit top ups goes here
             ##get the type in ecn table
             troy_trans = Troy::Trans.where(invoicerefkey: credit_available.invoicerefkey).first
 
             if !troy_trans.nil?
-              credit_type = Troy::EcnTransaction.where(tranid: troy_trans.tranid).first.pg.try(:strip)
-              if credit_type == "2co"
-                credit_type = "twoCo"
+              troy_ecn_transaction = Troy::EcnTransaction.where(tranid: troy_trans.tranid).first
+              if !troy_ecn_transaction.nil?
+                credit_amount = credit_available.numcredits
+                credit_fee    = credit_available.amount - credit_available.numcredits
+                if troy_ecn_transaction.pg == "2co"
+                  credit_type = "twoCo"
+                else
+                  credit_type = troy_ecn_transaction.pg
+                end
+              else
+                # will check cash and check payment table
+                get_credit_amount = get_cash_or_check_amount(credit_available.receiptnum.try(:strip))
+                credit_amount = get_credit_amount == 0 ? credit_available.numcredits : get_credit_amount
+                credit_fee    = credit_amount - credit_available.numcredits
+                credit_type = "bank"
               end
             else
               credit_type = "bank"
             end
 
+            ca_createdate = Troy::Invoice.where(invoicerefkey: credit_available.invoicerefkey).first
+
             credit = partner.credits.new
             credit.type           = CREDIT_TYPES[credit_type.to_sym]
-            credit.amount         = credit_available.numcredits
-            credit.credited_at    = Time.now
-            credit.remarks        = "overall credit topup migration"
-            credit.fee            = credit_available.amount - credit_available.numcredits
+            credit.amount         = credit_amount
+            credit.credited_at    = ca_createdate.nil? ? nil : ca_createdate
+            credit.remarks        = "overall migration of credit topup from troy for reports"
+            credit.fee            = credit_fee
             credit.troy_migration = true
 
             credit.complete!
@@ -93,7 +111,6 @@ namespace :db do
     partner_with_more_than_one_top_up_hash.each do |partner_name, ca_key|
       partner = Partner.find_by_name(partner_name)
       troy_user = Troy::User.find_by_userid(partner.name)
-
       if !troy_user.nil?
         migrate_special_partners(partner, troy_user, ca_key)
       end
@@ -102,29 +119,48 @@ namespace :db do
   end
 
   def migrate_special_partners partner, troy_user, ca_key
+    credit_amount = 0
+    credit_fee    = 0
+
     troy_credit_availables = Troy::CreditAvailable.where("userrefkey = ? and creditavailablerefkey >= ?", troy_user.userrefkey, ca_key).order(:creditavailablerefkey)
 
     troy_credit_availables.each do |credit_available|
-      if troy_credit_availables.receiptnum.try(:strip).starts_with?("dummy")
-        next
+      if !credit_available.receiptnum.nil? and credit_available.receiptnum != ''
+        if credit_available.receiptnum.try(:strip).start_with?("dummy")
+          next
+        end
       end
 
       troy_trans = Troy::Trans.where(invoicerefkey: credit_available.invoicerefkey).first
 
       if !troy_trans.nil?
-        credit_type = Troy::EcnTransaction.where(tranid: troy_trans.tranid).first.pg.try(:strip)
-        if credit_type == "2co"
-          credit_type = "twoCo"
+        troy_ecn_transaction = Troy::EcnTransaction.where(tranid: troy_trans.tranid).first
+        if !troy_ecn_transaction.nil?
+          credit_amount = credit_available.numcredits
+          credit_fee    = credit_available.amount - credit_available.numcredits
+          if troy_ecn_transaction.pg == "2co"
+            credit_type = "twoCo"
+          else
+            credit_type = troy_ecn_transaction.pg
+          end
+        else
+          # will check cash and check payment table
+          get_credit_amount = get_cash_or_check_amount(credit_available.receiptnum.try(:strip))
+          credit_amount = get_credit_amount == 0 ? credit_available.numcredits : get_credit_amount
+          credit_fee    = credit_amount - credit_available.numcredits
+          credit_type = "bank"
         end
       else
         credit_type = "bank"
       end
 
+      ca_createdate = Troy::Invoice.where(invoicerefkey: credit_available.invoicerefkey).first
+
       credit = partner.credits.new
       credit.type           = CREDIT_TYPES[credit_type.to_sym]
       credit.amount         = credit_available.numcredits
-      credit.credited_at    = Time.now
-      credit.remarks        = "overall credit topup migration"
+      credit.credited_at    = ca_createdate.nil? ? nil : ca_createdate
+      credit.remarks        = "overall migration of credit topup from troy for reports"
       credit.fee            = credit_available.amount - credit_available.numcredits
       credit.troy_migration = true
 
@@ -132,6 +168,43 @@ namespace :db do
       puts "Partner #{partner.name} migrated #{credit_available.numcredits} credit top up."
     end
     puts "Troy credit migration to sinag for #{partner.name} successfully done."
+  end
+
+
+  def get_cash_or_check_amount receiptnum
+    cash_amount = 0
+    troy_cash_payment = Troy::CashPayment.where("receiptnum = ?", receiptnum).first
+    if !troy_cash_payment.nil?
+      if troy_cash_payment.currency == "usd"
+        cash_amount = troy_cash_payment.amount
+      else
+        cash_amount = convert_php_to_usd troy_cash_payment.amount, troy_cash_payment.paymentdate
+      end
+    else
+      troy_check_payment = Troy::CheckPayment.where("receiptnum = ?", receiptnum).first
+      if !troy_check_payment.nil?
+        if troy_check_payment.currency == "usd"
+          cash_amount = troy_check_payment.amount
+        else
+          cash_amount = convert_php_to_usd troy_check_payment.amount, troy_check_payment.paymentdate
+        end
+      else
+        cash_amount = 0
+      end
+    end
+    return cash_amount.to_f
+  end
+
+  def convert_php_to_usd php_amount, payment_date
+    date = payment_date
+    current_rate = ExchangeRate.where("? > from_date and ? <= to_date", date, date).first
+
+    if !current_rate.nil?
+      amount = php_amount.to_f / current_rate.usd_rate.to_f
+    else
+      amount = 0
+    end
+    return amount.to_f
   end
 end
 
@@ -150,3 +223,8 @@ end
  # aena168          |     2  - 36793               4093
 
  # test = {"domainab" => 4444, "interiis" => 4100, "jcmedina" => 4361, "united" => 6271, "aena168" => 4093}
+ # select * from creditavailable a left join topup_convert b on a.creditavailablerefkey = b.old_ca_id where a.userrefkey=36793;
+ # select a.receiptnum, b.userid, c.amount, c.currency, b.type from creditavailable a left join users b on a.userrefkey = b.user
+ #   left join cashpayment c on a.receiptnum = c.receiptnum where a.receiptnum like 'or%' order by b.userid;
+
+# Credit.where("remarks like 'overall%'").map{|c| c.destroy!}
