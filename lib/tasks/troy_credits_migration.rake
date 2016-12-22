@@ -15,6 +15,8 @@ namespace :db do
 
     partners = Partner.all
     partners.each do |partner|
+      has_migrated_credit = false
+
       if sinag_partners.include?(partner.name)
         next
       end
@@ -32,6 +34,14 @@ namespace :db do
         troy_credit_availables = Troy::CreditAvailable.where(userrefkey: troy_user.userrefkey).order(:creditavailablerefkey)
 
         troy_credit_availables.each do |credit_available|
+          # dummy credits are not valid
+          puts "1credit_available == #{credit_available.inspect}"
+          if !credit_available.receiptnum.nil? and credit_available.receiptnum != ''
+            if credit_available.receiptnum.try(:strip).start_with?("dummy")
+              next
+            end
+          end
+
           # check if the record is for migration or not
           if credit_record_for_migrate == false
             topup_convert = Troy::TopupConvert.where(old_ca_id: credit_available.creditavailablerefkey).first
@@ -57,16 +67,20 @@ namespace :db do
 
             credit = partner.credits.new
             credit.type           = CREDIT_TYPES[credit_type.to_sym]
-            credit.amount         = topup_convert.numcredits
+            credit.amount         = credit_available.numcredits
             credit.credited_at    = Time.now
             credit.remarks        = "overall credit topup migration"
-            credit.fee            = topup_convert.amount - topup_convert.numcredits
+            credit.fee            = credit_available.amount - credit_available.numcredits
             credit.troy_migration = true
 
             credit.complete!
+            puts "Partner #{partner.name} migrated #{credit_available.numcredits} credit top up."
+            has_migrated_credit = true
           end
         end
-        puts "Troy credit migration to sinag for #{partner.name} successfully done."
+        if has_migrated_credit
+          puts "Troy credit migration to sinag for #{partner.name} successfully done."
+        end
       end
     end
 
@@ -91,6 +105,10 @@ namespace :db do
     troy_credit_availables = Troy::CreditAvailable.where("userrefkey = ? and creditavailablerefkey >= ?", troy_user.userrefkey, ca_key).order(:creditavailablerefkey)
 
     troy_credit_availables.each do |credit_available|
+      if troy_credit_availables.receiptnum.try(:strip).starts_with?("dummy")
+        next
+      end
+
       troy_trans = Troy::Trans.where(invoicerefkey: credit_available.invoicerefkey).first
 
       if !troy_trans.nil?
@@ -104,13 +122,14 @@ namespace :db do
 
       credit = partner.credits.new
       credit.type           = CREDIT_TYPES[credit_type.to_sym]
-      credit.amount         = topup_convert.numcredits
+      credit.amount         = credit_available.numcredits
       credit.credited_at    = Time.now
       credit.remarks        = "overall credit topup migration"
-      credit.fee            = topup_convert.amount - topup_convert.numcredits
+      credit.fee            = credit_available.amount - credit_available.numcredits
       credit.troy_migration = true
 
       credit.complete!
+      puts "Partner #{partner.name} migrated #{credit_available.numcredits} credit top up."
     end
     puts "Troy credit migration to sinag for #{partner.name} successfully done."
   end
