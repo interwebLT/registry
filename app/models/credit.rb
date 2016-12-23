@@ -14,13 +14,15 @@ class Credit < ActiveRecord::Base
 
   after_save :sync_external_registry
 
+  skip_callback :create, :before, :generate_credit_number, if: :credit_migration
+
   skip_callback :save, :after, :sync_external_registry, if: :troy_migration
 
   after_initialize do
     self.status ||= PENDING_CREDIT
   end
 
-  attr_accessor :troy_migration
+  attr_accessor :troy_migration, :credit_migration
 
   PAYPAL_CODE = 'EC'
   CHECKOUT_CODE = 'pay_tok'

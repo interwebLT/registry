@@ -13,8 +13,8 @@ namespace :db do
       bank: Credit::BankReplenish
     }
 
-    # partners = Partner.all
-    partners = Partner.where(name: "eastern")
+    partners = Partner.all
+    # partners = Partner.where(name: "eastern")
     partners.each do |partner|
       has_migrated_credit = false
       if sinag_partners.include?(partner.name)
@@ -60,11 +60,12 @@ namespace :db do
             ##get the type in ecn table
             troy_trans = Troy::Trans.where(invoicerefkey: credit_available.invoicerefkey).first
 
+            credit_amount = credit_available.numcredits
+            credit_fee    = credit_available.amount - credit_available.numcredits
+
             if !troy_trans.nil?
               troy_ecn_transaction = Troy::EcnTransaction.where(tranid: troy_trans.tranid).first
               if !troy_ecn_transaction.nil?
-                credit_amount = credit_available.numcredits
-                credit_fee    = credit_available.amount - credit_available.numcredits
                 if troy_ecn_transaction.pg == "2co"
                   credit_type = "twoCo"
                 else
@@ -84,12 +85,14 @@ namespace :db do
             ca_createdate = Troy::Invoice.where(invoicerefkey: credit_available.invoicerefkey).first
 
             credit = partner.credits.new
-            credit.type           = CREDIT_TYPES[credit_type.to_sym]
-            credit.amount         = credit_amount
-            credit.credited_at    = ca_createdate.nil? ? nil : ca_createdate
-            credit.remarks        = "overall migration of credit topup from troy for reports"
-            credit.fee            = credit_fee
-            credit.troy_migration = true
+            credit.credit_number    = credit_available.invoicerefkey.to_s
+            credit.type             = CREDIT_TYPES[credit_type.to_sym]
+            credit.amount           = credit_amount
+            credit.credited_at      = ca_createdate.nil? ? nil : ca_createdate
+            credit.remarks          = "overall migration of credit topup from troy for reports"
+            credit.fee              = credit_fee
+            credit.troy_migration   = true
+            credit.credit_migration = true
 
             credit.complete!
             puts "Partner #{partner.name} migrated #{credit_available.numcredits} credit top up."
@@ -133,11 +136,12 @@ namespace :db do
 
       troy_trans = Troy::Trans.where(invoicerefkey: credit_available.invoicerefkey).first
 
+      credit_amount = credit_available.numcredits
+      credit_fee    = credit_available.amount - credit_available.numcredits
+
       if !troy_trans.nil?
         troy_ecn_transaction = Troy::EcnTransaction.where(tranid: troy_trans.tranid).first
         if !troy_ecn_transaction.nil?
-          credit_amount = credit_available.numcredits
-          credit_fee    = credit_available.amount - credit_available.numcredits
           if troy_ecn_transaction.pg == "2co"
             credit_type = "twoCo"
           else
@@ -157,12 +161,14 @@ namespace :db do
       ca_createdate = Troy::Invoice.where(invoicerefkey: credit_available.invoicerefkey).first
 
       credit = partner.credits.new
-      credit.type           = CREDIT_TYPES[credit_type.to_sym]
-      credit.amount         = credit_available.numcredits
-      credit.credited_at    = ca_createdate.nil? ? nil : ca_createdate
-      credit.remarks        = "overall migration of credit topup from troy for reports"
-      credit.fee            = credit_available.amount - credit_available.numcredits
-      credit.troy_migration = true
+      credit.credit_number    = credit_available.invoicerefkey.to_s
+      credit.type             = CREDIT_TYPES[credit_type.to_sym]
+      credit.amount           = credit_available.numcredits
+      credit.credited_at      = ca_createdate.nil? ? nil : ca_createdate
+      credit.remarks          = "overall migration of credit topup from troy for reports"
+      credit.fee              = credit_available.amount - credit_available.numcredits
+      credit.troy_migration   = true
+      credit.credit_migration = true
 
       credit.complete!
       puts "Partner #{partner.name} migrated #{credit_available.numcredits} credit top up."
