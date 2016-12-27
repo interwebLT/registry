@@ -485,9 +485,9 @@ namespace :db do
     end
 
     ####!!!!####
-    od = Order.where(order_number: "351552").first.order_details.where(domain: "makatidiamond.com.ph", price_cents: 1750).first
+    od = Order.where(order_number: "351552").first
     if !od.nil?
-      od.destroy!
+      od.order_details.where(domain: "makatidiamond.com.ph", price_cents: 1750).first.destroy!
     end
   end
 
@@ -500,6 +500,7 @@ namespace :db do
     order_detail.registrant_handle = domain.nil? ? "" : domain.registrant_handle
     order_detail.type              = ORDER_DETAIL_TYPES[troy_report_data.type.strip.to_sym]
     order_detail.price_cents       = troy_report_data.amount_cents
+    order_detail.remarks           = "migrated from troy creditused"
 
     if order.nil?
       order                    = Order.new
@@ -543,6 +544,7 @@ namespace :db do
     vas_order_detail.registrant_handle = domain.nil? ? "" : domain.registrant_handle
     vas_order_detail.type              = VAS_ORDER_DETAIL_TYPES[od_type.to_sym]
     vas_order_detail.price_cents       = troy_report_data.amount_cents
+    vas_order_detail.remarks           = "migrated from troy creditused"
 
     if vas_order.nil?
       vas_order                    = Vas::Order.new
@@ -559,5 +561,45 @@ namespace :db do
     end
 
     return vas_order
+  end
+
+  desc "create order data for orphan vas orders"
+  task create_order_for_vas_order: :environment do
+    vas_orders = Vas::Order.all
+
+    vas_orders.each do |vas_order|
+      order = Order.find_by_order_number(vas_order.order_number)
+
+      if order.nil?
+        Order.create partner_id:   vas_order.partner_id,
+                     status:       "migration vas",
+                     completed_at: vas_order.completed_at,
+                     order_number: vas_order.order_number,
+                     ordered_at:   vas_order.ordered_at,
+                     troy_migration: true
+        puts "Order was created for vas order #{vas_order.order_number}."
+      end
+    end
+    puts "Done!"
+  end
+
+  task create_ledger_per_migrated_order: :environment do
+    orders = Order.where("length(order_number) < 10")
+
+    orders.each do |order|
+      vas_order = Vas::Order.find_by_order_number(order.order_number)
+
+      if vas_order.nil?
+        ledger_amount = order.total_price
+      else
+        ledger_amount = order.total_price + vas_order.total_price
+      end
+
+      order.partner.ledgers.create  order: order,
+                                    amount: ledger_amount * -1,
+                                    activity_type: 'use'
+      puts "Ledger entry for order #{order.order_number} was created."
+    end
+    puts "Done!"
   end
 end
