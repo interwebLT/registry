@@ -37,6 +37,20 @@ class OrderDetail::RegisterDomain < OrderDetail
 
     self.complete?
   end
+  
+  def reverse!
+    domain = Domain.named(self.domain)
+
+    domain.destroy!
+    
+    self.order.partner.ledgers.create order: self.order,
+                                      amount: self.price,
+                                      activity_type: 'use'
+
+    self.status = REVERSED_ORDER_DETAIL
+    self.save!
+  end
+
 
   def as_json options = nil
     {
