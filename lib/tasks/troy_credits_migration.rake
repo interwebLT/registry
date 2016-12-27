@@ -14,7 +14,6 @@ namespace :db do
     }
 
     partners = Partner.all
-    # partners = Partner.where(name: "eastern")
     partners.each do |partner|
       has_migrated_credit = false
       if sinag_partners.include?(partner.name)
@@ -33,6 +32,10 @@ namespace :db do
         troy_credit_availables = Troy::CreditAvailable.where(userrefkey: troy_user.userrefkey).order(:creditavailablerefkey)
 
         troy_credit_availables.each do |credit_available|
+          if credit_available.creditavailablerefkey == 7632
+            next
+          end
+
           credit_amount = 0
           credit_fee    = 0
           if !credit_available.receiptnum.nil? and credit_available.receiptnum != ''
@@ -51,7 +54,6 @@ namespace :db do
             end
           end
 
-          ## TODO: Change not equal to greater_than since there are some gaps
           if credit_record_for_migrate and credit_available.creditavailablerefkey > new_ca_refkey_before_valid
 
           puts "****************"
@@ -236,21 +238,12 @@ end
 
 # Credit.where("remarks like 'overall%'").map{|c| c.destroy!}
 
-
-# Partner skamfroj migrated 150.0 credit top up.
-# Troy credit migration to sinag for skamfroj successfully done.
-# ****************
-# Migration starts with credit avaialable refkey 321 for partner rmedina -- 6332 
-# ****************
-# rake aborted!
-# NoMethodError: undefined method `-' for nil:NilClass
-# /srv/registry/releases/20161223054951/lib/tasks/troy_credits_migration.rake:64:in `block (4 levels) in <top (required)>'
-# /srv/registry/shared/bundle/ruby/2.2.0/gems/activerecord-4.2.6/lib/active_record/relation/delegation.rb:46:in `each'
-# /srv/registry/shared/bundle/ruby/2.2.0/gems/activerecord-4.2.6/lib/active_record/relation/delegation.rb:46:in `each'
-# /srv/registry/releases/20161223054951/lib/tasks/troy_credits_migration.rake:35:in `block (3 levels) in <top (required)>'
-# /srv/registry/shared/bundle/ruby/2.2.0/gems/activerecord-4.2.6/lib/active_record/relation/delegation.rb:46:in `each'
-# /srv/registry/shared/bundle/ruby/2.2.0/gems/activerecord-4.2.6/lib/active_record/relation/delegation.rb:46:in `each'
-# /srv/registry/releases/20161223054951/lib/tasks/troy_credits_migration.rake:18:in `block (2 levels) in <top (required)>'
-# /srv/registry/shared/bundle/ruby/2.2.0/gems/rake-11.2.2/exe/rake:27:in `<top (required)>'
-# Tasks: TOP => db:migrate_credits_from_troy
-# (See full trace by running task with --trace)
+# credit_for_top_up = 0
+# partner_credit_used = 0
+# partner_credit_used = 0
+# troy_user = Troy::User.find_by_userid("bellinet")
+# credits = Troy::CreditAvailable.where("userrefkey=?", troy_user.userrefkey).map{|credit| credit.numcredits} - [nil]
+# partner_credit_available = credits.sum.to_f
+# used = Troy::Creditused.where("userrefkey=?", troy_user.userrefkey).map{|credit| credit.numcredits} - [nil]
+# partner_credit_used = used.sum.to_f
+# credit_for_top_up = partner_credit_available - partner_credit_used

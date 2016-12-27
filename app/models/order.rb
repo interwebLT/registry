@@ -8,7 +8,7 @@ class Order < ActiveRecord::Base
   monetize :total_price_cents
   monetize :fee_cents
 
-  validates :order_details, presence: true
+  validates :order_details, presence: true, unless: :troy_migration
   validates :ordered_at, presence: true
 
   validate :partner_must_exist
