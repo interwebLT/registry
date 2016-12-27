@@ -51,7 +51,8 @@ namespace :db do
             end
           end
 
-          if credit_record_for_migrate and credit_available.creditavailablerefkey != new_ca_refkey_before_valid
+          ## TODO: Change not equal to greater_than since there are some gaps
+          if credit_record_for_migrate and credit_available.creditavailablerefkey > new_ca_refkey_before_valid
 
           puts "****************"
           puts "Migration starts with credit avaialable refkey #{credit_available.creditavailablerefkey} for partner #{partner.name} -- #{credit_available.userrefkey} "
@@ -234,3 +235,22 @@ end
  #   left join cashpayment c on a.receiptnum = c.receiptnum where a.receiptnum like 'or%' order by b.userid;
 
 # Credit.where("remarks like 'overall%'").map{|c| c.destroy!}
+
+
+# Partner skamfroj migrated 150.0 credit top up.
+# Troy credit migration to sinag for skamfroj successfully done.
+# ****************
+# Migration starts with credit avaialable refkey 321 for partner rmedina -- 6332 
+# ****************
+# rake aborted!
+# NoMethodError: undefined method `-' for nil:NilClass
+# /srv/registry/releases/20161223054951/lib/tasks/troy_credits_migration.rake:64:in `block (4 levels) in <top (required)>'
+# /srv/registry/shared/bundle/ruby/2.2.0/gems/activerecord-4.2.6/lib/active_record/relation/delegation.rb:46:in `each'
+# /srv/registry/shared/bundle/ruby/2.2.0/gems/activerecord-4.2.6/lib/active_record/relation/delegation.rb:46:in `each'
+# /srv/registry/releases/20161223054951/lib/tasks/troy_credits_migration.rake:35:in `block (3 levels) in <top (required)>'
+# /srv/registry/shared/bundle/ruby/2.2.0/gems/activerecord-4.2.6/lib/active_record/relation/delegation.rb:46:in `each'
+# /srv/registry/shared/bundle/ruby/2.2.0/gems/activerecord-4.2.6/lib/active_record/relation/delegation.rb:46:in `each'
+# /srv/registry/releases/20161223054951/lib/tasks/troy_credits_migration.rake:18:in `block (2 levels) in <top (required)>'
+# /srv/registry/shared/bundle/ruby/2.2.0/gems/rake-11.2.2/exe/rake:27:in `<top (required)>'
+# Tasks: TOP => db:migrate_credits_from_troy
+# (See full trace by running task with --trace)
