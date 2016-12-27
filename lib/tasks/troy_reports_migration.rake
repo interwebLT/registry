@@ -595,10 +595,16 @@ namespace :db do
         ledger_amount = order.total_price + vas_order.total_price
       end
 
-      order.partner.ledgers.create  order: order,
-                                    amount: ledger_amount * -1,
-                                    activity_type: 'use'
-      puts "Ledger entry for order #{order.order_number} was created."
+      ledger = Ledger.find_by_order_id(order.id)
+
+      if ledger.nil?
+        order.partner.ledgers.create  order: order,
+                                      amount: ledger_amount * -1,
+                                      activity_type: 'use',
+                                      created_at: order.ordered_at,
+                                      updated_at: order.ordered_at
+        puts "Ledger entry for order #{order.order_number} was created."
+      end
     end
     puts "Done!"
   end
