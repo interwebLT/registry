@@ -608,4 +608,18 @@ namespace :db do
     end
     puts "Done!"
   end
+
+  task revert_ledger_per_migrated_order: :environment do
+    orders = Order.where("length(order_number) < 10")
+
+    orders.each do |order|
+      ledger = Ledger.find_by_order_id(order.id)
+
+      if !ledger.nil?
+        ledger.destroy!
+        puts "Ledger entry for order #{order.order_number} was deleted."
+      end
+    end
+    puts "Done!"
+  end
 end
