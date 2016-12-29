@@ -31,6 +31,8 @@ namespace :db do
 
         troy_credit_availables = Troy::CreditAvailable.where(userrefkey: troy_user.userrefkey).order(:creditavailablerefkey)
 
+        total_credited_amount = 0
+
         troy_credit_availables.each do |credit_available|
           if credit_available.creditavailablerefkey == 7632
             next
@@ -55,10 +57,6 @@ namespace :db do
           end
 
           if credit_record_for_migrate and credit_available.creditavailablerefkey > new_ca_refkey_before_valid
-
-          puts "****************"
-          puts "Migration starts with credit avaialable refkey #{credit_available.creditavailablerefkey} for partner #{partner.name} -- #{credit_available.userrefkey} "
-          puts "****************"
             # all credit top ups goes here
             ##get the type in ecn table
             troy_trans = Troy::Trans.where(invoicerefkey: credit_available.invoicerefkey).first
@@ -98,12 +96,15 @@ namespace :db do
             credit.credit_migration = true
 
             credit.complete!
-            puts "Partner #{partner.name} migrated #{credit_available.numcredits} credit top up."
+
+            total_credited_amount += credit_amount
+
+            puts "Partner #{partner.name} - #{credit_available.userrefkey} migrated #{credit_available.numcredits} credit top up from credit available #{credit_available.creditavailablerefkey}."
             has_migrated_credit = true
           end
         end
         if has_migrated_credit
-          puts "Troy credit migration to sinag for #{partner.name} successfully done."
+          puts "Troy credit migration to sinag for #{partner.name} successfully done. TOTAL CREDITED -- #{total_credited_amount}"
         end
       end
     end
@@ -125,6 +126,7 @@ namespace :db do
   end
 
   def migrate_special_partners partner, troy_user, ca_key
+    total_credited_amount = 0
     credit_amount = 0
     credit_fee    = 0
 
@@ -136,7 +138,6 @@ namespace :db do
           next
         end
       end
-
       troy_trans = Troy::Trans.where(invoicerefkey: credit_available.invoicerefkey).first
 
       credit_amount = credit_available.numcredits
@@ -166,17 +167,20 @@ namespace :db do
       credit = partner.credits.new
       credit.credit_number    = credit_available.invoicerefkey.to_s
       credit.type             = CREDIT_TYPES[credit_type.to_sym]
-      credit.amount           = credit_available.numcredits
+      credit.amount           = credit_amount
       credit.credited_at      = ca_createdate.nil? ? nil : ca_createdate
       credit.remarks          = "overall migration of credit topup from troy for reports"
-      credit.fee              = credit_available.amount - credit_available.numcredits
+      credit.fee              = credit_fee
       credit.troy_migration   = true
       credit.credit_migration = true
 
       credit.complete!
-      puts "Partner #{partner.name} migrated #{credit_available.numcredits} credit top up."
+
+      total_credited_amount += credit_amount
+
+      puts "Partner #{partner.name} - #{credit_available.userrefkey} migrated #{credit_available.numcredits} credit top up from credit available #{credit_available.creditavailablerefkey}."
     end
-    puts "Troy credit migration to sinag for #{partner.name} successfully done."
+    puts "Troy credit migration to sinag for #{partner.name} successfully done. TOTAL CREDITED -- #{total_credited_amount}"
   end
 
 
